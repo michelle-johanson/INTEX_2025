@@ -1,5 +1,53 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="/">Ella Rises</a>
+
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="/">Ella Rises</a>
+
+        <!-- Mobile menu toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Right-side menu -->
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <li class="nav-item me-3">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+
+                <li class="nav-item me-3">
+                    <a class="nav-link" href="/donations">Donations</a>
+                </li>
+
+                <% if (!session.isLoggedIn) { %>
+
+                    <!-- LOGIN BUTTON -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Login</a>
+                    </li>
+
+                    <% } else { %>
+
+                        <!-- GREETING -->
+                        <li class="nav-item me-3">
+                            <span class="navbar-text">
+                                Hello, <strong>
+                                    <%= session.username %>
+                                </strong>
+                            </span>
+                        </li>
+
+                        <!-- LOGOUT -->
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="/auth/logout">Logout</a>
+                        </li>
+
+                        <% } %>
+
+            </ul>
+        </div>
+
     </div>
 </nav>
