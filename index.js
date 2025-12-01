@@ -2,7 +2,7 @@
 require("dotenv").config();
 
 /* ============================================================
-    INSTALL DEPENDANCIES
+    INSTALL DEPENDENCIES
 ============================================================ */
 
 // Core Libraries
@@ -20,44 +20,45 @@ const knex = require("knex")({
         database: process.env.RDS_DB_NAME || "intex",
         port: process.env.RDS_PORT || 5432,
 
-        ssl: process.env.DB_SSL ? {rejectUnauthorized: false} : false 
-
+        ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false
     }
 });
 
-// Additional Dependancies
-const multer = require("multer");           // For image uploads
-const bodyParser = require("body-parser");  // To read the body of incoming HTTP requests
+// Additional Dependencies
+const multer = require("multer");
+const bodyParser = require("body-parser");
 
 // Initialize Express App
 const app = express();
 
 /* ============================================================
-    MIDDLEWARE
+    GLOBAL MIDDLEWARE
 ============================================================ */
 
-// Middleware
-app.use(express.urlencoded({ extended: true }));            // Parses URL-encoded bodies (form submissions)
+// Parse forms + JSON
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));    // Serves static files from 'public' folder (css)
 
-// Set view engine
-app.set("view engine", "ejs");                      // Use EJS for the web pages
+// Static files (CSS, images, JS)
+app.use(express.static(path.join(__dirname, "public")));
+
+// EJS Setup
+app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Required Middleware
+// Debug: print SESSION_SECRET
 console.log("SESSION_SECRET =", process.env.SESSION_SECRET);
 
-// Session Variables
+// Sessions
 app.use(
     session({
-        secret: process.env.SESSION_SECRET,
+        secret: process.env.SESSION_SECRET || "supersecret",
         resave: false,
         saveUninitialized: false,
     })
 );
 
-// Middleware to make session data available in all views
+// Make session available inside EJS views
 app.use((req, res, next) => {
     const s = req.session;
 
@@ -65,7 +66,8 @@ app.use((req, res, next) => {
         isLoggedIn: s.isLoggedIn || false,
         userId: s.userId || null,
         username: s.username || null,
-        firstname: s.firstname || null
+        firstname: s.firstname || null,   // from teammate
+        access_level: s.access_level || null  // from your version
     };
 
     next();
@@ -75,12 +77,23 @@ app.use((req, res, next) => {
     ROUTES
 ============================================================ */
 
+// Home
 const homeRoutes = require("./routes/home");
 app.use("/", homeRoutes);
+
+// Donations (your version — keep)
+const donationRoutes = require("./routes/donations");
+app.use("/donations", donationRoutes);
+
+// Auth (your version — keep)
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
 
 /* ============================================================
     START SERVER
 ============================================================ */
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Website is running! Check port ${PORT}`));
+app.listen(PORT, () =>
+    console.log(`🚀 Website is running! Visit http://localhost:${PORT}`)
+);
