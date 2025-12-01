@@ -66,8 +66,8 @@ app.use((req, res, next) => {
         isLoggedIn: s.isLoggedIn || false,
         userId: s.userId || null,
         username: s.username || null,
-        firstname: s.firstname || null,   // from teammate
-        access_level: s.access_level || null  // from your version
+        firstname: s.firstname || null,
+        access_level: s.access_level || null
     };
 
     next();
@@ -81,13 +81,17 @@ app.use((req, res, next) => {
 const homeRoutes = require("./routes/home");
 app.use("/", homeRoutes);
 
-// Donations (your version — keep)
+// Donations
 const donationRoutes = require("./routes/donations");
 app.use("/donations", donationRoutes);
 
-// Auth (your version — keep)
+// Auth
 const authRoutes = require("./routes/auth");
 app.use("/auth", authRoutes);
+
+// Participants
+const participantRoutes = require("./routes/participants");
+app.use("/participants", participantRoutes);
 
 /* ============================================================
     START SERVER

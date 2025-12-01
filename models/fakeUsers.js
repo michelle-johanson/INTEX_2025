@@ -2,13 +2,13 @@
 let users = [
     {
         id: 1,
-        username: "admin",
-        password: "admin123",
+        username: "michelle",
+        password: "my_password",
         access_level: "admin"
     },
     {
         id: 2,
-        username: "michelle",
+        username: "user",
         password: "test123",
         access_level: "user"
     }
