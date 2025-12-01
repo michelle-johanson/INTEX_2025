@@ -1,49 +1,50 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
     <div class="container">
 
         <!-- Brand -->
         <a class="navbar-brand fw-bold" href="/">Ella Rises</a>
 
-        <!-- Mobile toggle -->
+        <!-- Mobile menu toggle -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Nav items -->
+        <!-- Right-side menu -->
         <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
 
-                <!-- Home -->
-                <li class="nav-item">
+                <li class="nav-item me-3">
                     <a class="nav-link" href="/">Home</a>
                 </li>
 
-                <!-- Donations -->
-                <li class="nav-item">
+                <li class="nav-item me-3">
                     <a class="nav-link" href="/donations">Donations</a>
                 </li>
 
-                <!-- Add these now, even if blank, so your routing grows cleanly -->
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Participants</a>
-                </li>
+                <% if (!session.isLoggedIn) { %>
 
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Events</a>
-                </li>
+                    <!-- LOGIN BUTTON -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Login</a>
+                    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Surveys</a>
-                </li>
+                    <% } else { %>
 
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Milestones</a>
-                </li>
+                        <!-- GREETING -->
+                        <li class="nav-item me-3">
+                            <span class="navbar-text">
+                                Hello, <strong>
+                                    <%= session.username %>
+                                </strong>
+                            </span>
+                        </li>
 
-                <!-- Login (placeholder) -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
+                        <!-- LOGOUT -->
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="/auth/logout">Logout</a>
+                        </li>
+
+                        <% } %>
 
             </ul>
         </div>

@@ -33,28 +33,30 @@ const bodyParser = require("body-parser");  // To read the body of incoming HTTP
 const app = express();
 
 /* ============================================================
-    MIDDLEWARE
+    GLOBAL MIDDLEWARE
 ============================================================ */
 
-// Middleware
-app.use(express.urlencoded({ extended: true }));            // Parses URL-encoded bodies (form submissions)
+// Body parsing (forms + JSON)
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));    // Serves static files from 'public' folder (css)
 
-// Set view engine
-app.set("view engine", "ejs");                      // Use EJS for the web pages
+// Static files (CSS, images, JS)
+app.use(express.static(path.join(__dirname, "public")));
+
+// EJS Setup
+app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Session Variables
+// Sessions
 app.use(
     session({
-        secret: process.env.SESSION_SECRET,
+        secret: process.env.SESSION_SECRET || "supersecret",
         resave: false,
         saveUninitialized: false,
     })
 );
 
-// Middleware to make session data available in all views
+// Make session available inside EJS views
 app.use((req, res, next) => {
     const s = req.session;
 
@@ -62,26 +64,34 @@ app.use((req, res, next) => {
         isLoggedIn: s.isLoggedIn || false,
         userId: s.userId || null,
         username: s.username || null,
-        firstname: s.firstname || null
+        access_level: s.access_level || null
     };
 
     next();
 });
 
+
 /* ============================================================
     ROUTES
 ============================================================ */
 
+// Home (landing page)
 const homeRoutes = require("./routes/home");
 app.use("/", homeRoutes);
 
+// Donations (public + admin CRUD)
 const donationRoutes = require("./routes/donations");
 app.use("/donations", donationRoutes);
 
+// Auth (login/logout)
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
 
 /* ============================================================
     START SERVER
 ============================================================ */
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Website is running! Check port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`🚀 Website is running! Visit http://localhost:${PORT}`);
+});
