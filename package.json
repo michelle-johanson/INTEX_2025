@@ -1,0 +1,30 @@
+{
+  "name": "intex_2025",
+  "version": "1.0.0",
+  "description": "Follow these steps **in order** to get the Internship Tracker running on your computer.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michelle-johanson/INTEX_2025.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michelle-johanson/INTEX_2025/issues"
+  },
+  "homepage": "https://github.com/michelle-johanson/INTEX_2025#readme",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.2.0",
+    "express-session": "^1.18.2",
+    "knex": "^3.1.0",
+    "multer": "^2.0.2",
+    "pg": "^8.16.3"
+  }
+}
