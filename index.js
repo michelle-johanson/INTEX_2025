@@ -75,6 +75,10 @@ app.use((req, res, next) => {
 const homeRoutes = require("./routes/home");
 app.use("/", homeRoutes);
 
+const donationRoutes = require("./routes/donations");
+app.use("/donations", donationRoutes);
+
+
 /* ============================================================
     START SERVER
 ============================================================ */
