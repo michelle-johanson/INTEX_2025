@@ -77,4 +77,4 @@ app.use("/", homeRoutes);
 ============================================================ */
 
 const PORT = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Website is running! Check port ${PORT}`));
+app.listen(PORT, () => console.log(`Website is running! Check port ${PORT}`));
