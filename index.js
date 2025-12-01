@@ -46,8 +46,6 @@ app.set("view engine", "ejs");                      // Use EJS for the web pages
 app.set("views", path.join(__dirname, "views"));
 
 // Required Middleware
-console.log("SESSION_SECRET =", process.env.SESSION_SECRET);
-
 // Session Variables
 app.use(
     session({
