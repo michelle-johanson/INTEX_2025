@@ -11,14 +11,14 @@ Follow these steps **in order** to get the Internship Tracker running on your co
 Open your terminal (VS Code → Terminal → New Terminal), then run:
 
 ```bash
-git clone https://github.com/michelle-johanson/IS403-GroupProject.git
+git clone https://github.com/michelle-johanson/INTEX_2025.git
 
-cd IS403-GroupProject
+cd INTEX_2025
 ```
 
 ✅ You should now be inside the project folder.
 
-Run `pwd` to confirm. If the path ends in `/IS403-GroupProject`, you’re good!
+Run `pwd` to confirm. If the path ends in `/INTEX_2025`, you’re good!
 
 
 ---
