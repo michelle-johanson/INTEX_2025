@@ -4,7 +4,8 @@
   "description": "Follow these steps **in order** to get the Internship Tracker running on your computer.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
