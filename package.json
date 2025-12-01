@@ -4,9 +4,9 @@
   "description": "Follow these steps **in order** to get the Internship Tracker running on your computer.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
+  "test": "echo \"No tests, skipping\"",
+  "start": "node index.js"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/michelle-johanson/INTEX_2025.git"
