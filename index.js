@@ -34,6 +34,8 @@ app.use(express.static("public"));          // Serves static files from 'public'
 app.use(express.urlencoded({ extended: true })); // Parses URL-encoded bodies (form submissions)
 
 // Required Middleware
+console.log("SESSION_SECRET =", process.env.SESSION_SECRET);
+
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
