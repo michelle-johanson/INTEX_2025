@@ -68,6 +68,7 @@ app.use((req, res, next) => {
 /* ============================================================
     ROUTES
 ============================================================ */
+
 const homeRoutes = require("./routes/home");
 app.use("/", homeRoutes);
 
@@ -76,8 +77,4 @@ app.use("/", homeRoutes);
 ============================================================ */
 
 const PORT = process.env.PORT || 3000;
-// const PORT = 4000;
-
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(port, () => console.log(`Website is running! Check port ${PORT}`));
