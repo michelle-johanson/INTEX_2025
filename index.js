@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 
     res.locals.session = {
         isLoggedIn: s.isLoggedIn || false,
-        userId: s.userId || null,
+        user_id: s.user_id || null,
         username: s.username || null,
         firstname: s.firstname || null,
         access_level: s.access_level || null

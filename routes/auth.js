@@ -36,7 +36,7 @@ router.post("/login", (req, res) => {
 
     // correct → set session values
     req.session.isLoggedIn = true;
-    req.session.userId = user.id;
+    req.session.user_id = user.id;
     req.session.access_level = user.access_level;
     req.session.username = user.username;
 
