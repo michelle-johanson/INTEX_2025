@@ -92,6 +92,10 @@ app.use("/auth", authRoutes);
 const participantRoutes = require("./routes/participants");
 app.use("/participants", participantRoutes);
 
+// Events
+const eventRoutes = require("./routes/events");
+app.use("/events", eventRoutes);
+
 /* ============================================================
     START SERVER
 ============================================================ */
