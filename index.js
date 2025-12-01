@@ -1,6 +1,10 @@
 // Load environment variables from .env file into memory
 require("dotenv").config();
 
+/* ============================================================
+    INSTALL DEPENDANCIES
+============================================================ */
+
 // Core Libraries
 const express = require("express");
 const session = require("express-session");
@@ -19,18 +23,26 @@ const knex = require("knex")({
 });
 
 // Additional Dependancies
-const multer = require("multer"); // For image uploads
-const bodyParser = require("body-parser"); // To read the body of incoming HTTP requests
+const multer = require("multer");           // For image uploads
+const bodyParser = require("body-parser");  // To read the body of incoming HTTP requests
 
 // Initialize Express App
 const app = express();
 
-// View Engine & Static Files
-app.set("view engine", "ejs"); // Use EJS for the web pages
-app.use(express.static("public"));          // Serves static files from 'public' folder (css)
-app.use(express.urlencoded({ extended: true })); // Parses URL-encoded bodies (form submissions)
+/* ============================================================
+    MIDDLEWARE
+============================================================ */
 
-// Required Middleware
+// Middleware
+app.use(express.urlencoded({ extended: true }));            // Parses URL-encoded bodies (form submissions)
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));    // Serves static files from 'public' folder (css)
+
+// Set view engine
+app.set("view engine", "ejs");                      // Use EJS for the web pages
+app.set("views", path.join(__dirname, "views"));
+
+// Session Variables
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
@@ -53,6 +65,16 @@ app.use((req, res, next) => {
     next();
 });
 
+/* ============================================================
+    ROUTES
+============================================================ */
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log("Website is running!"));
+const homeRoutes = require("./routes/home");
+app.use("/", homeRoutes);
+
+/* ============================================================
+    START SERVER
+============================================================ */
+
+const PORT = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Website is running! Check port ${PORT}`));
