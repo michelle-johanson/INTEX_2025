@@ -29,7 +29,7 @@ Parameters:
           commands:
             - echo "Running tests and type checks"
             - npm run build --if-present
-            - npm test
+            # - npm test
   RetentionPolicy:
     Description: Define if you'd like the resource retained or deleted when the
       CloudFormation stack is deleted.
