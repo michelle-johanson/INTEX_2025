@@ -9,6 +9,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
+const expressLayouts = require("express-ejs-layouts");
 
 // Database
 const knex = require("knex")({
@@ -45,8 +46,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Debug: print SESSION_SECRET
-console.log("SESSION_SECRET =", process.env.SESSION_SECRET);
+// enable layouts
+app.use(expressLayouts);
+app.set("layout", "layout");
 
 // Sessions
 app.use(

@@ -1,0 +1,16 @@
+/* =====================================
+   DASHBOARD LAYOUT
+===================================== */
+
+.dashboard-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.dashboard-card {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}

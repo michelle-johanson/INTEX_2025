@@ -1,0 +1,52 @@
+<div class="page-container">
+
+    <h1 class="page-title">Event Occurrences</h1>
+
+    <% if (session && session.access_level === "manager") { %>
+        <a href="/eventOccurrences/new" class="btn btn-primary btn-small mb-4">
+            + Schedule New Occurrence
+        </a>
+    <% } %>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Location</th>
+                <th>Capacity</th>
+                <th>Reg Deadline</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% occurrences.forEach(o => { %>
+                <tr>
+                    <td><%= o.EventName %></td>
+                    <td><%= o.EventDateTimeStart %></td>
+                    <td><%= o.EventDateTimeEnd %></td>
+                    <td><%= o.EventLocation %></td>
+                    <td><%= o.EventCapacity %></td>
+                    <td><%= o.EventRegistrationDeadline %></td>
+
+                    <td class="table-actions">
+                        <a href="/eventOccurrences/<%= o.EventOccurrenceID %>">View</a>
+
+                        <% if (session && session.access_level === "manager") { %>
+                            <a href="/eventOccurrences/<%= o.EventOccurrenceID %>/edit">Edit</a>
+                            <form action="/eventOccurrences/<%= o.EventOccurrenceID %>/delete"
+                                  method="POST"
+                                  style="display:inline;">
+                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                    Delete
+                                </button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+</div>

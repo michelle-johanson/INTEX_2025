@@ -1,0 +1,66 @@
+<div class="page-container">
+
+    <h1 class="page-title">Registration Details</h1>
+
+    <div class="detail-card">
+
+        <div class="detail-row">
+            <span class="detail-label">Event</span>
+            <span class="detail-value">
+                <%= event?.EventName || "Unknown" %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Occurrence Date</span>
+            <span class="detail-value">
+                <%= occurrence?.EventDateTimeStart %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Participant</span>
+            <span class="detail-value">
+                <%= participant?.FirstName %>
+                    <%= participant?.LastName %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+                <%= registration.RegistrationStatus %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Attended?</span>
+            <span class="detail-value">
+                <%= registration.RegistrationAttendedFlag ? "Yes" : "No" %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Check-In Time</span>
+            <span class="detail-value">
+                <%= registration.RegistrationCheckInTime || "—" %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Created At</span>
+            <span class="detail-value">
+                <%= registration.RegistrationCreatedAt %>
+            </span>
+        </div>
+
+        <% if (session && session.access_level==="manager" ) { %>
+            <div class="detail-actions">
+                <a
+                    href="/registrations/<%= registration.EventOccurrenceID %>/<%= registration.ParticipantID %>/edit">Edit</a>
+            </div>
+            <% } %>
+
+    </div>
+
+</div>

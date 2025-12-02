@@ -1,0 +1,46 @@
+<div class="page-container">
+
+    <h1 class="page-title">Edit Registration</h1>
+
+    <form action="/registrations/<%= registration.EventOccurrenceID %>/<%= registration.ParticipantID %>/edit"
+        method="POST" class="form">
+
+        <label>Participant</label>
+        <select name="ParticipantID" disabled>
+            <% participants.forEach(p=> { %>
+                <option value="<%= p.ParticipantID %>" <%=p.ParticipantID===registration.ParticipantID ? "selected" : ""
+                    %>>
+                    <%= p.FirstName %>
+                        <%= p.LastName %>
+                </option>
+                <% }) %>
+        </select>
+
+        <label>Event Occurrence</label>
+        <select name="EventOccurrenceID" disabled>
+            <% occurrences.forEach(o=> { %>
+                <option value="<%= o.EventOccurrenceID %>" <%=o.EventOccurrenceID===registration.EventOccurrenceID
+                    ? "selected" : "" %>>
+                    <%= o.EventDateTimeStart %>
+                </option>
+                <% }) %>
+        </select>
+
+        <label>Status</label>
+        <input type="text" name="RegistrationStatus" value="<%= registration.RegistrationStatus %>" />
+
+        <label>Attended?</label>
+        <input type="checkbox" name="RegistrationAttendedFlag" <%=registration.RegistrationAttendedFlag ? "checked" : ""
+            %> />
+
+        <label>Check-In Time</label>
+        <input type="datetime-local" name="RegistrationCheckInTime"
+            value="<%= registration.RegistrationCheckInTime %>" />
+
+        <label>Created At</label>
+        <input type="date" name="RegistrationCreatedAt" value="<%= registration.RegistrationCreatedAt %>" />
+
+        <button class="btn-submit">Save Changes</button>
+    </form>
+
+</div>

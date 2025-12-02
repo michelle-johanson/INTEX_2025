@@ -4,11 +4,11 @@ const express = require("express");
 const router = express.Router();
 
 const { requireAdmin, requireLogin } = require("../middleware/auth");
-const Milestones = require("../models/fakeMilestones");
-const Participants = require("../models/fakeParticipants");
+const Milestones = require("../models/milestones");   // NEW MODEL
+const Participants = require("../models/participants");
 
 /* ============================================================
-    LIST MILESTONES (LOGIN REQUIRED)
+   LIST MILESTONES (LOGIN REQUIRED)
 ============================================================ */
 router.get("/", requireLogin, (req, res) => {
     const milestones = Milestones.getAll();
@@ -31,13 +31,12 @@ router.get("/new", requireAdmin, (req, res) => {
     });
 });
 
-// Handle submit
+// Submit form
 router.post("/new", requireAdmin, (req, res) => {
-    Milestones.add({
-        title: req.body.title,
-        description: req.body.description,
-        participant_id: Number(req.body.participant_id),
-        completed: req.body.completed === "on"
+    Milestones.create({
+        ParticipantID: Number(req.body.ParticipantID),
+        MilestoneTitle: req.body.MilestoneTitle,
+        MilestoneDate: req.body.MilestoneDate
     });
 
     res.redirect("/milestones");
@@ -48,6 +47,7 @@ router.post("/new", requireAdmin, (req, res) => {
     EDIT MILESTONE (ADMIN ONLY)
 ============================================================ */
 
+// Show edit form
 router.get("/:id/edit", requireAdmin, (req, res) => {
     const milestone = Milestones.getById(req.params.id);
     if (!milestone) return res.status(404).send("Milestone not found");
@@ -59,12 +59,12 @@ router.get("/:id/edit", requireAdmin, (req, res) => {
     });
 });
 
+// Submit edit
 router.post("/:id/edit", requireAdmin, (req, res) => {
     Milestones.update(req.params.id, {
-        title: req.body.title,
-        description: req.body.description,
-        participant_id: Number(req.body.participant_id),
-        completed: req.body.completed === "on"
+        ParticipantID: Number(req.body.ParticipantID),
+        MilestoneTitle: req.body.MilestoneTitle,
+        MilestoneDate: req.body.MilestoneDate
     });
 
     res.redirect("/milestones");
@@ -87,10 +87,12 @@ router.get("/:id", requireLogin, (req, res) => {
     const milestone = Milestones.getById(req.params.id);
     if (!milestone) return res.status(404).send("Milestone not found");
 
+    const participant = Participants.getById(milestone.ParticipantID);
+
     res.render("milestones/show", {
         title: "Milestone Details",
         milestone,
-        participant: Participants.getById(milestone.participant_id)
+        participant
     });
 });
 

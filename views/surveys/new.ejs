@@ -1,0 +1,50 @@
+<div class="page-container">
+
+    <h1 class="page-title">Add Survey</h1>
+
+    <form action="/surveys/new" method="POST" class="form">
+
+        <label>Participant</label>
+        <select name="ParticipantID" required>
+            <option value="">Select a participant…</option>
+            <% participants.forEach(p=> { %>
+                <option value="<%= p.ParticipantID %>">
+                    <%= p.FirstName %>
+                        <%= p.LastName %>
+                </option>
+                <% }) %>
+        </select>
+
+        <label>Event Occurrence</label>
+        <select name="EventOccurrenceID" required>
+            <% occurrences.forEach(o=> { %>
+                <option value="<%= o.EventOccurrenceID %>">
+                    <%= events.find(e=> e.EventID === o.EventID)?.EventName %>
+                        — <%= o.EventDateTimeStart %>
+                </option>
+                <% }) %>
+        </select>
+
+        <label>Satisfaction Score</label>
+        <input type="number" name="SurveySatisfactionScore" min="1" max="5" required />
+
+        <label>Usefulness Score</label>
+        <input type="number" name="SurveyUsefulnessScore" min="1" max="5" required />
+
+        <label>Recommendation Score</label>
+        <input type="number" name="SurveyRecommendationScore" min="1" max="5" required />
+
+        <label>Overall Score</label>
+        <input type="number" name="SurveyOverallScore" min="1" max="5" required />
+
+        <label>Comments</label>
+        <textarea name="SurveyComments" rows="3"></textarea>
+
+        <label>Submission Date</label>
+        <input type="date" name="SurveySubmissionDate" required />
+
+        <button class="btn-submit">Submit Survey</button>
+
+    </form>
+
+</div>

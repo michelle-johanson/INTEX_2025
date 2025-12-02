@@ -1,53 +1,78 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
-    <div class="container">
+<nav class="er-navbar">
+<div class="er-navbar-inner">
 
-        <!-- Brand -->
-        <a class="navbar-brand fw-bold" href="/">Ella Rises</a>
+    <!-- LEFT: Logo + Menu -->
+    <div class="er-navbar-left">
+        <a href="/" class="er-navbar-logo">
+            <img src="/img/logo-no-bg.png" alt="Ella Rises Logo">
+        </a>
 
-        <!-- Mobile menu toggle -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <ul class="er-navbar-menu">
+            <% const menus = [
+                { label: "EVENTS", items: [
+                    { text: "Events", href: "/events" },
+                    { text: "Event Occurrences", href: "/eventOccurrences" }
+                ]},
+                { label: "REGISTER", items: [
+                    { text: "Registrations", href: "/registrations" },
+                    { text: "Participants", href: "/participants" },
+                    { text: "Milestones", href: "/milestones" }
+                ]},
+                { label: "SURVEY", items: [
+                    { text: "Surveys", href: "/surveys" },
+                    { text: "Dashboard", href: "/dashboard" }
+                ]}
+            ]; %>
 
-        <!-- Right-side menu -->
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto align-items-center">
+            <% menus.forEach(menu => { %>
+                <li class="er-nav-item dropdown">
+                    <a class="er-nav-link dropdown-toggle"
+                        href="#"
+                        data-bs-toggle="dropdown">
+                        <%= menu.label %>
+                    </a>
 
-                <li class="nav-item me-3">
-                    <a class="nav-link" href="/">Home</a>
+                    <ul class="dropdown-menu">
+                        <% menu.items.forEach(i => { %>
+                            <li><a class="dropdown-item" href="<%= i.href %>"><%= i.text %></a></li>
+                        <% }) %>
+                    </ul>
                 </li>
+            <% }) %>
 
-                <li class="nav-item me-3">
-                    <a class="nav-link" href="/donations/new">Donations</a>
-                </li>
-
-                <% if (!session.isLoggedIn) { %>
-
-                    <!-- LOGIN BUTTON -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/auth/login">Login</a>
-                    </li>
-
-                    <% } else { %>
-
-                        <!-- GREETING -->
-                        <li class="nav-item me-3">
-                            <span class="navbar-text">
-                                Hello, <strong>
-                                    <%= session.username %>
-                                </strong>
-                            </span>
-                        </li>
-
-                        <!-- LOGOUT -->
-                        <li class="nav-item">
-                            <a class="nav-link text-danger" href="/auth/logout">Logout</a>
-                        </li>
-
-                        <% } %>
-
-            </ul>
-        </div>
-
+            <!-- DONATE BUTTON -->
+            <li>
+                <a class="er-navbar-donate" href="/donations/new">DONATE</a>
+            </li>
+        </ul>
     </div>
+
+    <!-- RIGHT: Account -->
+    <div class="er-navbar-right">
+        <% if (!session || !session.isLoggedIn) { %>
+            <a href="/auth/login" class="er-navbar-login">LOGIN</a>
+        <% } else { %>
+
+            <div class="dropdown er-account-dropdown">
+                <a class="er-nav-link dropdown-toggle"
+                    href="#"
+                    data-bs-toggle="dropdown">
+                    <%= session.username %>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <% if (session.access_level === "manager") { %>
+                    <li><a class="dropdown-item" href="/users">Manage Users</a></li>
+                    <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <% } %>
+
+                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                </ul>
+            </div>
+
+        <% } %>
+    </div>
+
+</div>
 </nav>

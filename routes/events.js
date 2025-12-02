@@ -1,39 +1,43 @@
-// routes/events.js
+// routes/events.js (Event Templates)
 
 const express = require("express");
 const router = express.Router();
 
 const { requireAdmin, requireLogin } = require("../middleware/auth");
-const Events = require("../models/fakeEvents");
+const Events = require("../models/events");   // NEW ERD MODEL
 
 /* ============================================================
-    LIST EVENTS  (LOGIN REQUIRED)
+   LIST EVENT TEMPLATES (LOGIN REQUIRED)
 ============================================================ */
 router.get("/", requireLogin, (req, res) => {
     const events = Events.getAll();
+
     res.render("events/index", {
-        title: "Events",
+        title: "Event Templates",
         events
     });
 });
 
 
 /* ============================================================
-    CREATE EVENT (ADMIN ONLY)
+   CREATE NEW EVENT TEMPLATE (ADMIN ONLY)
 ============================================================ */
 
 // Show form
 router.get("/new", requireAdmin, (req, res) => {
-    res.render("events/new", { title: "Add Event" });
+    res.render("events/new", {
+        title: "Add Event Template"
+    });
 });
 
-// Handle submit
+// Submit
 router.post("/new", requireAdmin, (req, res) => {
-    Events.add({
-        name: req.body.name,
-        date: req.body.date,
-        location: req.body.location,
-        event_type: req.body.event_type
+    Events.create({
+        EventName: req.body.EventName,
+        EventType: req.body.EventType,
+        EventRecurrencePattern: req.body.EventRecurrencePattern,
+        EventDescription: req.body.EventDescription,
+        EventDefaultCapacity: Number(req.body.EventDefaultCapacity)
     });
 
     res.redirect("/events");
@@ -41,28 +45,28 @@ router.post("/new", requireAdmin, (req, res) => {
 
 
 /* ============================================================
-    EDIT EVENT (ADMIN ONLY)
+   EDIT EVENT TEMPLATE (ADMIN ONLY)
 ============================================================ */
 
-// Show form
+// Show edit form
 router.get("/:id/edit", requireAdmin, (req, res) => {
     const event = Events.getById(req.params.id);
-
-    if (!event) return res.status(404).send("Event not found");
+    if (!event) return res.status(404).send("Event template not found");
 
     res.render("events/edit", {
-        title: "Edit Event",
+        title: "Edit Event Template",
         event
     });
 });
 
-// Handle submit
+// Submit edits
 router.post("/:id/edit", requireAdmin, (req, res) => {
     Events.update(req.params.id, {
-        name: req.body.name,
-        date: req.body.date,
-        location: req.body.location,
-        event_type: req.body.event_type
+        EventName: req.body.EventName,
+        EventType: req.body.EventType,
+        EventRecurrencePattern: req.body.EventRecurrencePattern,
+        EventDescription: req.body.EventDescription,
+        EventDefaultCapacity: Number(req.body.EventDefaultCapacity)
     });
 
     res.redirect("/events");
@@ -70,7 +74,7 @@ router.post("/:id/edit", requireAdmin, (req, res) => {
 
 
 /* ============================================================
-    DELETE EVENT (ADMIN ONLY)
+   DELETE EVENT TEMPLATE (ADMIN ONLY)
 ============================================================ */
 router.post("/:id/delete", requireAdmin, (req, res) => {
     Events.delete(req.params.id);
@@ -79,15 +83,14 @@ router.post("/:id/delete", requireAdmin, (req, res) => {
 
 
 /* ============================================================
-    SHOW ONE EVENT (LOGIN REQUIRED)
+   SHOW SINGLE EVENT TEMPLATE (LOGIN REQUIRED)
 ============================================================ */
 router.get("/:id", requireLogin, (req, res) => {
     const event = Events.getById(req.params.id);
-
-    if (!event) return res.status(404).send("Event not found");
+    if (!event) return res.status(404).send("Event template not found");
 
     res.render("events/show", {
-        title: "Event Details",
+        title: "Event Template Details",
         event
     });
 });

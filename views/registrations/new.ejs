@@ -1,0 +1,44 @@
+<div class="page-container">
+
+    <h1 class="page-title">Add Registration</h1>
+
+    <form action="/registrations/new" method="POST" class="form">
+
+        <label>Participant</label>
+        <select name="ParticipantID" required>
+            <option value="">Select a participant…</option>
+            <% participants.forEach(p=> { %>
+                <option value="<%= p.ParticipantID %>">
+                    <%= p.FirstName %>
+                        <%= p.LastName %>
+                </option>
+                <% }) %>
+        </select>
+
+        <label>Event Occurrence</label>
+        <select name="EventOccurrenceID" required>
+            <option value="">Select an event occurrence…</option>
+            <% occurrences.forEach(o=> { %>
+                <option value="<%= o.EventOccurrenceID %>">
+                    <%= events.find(e=> e.EventID === o.EventID)?.EventName %>
+                        — <%= o.EventDateTimeStart %>
+                </option>
+                <% }) %>
+        </select>
+
+        <label>Status</label>
+        <input type="text" name="RegistrationStatus" placeholder="Registered, Waitlisted, etc." />
+
+        <label>Attended?</label>
+        <input type="checkbox" name="RegistrationAttendedFlag" />
+
+        <label>Check-In Time (optional)</label>
+        <input type="datetime-local" name="RegistrationCheckInTime" />
+
+        <label>Created At</label>
+        <input type="date" name="RegistrationCreatedAt" required />
+
+        <button class="btn-submit">Create Registration</button>
+    </form>
+
+</div>

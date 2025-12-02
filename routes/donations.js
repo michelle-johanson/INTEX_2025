@@ -4,22 +4,29 @@ const express = require("express");
 const router = express.Router();
 
 const { requireAdmin, requireLogin } = require("../middleware/auth");
-const Donations = require("../models/fakeDonations");
+
+const Donations = require("../models/donations");     // NEW MODEL NAME
+const Participants = require("../models/participants");
 
 /* ============================================================
-    PUBLIC DONATION FORM (no login required)
+    PUBLIC DONATION FORM (NO LOGIN REQUIRED)
 ============================================================ */
 
 // Show donation form
 router.get("/new", (req, res) => {
-    res.render("donations/new", { title: "Make a Donation" });
+    res.render("donations/new", {
+        title: "Make a Donation",
+        participants: Participants.getAll()   // so the donor can pick a participant
+    });
 });
 
-// Submit new donation (public)
+// Submit new donation
 router.post("/new", (req, res) => {
-    const { donor, amount, message } = req.body;
-
-    Donations.add(donor, Number(amount), message);
+    Donations.create({
+        ParticipantID: Number(req.body.ParticipantID),
+        DonationDate: req.body.DonationDate,
+        DonationAmount: Number(req.body.DonationAmount)
+    });
 
     res.redirect("/donations/thanks");
 });
@@ -31,25 +38,34 @@ router.get("/thanks", (req, res) => {
 
 
 /* ============================================================
-    INTERNAL PAGES (login required)
+    INTERNAL PAGES (LOGIN REQUIRED)
 ============================================================ */
 
-// List all donations
-router.get("/", (req, res) => {
+router.get("/", requireLogin, (req, res) => {
     const donations = Donations.getAll();
+
     res.render("donations/index", {
         title: "Donations",
-        donations
+        donations,
+        participants: Participants.getAll()
     });
 });
 
-// Show donation details
-router.get("/:id", (req, res) => {
+
+/* ============================================================
+    SHOW DONATION (LOGIN REQUIRED)
+============================================================ */
+router.get("/:id", requireLogin, (req, res) => {
     const donation = Donations.getById(req.params.id);
+
+    if (!donation) return res.status(404).send("Donation not found");
+
+    const participant = Participants.getById(donation.ParticipantID);
 
     res.render("donations/show", {
         title: "Donation Details",
-        donation
+        donation,
+        participant
     });
 });
 
@@ -61,19 +77,21 @@ router.get("/:id", (req, res) => {
 // Show edit form
 router.get("/:id/edit", requireAdmin, (req, res) => {
     const donation = Donations.getById(req.params.id);
+    if (!donation) return res.status(404).send("Donation not found");
 
     res.render("donations/edit", {
         title: "Edit Donation",
-        donation
+        donation,
+        participants: Participants.getAll()
     });
 });
 
 // Submit edits
 router.post("/:id/edit", requireAdmin, (req, res) => {
     Donations.update(req.params.id, {
-        donor: req.body.donor,
-        amount: Number(req.body.amount),
-        message: req.body.message
+        ParticipantID: Number(req.body.ParticipantID),
+        DonationDate: req.body.DonationDate,
+        DonationAmount: Number(req.body.DonationAmount)
     });
 
     res.redirect("/donations");
