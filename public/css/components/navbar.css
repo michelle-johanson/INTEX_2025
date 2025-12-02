@@ -1,7 +1,5 @@
 /* ============================================================
-   ELLA RISES NAVBAR  —  Token-Based, Conflict-Free, Polished
-   This navbar uses ONLY component-level variables defined in
-   variables.css (under .er-navbar { ... } )
+   ELLA RISES NAVBAR — Clean + Token-Based
 ============================================================== */
 
 .er-navbar {
@@ -13,7 +11,6 @@
     z-index: 5000;
 }
 
-/* Outer wrapper: max width + spacing */
 .er-navbar-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -25,144 +22,94 @@
     justify-content: space-between;
 }
 
-/* ============================================================
-   LEFT GROUP (Logo + Main Nav)
-============================================================== */
-
+/* LEFT group */
 .er-navbar-left {
     display: flex;
     align-items: center;
     gap: 3rem;
-    /* spacing between logo and menu */
 }
 
-/* Logo image stays true to original PNG proportions */
 .er-navbar-logo img {
     height: 70px;
     width: auto;
-    object-fit: contain;
     display: block;
-    /* removes inline-image gaps */
 }
 
 /* ============================================================
-   NAV LINKS (EVENTS, REGISTER, SURVEY, DONATE)
+   NAVIGATION LINKS
 ============================================================== */
+
+.er-navbar-menu,
+.er-navbar-menu li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
 
 .er-navbar-menu {
     display: flex;
     align-items: center;
     gap: 2rem;
-
-    list-style: none;
-    margin: 0;
-    padding: 0;
 }
 
-.er-navbar-item {
-    position: relative;
-    /* required for dropdown anchoring */
-}
-
-/* Base link styling */
-.er-navbar-link {
-    font-family: var(--font-body);
+.er-nav-link {
+    text-transform: uppercase;
     font-weight: 600;
     font-size: 0.95rem;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
-
     color: var(--er-navbar-text);
     text-decoration: none;
-
-    padding: 0.25rem 0;
+    padding: 0.35rem 0;
 }
 
-/* Hover (desktop) */
-.er-navbar-link:hover {
+.er-nav-link:hover {
     color: var(--er-navbar-hover-text);
 }
 
 /* ============================================================
-   RIGHT GROUP (Login / Account Dropdown)
+   DROPDOWNS
 ============================================================== */
 
-.er-navbar-right {
-    display: flex;
-    align-items: center;
+.dropdown {
+    position: relative;
 }
-
-.er-navbar-login {
-    color: var(--er-navbar-text);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.er-navbar-login:hover {
-    color: var(--er-navbar-hover-text);
-}
-
-/* ============================================================
-   DROPDOWN MENU (Bootstrap controls show/hide)
-============================================================== */
 
 .dropdown-menu {
     background: var(--er-navbar-dropdown-bg);
     color: var(--er-navbar-dropdown-text);
 
     border: none;
-    border-radius: 10px;
-    box-shadow: var(--shadow);
+    border-radius: 14px;
+    padding: 0.75rem 0;
+
+    min-width: 180px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Dropdown items */
-.dropdown-menu .dropdown-item {
-    font-family: var(--font-body);
+.dropdown-item {
+    padding: 0.8rem 1.25rem;
     font-weight: 500;
 }
 
-/* Hover for dropdown entries */
-.dropdown-menu .dropdown-item:hover {
+.dropdown-item:hover {
     background: var(--er-navbar-dropdown-hover-bg);
     color: var(--er-navbar-dropdown-hover-text);
 }
 
-/* ============================================================
-   DESKTOP HOVER BEHAVIOR
-============================================================== */
-
 @media (hover: hover) and (pointer: fine) {
-    .er-has-dropdown:hover>.dropdown-menu {
+    .dropdown:hover>.dropdown-menu:not(.dropdown-menu-end) {
         display: block;
     }
 }
 
-/* Girls-Who-Code style dropdown enhancements */
-.er-navbar .dropdown-menu {
-    min-width: 180px;
-    padding: 0.75rem 0;
-    border-radius: 14px;
-    border: none;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
+/* ============================================================
+   DONATE BUTTON
+============================================================== */
 
-.er-navbar .dropdown-item {
-    padding: 0.8rem 1.25rem;
-    font-size: 0.95rem;
-}
-
-.er-navbar .dropdown-item:hover {
-    background: var(--er-navbar-dropdown-hover-bg);
-    color: var(--er-navbar-dropdown-hover-text);
-    border-radius: 0;
-}
-
-/* Donate button */
 .er-navbar-donate {
     padding: 0.65rem 1.3rem;
+    border-radius: 5px;
     border: 2px solid var(--er-navbar-donate-border);
-    border-radius: 5px; 
-    font-size: 0.95rem;
     color: var(--er-navbar-donate-text);
     text-decoration: none;
     font-weight: 600;
@@ -172,6 +119,20 @@
 .er-navbar-donate:hover {
     background: var(--er-navbar-donate-hover-bg);
     color: var(--er-navbar-donate-hover-text);
+}
+
+/* ============================================================
+   RIGHT (LOGIN / PROFILE)
+============================================================== */
+
+.er-navbar-login {
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--er-navbar-text);
+}
+
+.er-navbar-login:hover {
+    color: var(--er-navbar-hover-text);
 }
 
 .er-account-dropdown {

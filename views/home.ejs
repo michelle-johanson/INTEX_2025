@@ -1,47 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+<section class="hero">
+    <h1 class="page-title">Empowering the Rising Generation</h1>
+    
+    <p class="page-subtitle">
+        Ella Rises helps young women develop confidence and pursue higher education
+        through STEAM workshops, mentoring, and leadership opportunities.
+    </p>
+    
+    <a href="/donations/new" class="btn btn-primary btn-large">
+        Support the Mission
+    </a>
+</section>
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
-
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-
-<body class="page">
-
-    <%- include("partials/navbar", { session }) %>
-
-        <div class="page-container text-center">
-
-            <h1 class="page-title">Empowering the Rising Generation</h1>
-
-            <p class="page-subtitle">
-                Ella Rises helps young women develop confidence and pursue higher education
-                through STEAM workshops, mentoring, and leadership opportunities.
-            </p>
-
-            <a href="/donations/new" class="btn btn-primary btn-large">
-                Support the Mission
-            </a>
-
-            <div class="page-card mt-4">
-                <h2 class="page-title" style="font-size: 1.8rem;">Our Impact</h2>
-                <p class="page-subtitle">
-                    We track participant milestones, post-event survey responses, and long-term STEAM outcomes.
-                </p>
-
-                <% if (session && session.isLoggedIn) { %>
-                    <a href="/dashboard" class="btn btn-secondary btn-large mt-2">
-                        View Dashboard
-                    </a>
-                    <% } %>
-            </div>
-
-        </div>
-
-</body>
-
-</html>
+<section class="impact">
+    <h2 class="page-title" style="font-size: 1.8rem;">Our Impact</h2>
+    <p class="page-subtitle">
+        We track participant milestones, post-event survey responses, and long-term STEAM outcomes.
+    </p>
+    
+    <% if (session && session.isLoggedIn) { %>
+        <a href="/dashboard" class="btn btn-secondary btn-large mt-2">
+            View Dashboard
+        </a>
+    <% } %>
+</section>

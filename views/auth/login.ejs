@@ -1,43 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title><%= title %></title>
+<div class="page-card-wide form">
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <h2 class="page-title" style="text-align:center; margin-bottom:1rem;">
+        Login
+    </h2>
 
-<body class="page">
+    <% if (error) { %>
+        <div class="form-error" style="text-align:center;">
+            <%= error %>
+        </div>
+    <% } %>
 
-    <%- include("../partials/navbar", { session }) %>
+    <form action="/auth/login" method="POST">
 
-    <div class="page-card-wide form">
+        <label for="username">Username</label>
+        <input id="username" type="text" name="username" class="form-control" required>
 
-        <h2 class="page-title" style="text-align:center; margin-bottom:1rem;">
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" class="form-control" required>
+
+        <button type="submit" class="btn-submit">
             Login
-        </h2>
+        </button>
 
-        <% if (error) { %>
-            <div class="form-error" style="text-align:center;">
-                <%= error %>
-            </div>
-        <% } %>
+    </form>
 
-        <form action="/auth/login" method="POST">
-
-            <label for="username">Username</label>
-            <input id="username" type="text" name="username" class="form-control" required>
-
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password" class="form-control" required>
-
-            <button type="submit" class="btn-submit">
-                Login
-            </button>
-
-        </form>
-
-    </div>
-
-</body>
-</html>
+</div>
