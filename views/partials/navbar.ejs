@@ -1,69 +1,92 @@
 <nav class="navbar">
     <div class="container-fluid">
+        <div class="navbar-inner">
 
-        <!-- LEFT -->
-        <div class="navbar-section">
-            <a href="/" class="navbar-brand">Ella Rises</a>
+            <!-- LEFT: LOGO -->
+            <a href="/" class="navbar-logo">
+                <img src="/img/logo.png" alt="Ella Rises Logo">
+            </a>
 
-            <% if (session && session.isLoggedIn) { %>
-                <div class="dropdown">
-                    <a href="#" class="navbar-link dropdown-toggle" data-bs-toggle="dropdown">
-                        Program Hub
+            <!-- CENTER NAVIGATION -->
+            <ul class="navbar-nav">
+
+                <!-- EVENTS -->
+                <li class="nav-item dropdown hover-dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        EVENTS
                     </a>
-
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/participants">Participants</a></li>
-                        <li><a class="dropdown-item" href="/surveys">Surveys</a></li>
-                        <li><a class="dropdown-item" href="/milestones">Milestones</a></li>
                         <li><a class="dropdown-item" href="/events">Events</a></li>
                         <li><a class="dropdown-item" href="/eventOccurrences">Event Occurrences</a></li>
-                        <li><a class="dropdown-item" href="/registrations">Registrations</a></li>
                     </ul>
-                </div>
-                <% } %>
-        </div>
+                </li>
 
-        <!-- RIGHT -->
-        <div class="navbar-section">
+                <!-- REGISTER -->
+                <li class="nav-item dropdown hover-dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        REGISTER
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/registrations">Registrations</a></li>
+                        <li><a class="dropdown-item" href="/participants">Participants</a></li>
+                        <li><a class="dropdown-item" href="/milestones">Milestones</a></li>
+                    </ul>
+                </li>
 
-            <a href="/donations/new" class="navbar-button">Donate</a>
+                <!-- SURVEY -->
+                <li class="nav-item dropdown hover-dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        SURVEY
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/surveys">Surveys</a></li>
+                        <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
+                    </ul>
+                </li>
 
-            <% if (!session || !session.isLoggedIn) { %>
+            </ul>
 
-                <a href="/auth/login" class="navbar-link">Login</a>
+            <!-- RIGHT SIDE -->
+            <div class="navbar-right">
 
-                <% } else { %>
+                <!-- DONATE BUTTON -->
+                <a href="/donations/new" class="navbar-donate-btn">
+                    Donate
+                </a>
 
-                    <div class="dropdown">
-                        <a href="#" class="navbar-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <%= session.username %>
-                        </a>
+                <!-- LOGIN / PROFILE -->
+                <% if (!session || !session.isLoggedIn) { %>
+                    <a href="/auth/login" class="navbar-login-link">Login</a>
+                    <% } else { %>
 
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <div class="dropdown hover-dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <%= session.username %>
+                            </a>
 
-                            <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end">
 
-                            <% if (session.access_level==="X" ) { %>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="/users">Manage Users</a></li>
-                                <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
-                                <% } %>
+                                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
 
+                                <% if (session.access_level==="X" ) { %>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                                    <li><a class="dropdown-item" href="/users">Manage Users</a></li>
+                                    <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                                    <% } %>
 
-                        </ul>
-                    </div>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
 
-                    <% } %>
+                            </ul>
+                        </div>
 
+                        <% } %>
+
+            </div>
         </div>
     </div>
 </nav>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" defer></script>

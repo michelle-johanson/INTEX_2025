@@ -82,3 +82,36 @@ body {
 .text-right {
     text-align: right;
 }
+
+/* =========================
+      HERO SECTION
+========================= */
+
+.hero {
+    background: var(--light-pink);
+    padding: 4rem 1.5rem 5rem;
+    text-align: center;
+}
+
+.hero-welcome {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    margin-bottom: 1.5rem;
+    color: var(--charcoal);
+}
+
+.hero-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+}
+
+.hero-mission {
+    font-size: 1.25rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+    color: var(--charcoal);
+}

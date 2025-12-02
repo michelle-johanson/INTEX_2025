@@ -1,160 +1,104 @@
-/* ============================================================
-   ELLA RISES NAVBAR
-   Clean, token-based, Bootstrap-safe component styling
-============================================================ */
+/* ================================
+    PROFESSIONAL NAVBAR
+================================ */
 
-/* Component Token Overrides — local to navbar */
 .navbar {
-    /* Structure */
-    background-color: var(--navbar-bg);
-    height: 65px;
+    width: 100%;
+    height: 90px;
+    background: var(--light-pink);
     display: flex;
     align-items: center;
-    padding: 0 1rem;
+    box-shadow: var(--shadow);
     position: sticky;
     top: 0;
-    z-index: 1000;
-    box-shadow: var(--shadow);
+    z-index: 2000;
 }
 
-/* ------------------------------------------------------------
-   Layout Containers
------------------------------------------------------------- */
-
-.navbar .container-fluid {
-    height: 100%;
+.navbar-inner {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-}
-
-.navbar-section {
-    height: 100%;
-    display: flex;
     align-items: center;
-    gap: 1rem;
+    width: 100%;
 }
 
-/* ------------------------------------------------------------
-   Logo
------------------------------------------------------------- */
+/* LOGO */
+.navbar-logo img {
+    height: 60px;
+    width: 60px;
+    object-fit: contain;
+    border-radius: 50%;
+}
 
-.navbar-brand {
-    color: var(--navbar-text) !important;
-    font-size: 1.8rem;
+/* CENTER NAV */
+.navbar-nav {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    font-family: var(--font-body);
     font-weight: 600;
-    font-family: var(--font-script);
+    color: var(--charcoal);
     text-decoration: none;
+    padding: 1rem 0.5rem;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: black;
+}
+
+/* RIGHT SIDE */
+.navbar-right {
     display: flex;
     align-items: center;
-    height: 100%;
+    gap: 1.5rem;
 }
 
-/* ------------------------------------------------------------
-   NAV LINKS (full-height tabs)
------------------------------------------------------------- */
-
-.navbar-link {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-    text-decoration: none;
-    color: var(--navbar-text) !important;
-    font-family: var(--font-body);
-    font-weight: 500;
-    border-radius: 0;
-    transition: var(--transition);
-}
-
-.navbar-link:hover {
-    background-color: var(--navbar-hover-bg);
-    color: var(--navbar-hover-text) !important;
-}
-
-/* Dropdown toggle should look identical to links */
-.navbar .dropdown-toggle {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-
-    color: var(--navbar-text) !important;
-    font-family: var(--font-body);
-    font-weight: 500;
-    border-radius: 0;
-
-    transition: var(--transition);
-}
-
-.navbar .dropdown-toggle:hover,
-.navbar .dropdown.show .dropdown-toggle {
-    background-color: var(--navbar-hover-bg) !important;
-    color: var(--navbar-hover-text) !important;
-}
-
-.navbar .dropdown-toggle::after {
-    margin-left: 0.35rem;
-}
-
-/* Ensure dropdown container stretches full height */
-.navbar .dropdown {
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-
-/* ------------------------------------------------------------
-   DONATE BUTTON (distinct from nav links)
------------------------------------------------------------- */
-
-.navbar-button {
-    background-color: var(--button-bg);
-    color: var(--button-text) !important;
-    padding: 0.45rem 1.2rem;
+/* DONATE BUTTON */
+.navbar-donate-btn {
+    background: var(--rose);
+    color: white;
+    padding: 0.6rem 1rem;
     border-radius: var(--border-radius);
     font-weight: 600;
-    font-family: var(--font-body);
     text-decoration: none;
-
-    display: flex;
-    align-items: center;
     transition: var(--transition);
 }
 
-.navbar-button:hover {
-    background-color: var(--button-hover-bg);
+.navbar-donate-btn:hover {
+    background: var(--charcoal);
 }
 
-/* ------------------------------------------------------------
-   DROPDOWN MENU
------------------------------------------------------------- */
+/* LOGIN LINK */
+.navbar-login-link {
+    color: var(--charcoal);
+    text-decoration: none;
+    font-weight: 600;
+}
 
-.navbar .dropdown-menu {
-    background-color: var(--dropdown-bg);
+/* DROPDOWN MENU */
+.dropdown-menu {
     border-radius: 12px;
-    padding: 0.5rem 0;
-    box-shadow: var(--shadow);
     border: none;
+    box-shadow: var(--shadow);
 }
 
-.navbar .dropdown-menu .dropdown-item {
-    padding: 0.6rem 1rem;
-    font-family: var(--font-body);
-    color: var(--dropdown-text);
-    background: transparent;
-    transition: var(--transition);
+/* HOVER DROPDOWN (Desktop) */
+@media (hover: hover) and (pointer: fine) {
+    .hover-dropdown:hover>.dropdown-menu {
+        display: block;
+    }
 }
 
-.navbar .dropdown-menu .dropdown-item:hover {
-    background-color: var(--dropdown-hover-bg);
-    color: var(--dropdown-hover-text) !important;
+.navbar .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
-.navbar .dropdown-divider {
-    margin: 0.35rem 0;
+.navbar-nav .dropdown-menu {
+    margin-top: 0;
 }
