@@ -100,6 +100,10 @@ app.use("/events", eventRoutes);
 const surveyRoutes = require("./routes/surveys");
 app.use("/surveys", surveyRoutes);
 
+// Milestones
+const milestoneRoutes = require("./routes/milestones");
+app.use("/milestones", milestoneRoutes);
+
 /* ============================================================
     START SERVER
 ============================================================ */
