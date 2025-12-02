@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 
 const Users = require("../models/users");
+const { render } = require("ejs");
 
 /* ============================================================
    LOGIN FORM
@@ -20,7 +21,6 @@ router.get("/login", (req, res) => {
    LOGIN SUBMIT
 ============================================================ */
 router.post("/login", (req, res) => {
-    // FIXED → expecting lowercase fields from your form
     const { username, password } = req.body;
 
     const user = Users.validateCredentials(username, password);
@@ -32,11 +32,10 @@ router.post("/login", (req, res) => {
         });
     }
 
-    // session values
     req.session.isLoggedIn = true;
-    req.session.UserID = user.UserID;
-    req.session.Username = user.Username;
-    req.session.AccessLevel = user.AccessLevel;
+    req.session.username = user.Username;        // <-- matches model field name
+    req.session.access_level = user.AccessLevel; // <-- matches model field name
+    req.session.userID = user.UserID;
 
     res.redirect("/");
 });

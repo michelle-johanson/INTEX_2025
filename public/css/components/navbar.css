@@ -1,104 +1,138 @@
-/* ================================
-    PROFESSIONAL NAVBAR
-================================ */
+/* ============================================================
+   ELLA RISES NAVBAR  —  Token-Based, Conflict-Free, Polished
+   This navbar uses ONLY component-level variables defined in
+   variables.css (under .er-navbar { ... } )
+============================================================== */
 
-.navbar {
+.er-navbar {
     width: 100%;
-    height: 90px;
-    background: var(--light-pink);
-    display: flex;
-    align-items: center;
+    background: var(--er-navbar-bg);
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
-    z-index: 2000;
+    z-index: 5000;
 }
 
-.navbar-inner {
+/* Outer wrapper: max width + spacing */
+.er-navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+    height: 100px;
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
+    justify-content: space-between;
 }
 
-/* LOGO */
-.navbar-logo img {
-    height: 60px;
-    width: 60px;
-    object-fit: contain;
-    border-radius: 50%;
-}
+/* ============================================================
+   LEFT GROUP (Logo + Main Nav)
+============================================================== */
 
-/* CENTER NAV */
-.navbar-nav {
+.er-navbar-left {
     display: flex;
+    align-items: center;
+    gap: 3rem;
+    /* spacing between logo and menu */
+}
+
+/* Logo image stays true to original PNG proportions */
+.er-navbar-logo img {
+    height: 55px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    /* removes inline-image gaps */
+}
+
+/* ============================================================
+   NAV LINKS (EVENTS, REGISTER, SURVEY, DONATE)
+============================================================== */
+
+.er-navbar-menu {
+    display: flex;
+    align-items: center;
     gap: 2rem;
+
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.nav-link {
+.er-navbar-item {
+    position: relative;
+    /* required for dropdown anchoring */
+}
+
+/* Base link styling */
+.er-navbar-link {
     font-family: var(--font-body);
     font-weight: 600;
-    color: var(--charcoal);
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    color: var(--er-navbar-text);
     text-decoration: none;
-    padding: 1rem 0.5rem;
-    position: relative;
+
+    padding: 0.25rem 0;
 }
 
-.nav-link:hover {
-    color: black;
+/* Hover (desktop) */
+.er-navbar-link:hover {
+    color: var(--er-navbar-hover-text);
 }
 
-/* RIGHT SIDE */
-.navbar-right {
+/* ============================================================
+   RIGHT GROUP (Login / Account Dropdown)
+============================================================== */
+
+.er-navbar-right {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
 }
 
-/* DONATE BUTTON */
-.navbar-donate-btn {
-    background: var(--rose);
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: var(--border-radius);
-    font-weight: 600;
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-.navbar-donate-btn:hover {
-    background: var(--charcoal);
-}
-
-/* LOGIN LINK */
-.navbar-login-link {
-    color: var(--charcoal);
+.er-navbar-login {
+    color: var(--er-navbar-text);
     text-decoration: none;
     font-weight: 600;
 }
 
-/* DROPDOWN MENU */
+.er-navbar-login:hover {
+    color: var(--er-navbar-hover-text);
+}
+
+/* ============================================================
+   DROPDOWN MENU (Bootstrap controls show/hide)
+============================================================== */
+
 .dropdown-menu {
-    border-radius: 12px;
+    background: var(--er-navbar-dropdown-bg);
+    color: var(--er-navbar-dropdown-text);
+
     border: none;
+    border-radius: 10px;
     box-shadow: var(--shadow);
 }
 
-/* HOVER DROPDOWN (Desktop) */
+/* Dropdown items */
+.dropdown-menu .dropdown-item {
+    font-family: var(--font-body);
+    font-weight: 500;
+}
+
+/* Hover for dropdown entries */
+.dropdown-menu .dropdown-item:hover {
+    background: var(--er-navbar-dropdown-hover-bg);
+    color: var(--er-navbar-dropdown-hover-text);
+}
+
+/* ============================================================
+   DESKTOP HOVER BEHAVIOR
+============================================================== */
+
 @media (hover: hover) and (pointer: fine) {
-    .hover-dropdown:hover>.dropdown-menu {
+    .er-has-dropdown:hover>.dropdown-menu {
         display: block;
     }
-}
-
-.navbar .container-fluid {
-    padding-left: 2rem;
-    padding-right: 2rem;
-}
-
-.navbar-nav .dropdown-menu {
-    margin-top: 0;
 }

@@ -1,18 +1,17 @@
-<nav class="navbar">
-    <div class="container-fluid">
-        <div class="navbar-inner">
+<nav class="er-navbar">
+    <div class="er-navbar-inner">
 
-            <!-- LEFT: LOGO -->
-            <a href="/" class="navbar-logo">
-                <img src="/img/logo.png" alt="Ella Rises Logo">
+        <!-- LEFT: logo + nav links (including Donate) -->
+        <div class="er-navbar-left">
+            <a href="/" class="er-navbar-logo">
+                <img src="/img/logo-no-bg.png" alt="Ella Rises Logo">
             </a>
 
-            <!-- CENTER NAVIGATION -->
-            <ul class="navbar-nav">
+            <ul class="er-navbar-menu">
 
                 <!-- EVENTS -->
-                <li class="nav-item dropdown hover-dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                <li class="er-navbar-item dropdown er-has-dropdown">
+                    <a class="er-navbar-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         EVENTS
                     </a>
                     <ul class="dropdown-menu">
@@ -22,8 +21,8 @@
                 </li>
 
                 <!-- REGISTER -->
-                <li class="nav-item dropdown hover-dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                <li class="er-navbar-item dropdown er-has-dropdown">
+                    <a class="er-navbar-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         REGISTER
                     </a>
                     <ul class="dropdown-menu">
@@ -34,8 +33,8 @@
                 </li>
 
                 <!-- SURVEY -->
-                <li class="nav-item dropdown hover-dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                <li class="er-navbar-item dropdown er-has-dropdown">
+                    <a class="er-navbar-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         SURVEY
                     </a>
                     <ul class="dropdown-menu">
@@ -44,49 +43,44 @@
                     </ul>
                 </li>
 
+                <!-- DONATE as plain link -->
+                <li class="er-navbar-item">
+                    <a class="er-navbar-link" href="/donations/new">
+                        DONATE
+                    </a>
+                </li>
+
             </ul>
+        </div>
 
-            <!-- RIGHT SIDE -->
-            <div class="navbar-right">
+        <!-- RIGHT: login / account -->
+        <div class="er-navbar-right">
+            <% if (!session || !session.isLoggedIn) { %>
+                <a href="/auth/login" class="er-navbar-login">Login</a>
+                <% } else { %>
+                    <div class="dropdown er-account-dropdown">
+                        <a class="er-navbar-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <%= session.username %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile">My Profile</a></li>
 
-                <!-- DONATE BUTTON -->
-                <a href="/donations/new" class="navbar-donate-btn">
-                    Donate
-                </a>
+                            <% if (session.access_level==="manager" ) { %>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="/users">Manage Users</a></li>
+                                <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                                <% } %>
 
-                <!-- LOGIN / PROFILE -->
-                <% if (!session || !session.isLoggedIn) { %>
-                    <a href="/auth/login" class="navbar-login-link">Login</a>
-                    <% } else { %>
-
-                        <div class="dropdown hover-dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <%= session.username %>
-                            </a>
-
-                            <ul class="dropdown-menu dropdown-menu-end">
-
-                                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-
-                                <% if (session.access_level==="X" ) { %>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="/users">Manage Users</a></li>
-                                    <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
-                                    <% } %>
-
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
-
-                            </ul>
-                        </div>
-
-                        <% } %>
-
-            </div>
+                                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                    <% } %>
         </div>
+
     </div>
 </nav>

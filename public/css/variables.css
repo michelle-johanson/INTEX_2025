@@ -39,6 +39,19 @@
     --dropdown-hover-bg: var(--rose);
     --dropdown-hover-text: white;
 }
+
+/* Component: Ella Rises Navbar */
+.er-navbar {
+    --er-navbar-bg: var(--light-pink);
+    --er-navbar-text: var(--charcoal);
+    --er-navbar-hover-text: black;
+
+    --er-navbar-dropdown-bg: white;
+    --er-navbar-dropdown-text: var(--charcoal);
+    --er-navbar-dropdown-hover-bg: var(--rose);
+    --er-navbar-dropdown-hover-text: white;
+}
+
 /* ============================================================
     Component: Pages / Layout
 ============================================================ */
