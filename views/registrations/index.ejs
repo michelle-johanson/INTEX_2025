@@ -1,0 +1,51 @@
+<div class="page-container">
+    <h1 class="page-title">Registrations</h1>
+
+    <% if (session && session.access_level === "manager") { %>
+        <a href="/registrations/new" class="btn btn-primary btn-small mb-4">
+            + Add Registration
+        </a>
+    <% } %>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Date</th>
+                <th>Participant</th>
+                <th>Status</th>
+                <th>Attended?</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% registrations.forEach(r => { %>
+                <tr>
+                    <td><%= r.EventName %></td>
+                    <td><%= r.EventDateTimeStart %></td>
+                    <td><%= r.ParticipantName %></td>
+                    <td><%= r.RegistrationStatus %></td>
+                    <td><%= r.RegistrationAttendedFlag ? "Yes" : "No" %></td>
+
+                    <td class="table-actions">
+                        <a href="/registrations/<%= r.EventOccurrenceID %>/<%= r.ParticipantID %>">
+                            View
+                        </a>
+
+                        <% if (session && session.access_level === "manager") { %>
+                            <a href="/registrations/<%= r.EventOccurrenceID %>/<%= r.ParticipantID %>/edit">Edit</a>
+
+                            <form action="/registrations/<%= r.EventOccurrenceID %>/<%= r.ParticipantID %>/delete" 
+                                  method="POST" style="display:inline;">
+                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                    Delete
+                                </button>
+                            </form>
+                        <% } %>
+
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

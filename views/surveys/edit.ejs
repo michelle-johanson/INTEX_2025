@@ -1,69 +1,41 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <h1 class="page-title">Edit Survey</h1>
 
-<body>
-    <%- include("../partials/navbar") %>
+    <form action="/surveys/<%= survey.EventOccurrenceID %>/<%= survey.ParticipantID %>/edit" method="POST" class="form">
 
-        <div class="container mt-4" style="max-width: 600px;">
+        <!-- Participant + Occurrence stay fixed -->
 
-            <h1>Edit Survey</h1>
+        <label>Participant</label>
+        <input type="text" disabled value="<%= participants.find(p => p.ParticipantID === survey.ParticipantID)?.FirstName %>
+                      <%= participants.find(p => p.ParticipantID === survey.ParticipantID)?.LastName %>">
 
-            <form action="/surveys/<%= survey.id %>/edit" method="POST">
+        <label>Event Occurrence</label>
+        <input type="text" disabled
+            value="<%= occurrences.find(o => o.EventOccurrenceID === survey.EventOccurrenceID)?.EventDateTimeStart %>">
 
-                <div class="mb-3">
-                    <label>Participant</label>
-                    <select name="participant_id" class="form-control">
-                        <% participants.forEach(p=> { %>
-                            <option value="<%= p.id %>" <%=p.id===survey.participant_id ? "selected" : "" %>>
-                                <%= p.first_name %>
-                                    <%= p.last_name %>
-                            </option>
-                            <% }) %>
-                    </select>
-                </div>
+        <label>Satisfaction Score</label>
+        <input type="number" name="SurveySatisfactionScore" min="1" max="5"
+            value="<%= survey.SurveySatisfactionScore %>" />
 
-                <div class="mb-3">
-                    <label>Event</label>
-                    <select name="event_id" class="form-control">
-                        <% events.forEach(e=> { %>
-                            <option value="<%= e.id %>" <%=e.id===survey.event_id ? "selected" : "" %>>
-                                <%= e.name %>
-                            </option>
-                            <% }) %>
-                    </select>
-                </div>
+        <label>Usefulness Score</label>
+        <input type="number" name="SurveyUsefulnessScore" min="1" max="5" value="<%= survey.SurveyUsefulnessScore %>" />
 
-                <div class="mb-3">
-                    <label>Rating (1–5)</label>
-                    <input type="number" min="1" max="5" name="rating" value="<%= survey.rating %>"
-                        class="form-control">
-                </div>
+        <label>Recommendation Score</label>
+        <input type="number" name="SurveyRecommendationScore" min="1" max="5"
+            value="<%= survey.SurveyRecommendationScore %>" />
 
-                <div class="mb-3">
-                    <label>Comments</label>
-                    <textarea name="comments" class="form-control"><%= survey.comments %></textarea>
-                </div>
+        <label>Overall Score</label>
+        <input type="number" name="SurveyOverallScore" min="1" max="5" value="<%= survey.SurveyOverallScore %>" />
 
-                <div class="mb-3">
-                    <label>Date Taken</label>
-                    <input type="date" name="date_taken" class="form-control" value="<%= survey.date_taken %>">
-                </div>
+        <label>Comments</label>
+        <textarea name="SurveyComments" rows="3"><%= survey.SurveyComments %></textarea>
 
-                <button class="btn btn-success">Save Changes</button>
-            </form>
+        <label>Submission Date</label>
+        <input type="date" name="SurveySubmissionDate" value="<%= survey.SurveySubmissionDate %>" />
 
-            <br>
-            <a href="/surveys" class="btn btn-secondary">Cancel</a>
-        </div>
+        <button class="btn-submit">Save Changes</button>
 
-</body>
+    </form>
 
-</html>
+</div>
