@@ -1,0 +1,59 @@
+/* ============================================================
+    FORMS
+============================================================ */
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--form-border);
+    background: var(--form-bg);
+    color: var(--form-text);
+    font-family: var(--font-body);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    margin-bottom: 1.2rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--form-focus-border);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--form-focus-shadow);
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    color: var(--form-label-text);
+    margin-bottom: 0.5rem;
+}
+
+/* Form buttons */
+.btn-submit {
+    background: var(--form-button-bg);
+    color: var(--form-button-text);
+    padding: 0.7rem 1.4rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-submit:hover {
+    background: var(--form-button-hover-bg);
+}
+
+/* Error messages */
+.form-error {
+    color: var(--form-error-text);
+    font-size: 0.9rem;
+    margin-top: -0.8rem;
+    margin-bottom: 1rem;
+}

@@ -1,0 +1,42 @@
+/* ============================================================
+    TABLES
+============================================================ */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+/* Table headers */
+thead th {
+    background: var(--table-header-bg);
+    color: var(--table-header-text);
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Body cells */
+tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--table-row-border);
+    color: var(--table-body-text);
+}
+
+/* Hover row */
+tbody tr:hover {
+    background: var(--table-row-hover-bg);
+}
+
+/* Action links */
+.table-actions a {
+    color: var(--table-action-text);
+    font-weight: 600;
+    text-decoration: none;
+    margin-right: 0.8rem;
+}
+
+.table-actions a:hover {
+    color: var(--table-action-hover-text);
+}

@@ -39,3 +39,78 @@
     --dropdown-hover-bg: var(--rose);
     --dropdown-hover-text: white;
 }
+/* ============================================================
+    Component: Pages / Layout
+============================================================ */
+.page {
+    --page-bg: var(--cream);
+    --page-text: var(--charcoal);
+    --page-heading-color: var(--charcoal);
+    --page-subheading-color: rgba(0, 0, 0, 0.7);
+    --page-card-bg: white;
+}
+
+/* ============================================================
+    Component: Forms
+============================================================ */
+.form {
+    --form-bg: white;
+    --form-border: #ccc;
+    --form-text: var(--charcoal);
+    --form-label-text: var(--charcoal);
+    --form-focus-border: var(--lavender);
+    --form-focus-shadow: rgba(151, 188, 228, 0.35);
+    --form-error-text: var(--rose);
+    --form-button-bg: var(--rose);
+    --form-button-text: white;
+    --form-button-hover-bg: var(--charcoal);
+}
+
+/* ============================================================
+    Component: Tables
+============================================================ */
+.table {
+    --table-header-bg: var(--blue);
+    --table-header-text: white;
+    --table-row-border: #ddd;
+    --table-row-hover-bg: rgba(0, 0, 0, 0.03);
+    --table-body-text: var(--charcoal);
+    --table-action-text: var(--rose);
+    --table-action-hover-text: var(--charcoal);
+}
+
+/* ============================================================
+    Component: Details / Panels
+============================================================ */
+.details {
+    --details-bg: white;
+    --details-label: var(--charcoal);
+    --details-text: var(--charcoal);
+    --details-divider: rgba(0, 0, 0, 0.1);
+    --details-button-text: var(--rose);
+    --details-button-hover-text: var(--charcoal);
+}
+
+/* ============================================================
+    Component: Buttons
+    (Used across entire site)
+============================================================ */
+.btn {
+    --btn-bg: var(--rose);
+    --btn-text: white;
+    --btn-hover-bg: var(--charcoal);
+
+    --btn-secondary-bg: white;
+    --btn-secondary-text: var(--charcoal);
+    --btn-secondary-border: var(--charcoal);
+    --btn-secondary-hover-bg: var(--lavender);
+
+    --btn-danger-bg: var(--rose);
+    --btn-danger-text: white;
+    --btn-danger-hover-bg: var(--charcoal);
+
+    --btn-padding-y: 0.6rem;
+    --btn-padding-x: 1.2rem;
+    --btn-radius: var(--border-radius);
+    --btn-font: var(--font-body);
+}
