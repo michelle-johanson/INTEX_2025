@@ -4,24 +4,44 @@ const express = require("express");
 const router = express.Router();
 
 const { requireAdmin, requireLogin } = require("../middleware/auth");
-const Surveys = require("../models/fakeSurveys");
-const Participants = require("../models/fakeParticipants");
-const Events = require("../models/fakeEvents");
+
+const Surveys = require("../models/surveys");
+const Participants = require("../models/participants");
+const EventOccurrences = require("../models/eventOccurrences");
+const Events = require("../models/events");
 
 /* ============================================================
-    LIST SURVEYS  (LOGIN REQUIRED)
+   LIST SURVEYS (LOGIN REQUIRED)
 ============================================================ */
 router.get("/", requireLogin, (req, res) => {
     const surveys = Surveys.getAll();
+    const participants = Participants.getAll();
+    const occurrences = EventOccurrences.getAll();
+    const events = Events.getAll();
+
+    // join for UI
+    const enhanced = surveys.map(s => {
+        const participant = participants.find(p => p.ParticipantID === s.ParticipantID);
+        const occurrence = occurrences.find(o => o.EventOccurrenceID === s.EventOccurrenceID);
+        const event = occurrence ? events.find(e => e.EventID === occurrence.EventID) : null;
+
+        return {
+            ...s,
+            ParticipantName: participant ? `${participant.FirstName} ${participant.LastName}` : "Unknown",
+            EventName: event ? event.EventName : "Unknown",
+            EventDateTimeStart: occurrence ? occurrence.EventDateTimeStart : "Unknown"
+        };
+    });
+
     res.render("surveys/index", {
-        title: "Surveys",
-        surveys
+        title: "Post-Event Surveys",
+        surveys: enhanced
     });
 });
 
 
 /* ============================================================
-    NEW SURVEY (ADMIN ONLY)
+   NEW SURVEY (ADMIN ONLY)
 ============================================================ */
 
 // Show form
@@ -29,18 +49,22 @@ router.get("/new", requireAdmin, (req, res) => {
     res.render("surveys/new", {
         title: "New Survey",
         participants: Participants.getAll(),
+        occurrences: EventOccurrences.getAll(),
         events: Events.getAll()
     });
 });
 
 // Submit
 router.post("/new", requireAdmin, (req, res) => {
-    Surveys.add({
-        participant_id: Number(req.body.participant_id),
-        event_id: Number(req.body.event_id),
-        rating: Number(req.body.rating),
-        comments: req.body.comments,
-        date_taken: req.body.date_taken
+    Surveys.create({
+        EventOccurrenceID: Number(req.body.EventOccurrenceID),
+        ParticipantID: Number(req.body.ParticipantID),
+        SurveySatisfactionScore: Number(req.body.SurveySatisfactionScore),
+        SurveyUsefulnessScore: Number(req.body.SurveyUsefulnessScore),
+        SurveyRecommendationScore: Number(req.body.SurveyRecommendationScore),
+        SurveyOverallScore: Number(req.body.SurveyOverallScore),
+        SurveyComments: req.body.SurveyComments,
+        SurveySubmissionDate: req.body.SurveySubmissionDate
     });
 
     res.redirect("/surveys");
@@ -48,56 +72,74 @@ router.post("/new", requireAdmin, (req, res) => {
 
 
 /* ============================================================
-    EDIT SURVEY (ADMIN ONLY)
+   EDIT SURVEY (ADMIN ONLY)
 ============================================================ */
+router.get("/:occurrenceID/:participantID/edit", requireAdmin, (req, res) => {
+    const survey = Surveys.getByIds(
+        req.params.occurrenceID,
+        req.params.participantID
+    );
 
-router.get("/:id/edit", requireAdmin, (req, res) => {
-    const survey = Surveys.getById(req.params.id);
     if (!survey) return res.status(404).send("Survey not found");
 
     res.render("surveys/edit", {
         title: "Edit Survey",
         survey,
         participants: Participants.getAll(),
+        occurrences: EventOccurrences.getAll(),
         events: Events.getAll()
     });
 });
 
-router.post("/:id/edit", requireAdmin, (req, res) => {
-    Surveys.update(req.params.id, {
-        participant_id: Number(req.body.participant_id),
-        event_id: Number(req.body.event_id),
-        rating: Number(req.body.rating),
-        comments: req.body.comments,
-        date_taken: req.body.date_taken
-    });
+// Submit edits
+router.post("/:occurrenceID/:participantID/edit", requireAdmin, (req, res) => {
+    Surveys.update(
+        req.params.occurrenceID,
+        req.params.participantID,
+        {
+            SurveySatisfactionScore: Number(req.body.SurveySatisfactionScore),
+            SurveyUsefulnessScore: Number(req.body.SurveyUsefulnessScore),
+            SurveyRecommendationScore: Number(req.body.SurveyRecommendationScore),
+            SurveyOverallScore: Number(req.body.SurveyOverallScore),
+            SurveyComments: req.body.SurveyComments,
+            SurveySubmissionDate: req.body.SurveySubmissionDate
+        }
+    );
 
     res.redirect("/surveys");
 });
 
 
 /* ============================================================
-    DELETE SURVEY  (ADMIN ONLY)
+   DELETE SURVEY (ADMIN ONLY)
 ============================================================ */
-
-router.post("/:id/delete", requireAdmin, (req, res) => {
-    Surveys.delete(req.params.id);
+router.post("/:occurrenceID/:participantID/delete", requireAdmin, (req, res) => {
+    Surveys.delete(req.params.occurrenceID, req.params.participantID);
     res.redirect("/surveys");
 });
 
 
 /* ============================================================
-    SHOW SURVEY  (LOGIN REQUIRED)
+   SHOW SINGLE SURVEY (LOGIN REQUIRED)
 ============================================================ */
-router.get("/:id", requireLogin, (req, res) => {
-    const survey = Surveys.getById(req.params.id);
+router.get("/:occurrenceID/:participantID", requireLogin, (req, res) => {
+    const survey = Surveys.getByIds(
+        req.params.occurrenceID,
+        req.params.participantID
+    );
+
     if (!survey) return res.status(404).send("Survey not found");
+
+    const participant = Participants.getById(survey.ParticipantID);
+    const occurrence = EventOccurrences.getById(survey.EventOccurrenceID);
+    const event = occurrence ? Events.getById(occurrence.EventID) : null;
 
     res.render("surveys/show", {
         title: "Survey Details",
         survey,
-        participant: Participants.getById(survey.participant_id),
-        event: Events.getById(survey.event_id)
+        participant,
+        occurrence,
+        event
     });
 });
 
