@@ -1,49 +1,67 @@
 // models/registrations.js
-
-let registrations = [
-    {
-        EventOccurrenceID: 1,
-        ParticipantID: 1,
-        RegistrationStatus: "Registered",
-        RegistrationAttendedFlag: false,
-        RegistrationCheckInTime: null,
-        RegistrationCreatedAt: "2024-02-28"
-    }
-];
+const knex = require("../db");
 
 module.exports = {
-    getAll: () => registrations,
+    // Get all registrations (Triple Join for full details)
+    getAll: () => {
+        return knex("registrations")
+            .join("participants", "registrations.participant_id", "=", "participants.participant_id")
+            .join("event_occurrences", "registrations.event_occurrence_id", "=", "event_occurrences.event_occurrence_id")
+            .join("events", "event_occurrences.event_id", "=", "events.event_id")
+            .select(
+                "registrations.*",
+                "participants.first_name",
+                "participants.last_name",
+                "events.name as event_name",
+                "event_occurrences.starts_at",
+                "event_occurrences.location"
+            )
+            .orderBy("registrations.created_at", "desc");
+    },
 
-    getByIds: (eventOccurrenceID, participantID) =>
-        registrations.find(
-            r =>
-                r.EventOccurrenceID === Number(eventOccurrenceID) &&
-                r.ParticipantID === Number(participantID)
-        ),
+    // Get specific registration (Needs TWO IDs)
+    getByIds: (occurrenceId, participantId) => {
+        return knex("registrations")
+            .join("participants", "registrations.participant_id", "=", "participants.participant_id")
+            .join("event_occurrences", "registrations.event_occurrence_id", "=", "event_occurrences.event_occurrence_id")
+            .join("events", "event_occurrences.event_id", "=", "events.event_id")
+            .select(
+                "registrations.*",
+                "participants.first_name",
+                "participants.last_name",
+                "events.name as event_name",
+                "event_occurrences.starts_at",
+                "event_occurrences.location"
+            )
+            .where({
+                "registrations.event_occurrence_id": occurrenceId,
+                "registrations.participant_id": participantId
+            })
+            .first();
+    },
 
+    // Create
     create: (data) => {
-        registrations.push(data);
-        return data;
+        return knex("registrations").insert(data);
     },
 
-    update: (eventOccurrenceID, participantID, updated) => {
-        const r = registrations.find(
-            r =>
-                r.EventOccurrenceID === Number(eventOccurrenceID) &&
-                r.ParticipantID === Number(participantID)
-        );
-        if (!r) return null;
-        Object.assign(r, updated);
-        return r;
+    // Update
+    update: (occurrenceId, participantId, data) => {
+        return knex("registrations")
+            .where({
+                event_occurrence_id: occurrenceId,
+                participant_id: participantId
+            })
+            .update(data);
     },
 
-    delete: (eventOccurrenceID, participantID) => {
-        registrations = registrations.filter(
-            r =>
-                !(
-                    r.EventOccurrenceID === Number(eventOccurrenceID) &&
-                    r.ParticipantID === Number(participantID)
-                )
-        );
+    // Delete
+    delete: (occurrenceId, participantId) => {
+        return knex("registrations")
+            .where({
+                event_occurrence_id: occurrenceId,
+                participant_id: participantId
+            })
+            .del();
     }
 };

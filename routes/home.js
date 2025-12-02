@@ -6,8 +6,8 @@ const router = express.Router();
 router.get("/", (req, res) => {
     res.render("home", {
         title: "Ella Rises – Empowering Young Women",
-        isLoggedIn: req.session.isLoggedIn || false,
-        username: req.session.Username || null
+        // UPDATED: 'Username' -> 'username' (to match auth.js)
+        username: req.session.username || null 
     });
 });
 

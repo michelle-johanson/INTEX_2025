@@ -20,27 +20,45 @@ router.get("/login", (req, res) => {
 /* ============================================================
    LOGIN SUBMIT
 ============================================================ */
-router.post("/login", (req, res) => {
-    const { username, password } = req.body;
+// 1. Notice the 'async' keyword here
+router.post("/login", async (req, res) => {
+    
+    // Assuming your form input name is "username", but we treat it as email based on your schema
+    const { username, password } = req.body; 
 
-    const user = Users.validateCredentials(username, password);
+    try {
+        // 2. We use 'await' because the database takes time to search
+        const user = await Users.validateCredentials(username, password);
 
-    if (!user) {
-        return res.render("auth/login", {
+        if (!user) {
+            return res.render("auth/login", {
+                title: "Login",
+                error: "Invalid email or password."
+            });
+        }
+
+        // 3. Update Session Data to match your new Database Schema
+        req.session.isLoggedIn = true;
+        
+        // Schema: 'email', Model: 'email'
+        req.session.username = user.email; 
+        
+        // Schema: 'role', Model: 'role' (Mapped from AccessLevel)
+        req.session.access_level = user.role || 'guest'; 
+        
+        // Schema: 'participant_id'
+        req.session.userID = user.participant_id; 
+
+        res.redirect("/");
+
+    } catch (err) {
+        console.error(err);
+        res.render("auth/login", {
             title: "Login",
-            error: "Invalid username or password."
+            error: "An error occurred during login."
         });
     }
-
-    req.session.isLoggedIn = true;
-    req.session.username = user.Username;        // <-- matches model field name
-    req.session.access_level = user.AccessLevel; // <-- matches model field name
-    req.session.userID = user.UserID;
-
-    res.redirect("/");
 });
-
-
 /* ============================================================
    LOGOUT
 ============================================================ */

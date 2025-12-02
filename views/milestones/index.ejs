@@ -12,7 +12,7 @@
         <thead>
             <tr>
                 <th>Title</th>
-                <th>Participant ID</th>
+                <th>Participant</th> 
                 <th>Date</th>
                 <th></th>
             </tr>
@@ -21,21 +21,26 @@
         <tbody>
             <% milestones.forEach(m => { %>
                 <tr>
-                    <td><%= m.MilestoneTitle %></td>
-                    <td>#<%= m.ParticipantID %></td>
-                    <td><%= m.MilestoneDate %></td>
+                    <td><%= m.title %></td>
+                    
+                    <td>
+                        <%= m.first_name %> <%= m.last_name %>
+                    </td>
+                    
+                    <td>
+                        <%= m.achieved_date ? new Date(m.achieved_date).toLocaleDateString() : '' %>
+                    </td>
 
                     <td class="table-actions">
-                        <a href="/milestones/<%= m.MilestoneID %>">View</a>
+                        <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>">View</a>
 
                         <% if (session && session.access_level === "manager") { %>
-                            <a href="/milestones/<%= m.MilestoneID %>/edit">Edit</a>
+                            <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/edit">Edit</a>
 
-                            <form action="/milestones/<%= m.MilestoneID %>/delete"
-                                method="POST"
-                                style="display:inline;">
-                                <button class="btn btn-danger btn-small"
-                                        style="padding:0.2rem 0.6rem;">
+                            <form action="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/delete" 
+                                  method="POST" 
+                                  style="display:inline;">
+                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
                                     Delete
                                 </button>
                             </form>

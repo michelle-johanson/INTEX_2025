@@ -1,67 +1,40 @@
 // models/participants.js
-// Temporary in-memory fake data for Participants (matches ERD)
-
-let participants = [
-    {
-        ParticipantID: 1,
-        Email: "maria@example.com",
-        FirstName: "Maria",
-        LastName: "Lopez",
-        DOB: "2006-04-12",
-        Role: "Student",
-        Phone: "555-1234",
-        City: "Provo",
-        State: "UT",
-        Zip: "84604",
-        SchoolOrEmployment: "BYU",
-        FieldOfInterest: "Engineering",
-        TotalDonations: 75
-    },
-    {
-        ParticipantID: 2,
-        Email: "sofia@example.com",
-        FirstName: "Sofia",
-        LastName: "Hernandez",
-        DOB: "2007-09-20",
-        Role: "Student",
-        Phone: "555-5678",
-        City: "Orem",
-        State: "UT",
-        Zip: "84058",
-        SchoolOrEmployment: "UVU",
-        FieldOfInterest: "Art",
-        TotalDonations: 20
-    }
-];
+const knex = require("../db");
 
 module.exports = {
-    getAll: () => participants,
+    // Get all participants, alphabetized
+    getAll: () => {
+        return knex("participants")
+            .select("participants.*")
+            .sum("donations.amount as total_donations") // Create the column
+            .leftJoin("donations", "participants.participant_id", "donations.participant_id")
+            .groupBy("participants.participant_id")
+            .orderBy("participants.last_name", "asc");
+    },
 
-    getById: (id) =>
-        participants.find(p => p.ParticipantID === Number(id)),
+    // Get specific participant
+    getById: (id) => {
+        return knex("participants")
+            .where({ participant_id: id })
+            .first();
+    },
 
+    // Create new participant
     create: (data) => {
-        const newParticipant = {
-            ParticipantID:
-                participants.length > 0
-                    ? participants[participants.length - 1].ParticipantID + 1
-                    : 1,
-            ...data
-        };
-        participants.push(newParticipant);
-        return newParticipant;
+        return knex("participants").insert(data).returning("participant_id");
     },
 
-    update: (id, updated) => {
-        const p = participants.find(p => p.ParticipantID === Number(id));
-        if (!p) return null;
-        Object.assign(p, updated);
-        return p;
+    // Update participant
+    update: (id, data) => {
+        return knex("participants")
+            .where({ participant_id: id })
+            .update(data);
     },
 
+    // Delete participant
     delete: (id) => {
-        participants = participants.filter(
-            p => p.ParticipantID !== Number(id)
-        );
+        return knex("participants")
+            .where({ participant_id: id })
+            .del();
     }
 };

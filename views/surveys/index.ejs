@@ -2,56 +2,57 @@
 
     <h1 class="page-title">Post-Event Surveys</h1>
 
-    <% if (session && session.access_level==="manager" ) { %>
+    <% if (session && session.access_level === "manager") { %>
         <a href="/surveys/new" class="btn btn-primary btn-small mb-4">
             + Add Survey
         </a>
-        <% } %>
+    <% } %>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Event</th>
-                        <th>Date</th>
-                        <th>Participant</th>
-                        <th>Overall Score</th>
-                        <th></th>
-                    </tr>
-                </thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Date</th>
+                <th>Participant</th>
+                <th>Overall Score</th>
+                <th></th>
+            </tr>
+        </thead>
 
-                <tbody>
-                    <% surveys.forEach(s=> { %>
-                        <tr>
-                            <td>
-                                <%= s.EventName %>
-                            </td>
-                            <td>
-                                <%= s.EventDateTimeStart %>
-                            </td>
-                            <td>
-                                <%= s.ParticipantName %>
-                            </td>
-                            <td>
-                                <%= s.SurveyOverallScore %>
-                            </td>
+        <tbody>
+            <% surveys.forEach(s => { %>
+                <tr>
+                    <td>
+                        <%= s.event_name %>
+                    </td>
+                    <td>
+                        <%= new Date(s.starts_at).toLocaleDateString() %>
+                    </td>
+                    <td>
+                        <%= s.first_name %> <%= s.last_name %>
+                    </td>
+                    <td>
+                        <%= s.overall_score %>
+                    </td>
 
-                            <td class="table-actions">
-                                <a href="/surveys/<%= s.EventOccurrenceID %>/<%= s.ParticipantID %>">View</a>
+                    <td class="table-actions">
+                        <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>">View</a>
 
-                                <% if (session && session.access_level==="manager" ) { %>
-                                    <a href="/surveys/<%= s.EventOccurrenceID %>/<%= s.ParticipantID %>/edit">Edit</a>
-                                    <form action="/surveys/<%= s.EventOccurrenceID %>/<%= s.ParticipantID %>/delete"
-                                        method="POST" style="display:inline;">
-                                        <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
-                                            Delete
-                                        </button>
-                                    </form>
-                                    <% } %>
-                            </td>
-                        </tr>
-                        <% }) %>
-                </tbody>
-
-            </table>
+                        <% if (session && session.access_level === "manager") { %>
+                            <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/edit">Edit</a>
+                            
+                            <form action="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/delete"
+                                  method="POST" 
+                                  style="display:inline;">
+                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                    Delete
+                                </button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
 
 </div>

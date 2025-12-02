@@ -1,51 +1,72 @@
 // models/milestones.js
-
-let milestones = [
-    {
-        MilestoneID: 1,
-        ParticipantID: 1,
-        MilestoneTitle: "Attended First Event",
-        MilestoneDate: "2024-03-15"
-    },
-    {
-        MilestoneID: 2,
-        ParticipantID: 2,
-        MilestoneTitle: "Met Mentor",
-        MilestoneDate: "2024-04-01"
-    }
-];
+const knex = require("../db");
 
 module.exports = {
-    getAll: () => milestones,
-
-    getById: (id) =>
-        milestones.find(m => m.MilestoneID === Number(id)),
-
-    create: (data) => {
-        const nextID =
-            milestones.length > 0
-                ? milestones[milestones.length - 1].MilestoneID + 1
-                : 1;
-
-        const newMilestone = {
-            MilestoneID: nextID,
-            ...data
-        };
-
-        milestones.push(newMilestone);
-        return newMilestone;
+    // Get all milestones (Joined with Participant name for display)
+    getAll: () => {
+        return knex("milestones")
+            .join("participants", "milestones.participant_id", "=", "participants.participant_id")
+            .select(
+                "milestones.*",
+                "participants.first_name",
+                "participants.last_name"
+            )
+            .orderBy("milestones.achieved_date", "desc");
     },
 
-    update: (id, updated) => {
-        const m = milestones.find(m => m.MilestoneID === Number(id));
-        if (!m) return null;
-        Object.assign(m, updated);
-        return m;
+    // Get specific milestone (Needs TWO IDs)
+    getById: (participantId, milestoneNo) => {
+        return knex("milestones")
+            .join("participants", "milestones.participant_id", "=", "participants.participant_id")
+            .select(
+                "milestones.*",
+                "participants.first_name",
+                "participants.last_name"
+            )
+            .where({ 
+                "milestones.participant_id": participantId,
+                "milestones.milestone_no": milestoneNo 
+            })
+            .first();
     },
 
-    delete: (id) => {
-        milestones = milestones.filter(
-            m => m.MilestoneID !== Number(id)
-        );
+    // Create new milestone (Auto-increments milestone_no per user)
+    create: async (data) => {
+        // 1. Find the highest milestone number this user currently has
+        const result = await knex("milestones")
+            .max("milestone_no as max_no")
+            .where({ participant_id: data.participant_id })
+            .first();
+
+        // 2. Add 1 to it (or start at 1 if they have none)
+        const nextNo = (result.max_no || 0) + 1;
+
+        // 3. Insert the new record
+        return knex("milestones").insert({
+            participant_id: data.participant_id,
+            milestone_no: nextNo,
+            title: data.title,
+            achieved_date: data.achieved_date
+        });
+    },
+
+    // Update (Needs TWO IDs)
+    update: (participantId, milestoneNo, data) => {
+        return knex("milestones")
+            .where({ 
+                participant_id: participantId,
+                milestone_no: milestoneNo 
+            })
+            .update(data);
+    },
+
+    // Delete (Needs TWO IDs)
+    delete: (participantId, milestoneNo) => {
+        return knex("milestones")
+            .where({ 
+                participant_id: participantId,
+                milestone_no: milestoneNo 
+            })
+            .del();
     }
 };

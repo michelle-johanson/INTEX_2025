@@ -21,17 +21,21 @@
         <tbody>
             <% events.forEach(e => { %>
                 <tr>
-                    <td><%= e.EventName %></td>
-                    <td><%= e.EventType %></td>
-                    <td><%= e.EventRecurrencePattern %></td>
-                    <td><%= e.EventDefaultCapacity %></td>
+                    <td><%= e.name %></td>
+                    <td><%= e.type %></td>
+                    
+                    <td><%= e.recurrence_pattern %></td>
+                    
+                    <td><%= e.default_capacity %></td>
+
                     <td class="table-actions">
-                        <a href="/events/<%= e.EventID %>">View</a>
+                        <a href="/events/<%= e.event_id %>">View</a>
 
                         <% if (session && session.access_level === "manager") { %>
-                            <a href="/events/<%= e.EventID %>/edit">Edit</a>
-                            <form action="/events/<%= e.EventID %>/delete"
-                                  method="POST"
+                            <a href="/events/<%= e.event_id %>/edit">Edit</a>
+                            
+                            <form action="/events/<%= e.event_id %>/delete" 
+                                  method="POST" 
                                   style="display:inline;">
                                 <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
                                     Delete

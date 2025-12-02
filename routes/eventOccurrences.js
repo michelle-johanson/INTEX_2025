@@ -11,105 +11,146 @@ const Events = require("../models/events");
 /* ============================================================
    LIST EVENT OCCURRENCES
 ============================================================ */
-router.get("/", requireLogin, (req, res) => {
-    const occurrences = EventOccurrences.getAll();
-    const events = Events.getAll();
+router.get("/", requireLogin, async (req, res) => {
+    try {
+        // SQL version: already includes event_name via JOIN
+        const occurrences = await EventOccurrences.getAll();
 
-    const enhanced = occurrences.map(o => {
-        const event = events.find(e => e.EventID === o.EventID);
-        return {
-            ...o,
-            EventName: event ? event.EventName : "Unknown Event"
-        };
-    });
+        res.render("eventOccurrences/index", {
+            title: "Event Occurrences",
+            occurrences,
+            session: req.session
+        });
 
-    res.render("eventOccurrences/index", {
-        title: "Event Occurrences",
-        occurrences: enhanced,
-        session: req.session
-    });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 });
 
 /* ============================================================
    NEW OCCURRENCE
 ============================================================ */
-router.get("/new", requireAdmin, (req, res) => {
-    res.render("eventOccurrences/new", {
-        title: "New Event Occurrence",
-        events: Events.getAll(),
-        session: req.session
-    });
+
+// Show form
+router.get("/new", requireAdmin, async (req, res) => {
+    try {
+        const events = await Events.getAll(); // Needed for dropdown
+
+        res.render("eventOccurrences/new", {
+            title: "New Event Occurrence",
+            events,
+            session: req.session
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading form");
+    }
 });
 
-router.post("/new", requireAdmin, (req, res) => {
-    EventOccurrences.create({
-        EventID: Number(req.body.EventID),
-        EventDateTimeStart: req.body.EventDateTimeStart,
-        EventDateTimeEnd: req.body.EventDateTimeEnd,
-        EventLocation: req.body.EventLocation,
-        EventCapacity: Number(req.body.EventCapacity),
-        EventRegistrationDeadline: req.body.EventRegistrationDeadline
-    });
+// Submit new occurrence
+router.post("/new", requireAdmin, async (req, res) => {
+    try {
+        const newOccurrence = {
+            event_id: Number(req.body.EventID),
+            starts_at: req.body.EventDateTimeStart,
+            ends_at: req.body.EventDateTimeEnd,
+            location: req.body.EventLocation,
+            capacity: Number(req.body.EventCapacity),
+            registration_deadline: req.body.EventRegistrationDeadline
+        };
 
-    res.redirect("/eventOccurrences");
+        await EventOccurrences.create(newOccurrence);
+        res.redirect("/eventOccurrences");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error creating occurrence");
+    }
 });
 
 /* ============================================================
    EDIT OCCURRENCE
 ============================================================ */
-router.get("/:id/edit", requireAdmin, (req, res) => {
-    const occurrence = EventOccurrences.getById(req.params.id);
-    if (!occurrence) return res.status(404).send("Occurrence not found");
 
-    res.render("eventOccurrences/edit", {
-        title: "Edit Event Occurrence",
-        occurrence,
-        events: Events.getAll(),
-        session: req.session
-    });
+// Show form
+router.get("/:id/edit", requireAdmin, async (req, res) => {
+    try {
+        const occurrence = await EventOccurrences.getById(req.params.id);
+        const events = await Events.getAll();
+
+        if (!occurrence) return res.status(404).send("Occurrence not found");
+
+        res.render("eventOccurrences/edit", {
+            title: "Edit Event Occurrence",
+            occurrence,
+            events,
+            session: req.session
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading edit form");
+    }
 });
 
-router.post("/:id/edit", requireAdmin, (req, res) => {
-    EventOccurrences.update(req.params.id, {
-        EventID: Number(req.body.EventID),
-        EventDateTimeStart: req.body.EventDateTimeStart,
-        EventDateTimeEnd: req.body.EventDateTimeEnd,
-        EventLocation: req.body.EventLocation,
-        EventCapacity: Number(req.body.EventCapacity),
-        EventRegistrationDeadline: req.body.EventRegistrationDeadline
-    });
+// Submit edits
+router.post("/:id/edit", requireAdmin, async (req, res) => {
+    try {
+        const updates = {
+            event_id: Number(req.body.EventID),
+            starts_at: req.body.EventDateTimeStart,
+            ends_at: req.body.EventDateTimeEnd,
+            location: req.body.EventLocation,
+            capacity: Number(req.body.EventCapacity),
+            registration_deadline: req.body.EventRegistrationDeadline
+        };
 
-    res.redirect("/eventOccurrences");
+        await EventOccurrences.update(req.params.id, updates);
+        res.redirect("/eventOccurrences");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating occurrence");
+    }
 });
 
 /* ============================================================
    DELETE OCCURRENCE
 ============================================================ */
-router.post("/:id/delete", requireAdmin, (req, res) => {
-    EventOccurrences.delete(req.params.id);
-    res.redirect("/eventOccurrences");
+router.post("/:id/delete", requireAdmin, async (req, res) => {
+    try {
+        await EventOccurrences.delete(req.params.id);
+        res.redirect("/eventOccurrences");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting occurrence");
+    }
 });
 
 /* ============================================================
    SHOW SINGLE OCCURRENCE
 ============================================================ */
-router.get("/:id", requireLogin, (req, res) => {
-    const occurrence = EventOccurrences.getById(req.params.id);
-    if (!occurrence) return res.status(404).send("Occurrence not found");
+router.get("/:id", requireLogin, async (req, res) => {
+    try {
+        const occurrence = await EventOccurrences.getById(req.params.id);
 
-    const parentEvent = Events.getById(occurrence.EventID) || {
-        EventName: "Unknown Event",
-        EventDescription: "",
-        EventType: "",
-        EventLocation: ""
-    };
+        if (!occurrence) return res.status(404).send("Occurrence not found");
 
-    res.render("eventOccurrences/show", {
-        title: `${parentEvent.EventName} Occurrence`,
-        occurrence,
-        parentEvent,
-        session: req.session
-    });
+        res.render("eventOccurrences/show", {
+            title: occurrence.event_name
+                ? `${occurrence.event_name} Occurrence`
+                : "Event Occurrence Details",
+            occurrence,
+            session: req.session
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading details");
+    }
 });
 
 module.exports = router;

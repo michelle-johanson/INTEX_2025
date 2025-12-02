@@ -8,141 +8,143 @@ const { requireAdmin, requireLogin } = require("../middleware/auth");
 const Registrations = require("../models/registrations");
 const Participants = require("../models/participants");
 const EventOccurrences = require("../models/eventOccurrences");
-const Events = require("../models/events");  // optional for dropdowns
 
 /* ============================================================
-    LIST REGISTRATIONS (LOGIN REQUIRED)
+   LIST REGISTRATIONS (LOGIN REQUIRED)
 ============================================================ */
-router.get("/", requireLogin, (req, res) => {
-    const registrations = Registrations.getAll();
-    const participants = Participants.getAll();
-    const occurrences = EventOccurrences.getAll();
-    const events = Events.getAll();
+router.get("/", requireLogin, async (req, res) => {
+    try {
+        // Model handles the JOINs now
+        const registrations = await Registrations.getAll();
 
-    // Join for readability
-    const enhanced = registrations.map(r => {
-        const participant = participants.find(p => p.ParticipantID === r.ParticipantID);
-        const occurrence = occurrences.find(o => o.EventOccurrenceID === r.EventOccurrenceID);
-        const eventTemplate = occurrence
-            ? events.find(e => e.EventID === occurrence.EventID)
-            : null;
-
-        return {
-            ...r,
-            ParticipantName: participant
-                ? `${participant.FirstName} ${participant.LastName}`
-                : "Unknown",
-            EventName: eventTemplate ? eventTemplate.EventName : "Unknown",
-            EventDateTimeStart: occurrence ? occurrence.EventDateTimeStart : "Unknown"
-        };
-    });
-
-    res.render("registrations/index", {
-        title: "Registrations",
-        registrations: enhanced
-    });
+        res.render("registrations/index", {
+            title: "Registrations",
+            registrations
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 });
 
 
 /* ============================================================
-    NEW REGISTRATION (ADMIN ONLY)
+   NEW REGISTRATION (ADMIN ONLY)
 ============================================================ */
 
 // Show form
-router.get("/new", requireAdmin, (req, res) => {
-    res.render("registrations/new", {
-        title: "New Registration",
-        participants: Participants.getAll(),
-        occurrences: EventOccurrences.getAll(),
-        events: Events.getAll()
-    });
+router.get("/new", requireAdmin, async (req, res) => {
+    try {
+        const participants = await Participants.getAll();
+        const occurrences = await EventOccurrences.getAll();
+
+        res.render("registrations/new", {
+            title: "New Registration",
+            participants,
+            occurrences
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading form");
+    }
 });
 
 // Submit new registration
-router.post("/new", requireAdmin, (req, res) => {
-    Registrations.create({
-        EventOccurrenceID: Number(req.body.EventOccurrenceID),
-        ParticipantID: Number(req.body.ParticipantID),
-        RegistrationStatus: req.body.RegistrationStatus,
-        RegistrationAttendedFlag: req.body.RegistrationAttendedFlag === "on",
-        RegistrationCheckInTime: req.body.RegistrationCheckInTime || null,
-        RegistrationCreatedAt: req.body.RegistrationCreatedAt
-    });
+router.post("/new", requireAdmin, async (req, res) => {
+    try {
+        const newRegistration = {
+            event_occurrence_id: Number(req.body.EventOccurrenceID),
+            participant_id: Number(req.body.ParticipantID),
+            status: req.body.RegistrationStatus,
+            attended: req.body.RegistrationAttendedFlag === "on", // Convert 'on' to boolean
+            check_in_time: req.body.RegistrationCheckInTime || null,
+            created_at: req.body.RegistrationCreatedAt || new Date()
+        };
 
-    res.redirect("/registrations");
+        await Registrations.create(newRegistration);
+        res.redirect("/registrations");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error creating registration");
+    }
 });
 
 
 /* ============================================================
-    EDIT REGISTRATION (ADMIN ONLY)
+   EDIT REGISTRATION (ADMIN ONLY)
+   URL: /:oid/:pid/edit
 ============================================================ */
-router.get("/:occurrenceID/:participantID/edit", requireAdmin, (req, res) => {
-    const registration = Registrations.getByIds(
-        req.params.occurrenceID,
-        req.params.participantID
-    );
+router.get("/:oid/:pid/edit", requireAdmin, async (req, res) => {
+    try {
+        const registration = await Registrations.getByIds(req.params.oid, req.params.pid);
+        const participants = await Participants.getAll();
+        const occurrences = await EventOccurrences.getAll();
 
-    if (!registration) return res.status(404).send("Registration not found");
+        if (!registration) return res.status(404).send("Registration not found");
 
-    res.render("registrations/edit", {
-        title: "Edit Registration",
-        registration,
-        participants: Participants.getAll(),
-        occurrences: EventOccurrences.getAll()
-    });
+        res.render("registrations/edit", {
+            title: "Edit Registration",
+            registration,
+            participants,
+            occurrences
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading edit form");
+    }
 });
 
-router.post("/:occurrenceID/:participantID/edit", requireAdmin, (req, res) => {
-    Registrations.update(
-        req.params.occurrenceID,
-        req.params.participantID,
-        {
-            RegistrationStatus: req.body.RegistrationStatus,
-            RegistrationAttendedFlag: req.body.RegistrationAttendedFlag === "on",
-            RegistrationCheckInTime: req.body.RegistrationCheckInTime || null,
-            RegistrationCreatedAt: req.body.RegistrationCreatedAt
-        }
-    );
+router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
+    try {
+        const updates = {
+            status: req.body.RegistrationStatus,
+            attended: req.body.RegistrationAttendedFlag === "on",
+            check_in_time: req.body.RegistrationCheckInTime || null,
+            created_at: req.body.RegistrationCreatedAt
+        };
 
-    res.redirect("/registrations");
-});
+        await Registrations.update(req.params.oid, req.params.pid, updates);
+        res.redirect("/registrations");
 
-
-/* ============================================================
-    DELETE REGISTRATION (ADMIN ONLY)
-============================================================ */
-router.post("/:occurrenceID/:participantID/delete", requireAdmin, (req, res) => {
-    Registrations.delete(
-        req.params.occurrenceID,
-        req.params.participantID
-    );
-
-    res.redirect("/registrations");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating registration");
+    }
 });
 
 
 /* ============================================================
-    SHOW SINGLE REGISTRATION (LOGIN REQUIRED)
+   DELETE REGISTRATION (ADMIN ONLY)
 ============================================================ */
-router.get("/:occurrenceID/:participantID", requireLogin, (req, res) => {
-    const registration = Registrations.getByIds(
-        req.params.occurrenceID,
-        req.params.participantID
-    );
+router.post("/:oid/:pid/delete", requireAdmin, async (req, res) => {
+    try {
+        await Registrations.delete(req.params.oid, req.params.pid);
+        res.redirect("/registrations");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting registration");
+    }
+});
 
-    if (!registration) return res.status(404).send("Registration not found");
 
-    const participant = Participants.getById(registration.ParticipantID);
-    const occurrence = EventOccurrences.getById(registration.EventOccurrenceID);
-    const event = occurrence ? Events.getById(occurrence.EventID) : null;
+/* ============================================================
+   SHOW SINGLE REGISTRATION (LOGIN REQUIRED)
+============================================================ */
+router.get("/:oid/:pid", requireLogin, async (req, res) => {
+    try {
+        const registration = await Registrations.getByIds(req.params.oid, req.params.pid);
 
-    res.render("registrations/show", {
-        title: "Registration Details",
-        registration,
-        participant,
-        occurrence,
-        event
-    });
+        if (!registration) return res.status(404).send("Registration not found");
+
+        res.render("registrations/show", {
+            title: "Registration Details",
+            registration
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading details");
+    }
 });
 
 module.exports = router;
