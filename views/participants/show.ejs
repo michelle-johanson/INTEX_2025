@@ -1,46 +1,52 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <h1 class="page-title">Participant Details</h1>
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-
-<body>
-    <%- include("../partials/navbar") %>
-
-        <div class="container mt-4">
-            <h1>
-                <%= participant.first_name %>
-                    <%= participant.last_name %>
-            </h1>
-
-            <p><strong>Email:</strong>
-                <%= participant.email %>
-            </p>
-            <p><strong>Phone:</strong>
-                <%= participant.phone %>
-            </p>
-            <p><strong>Program:</strong>
-                <%= participant.program %>
-            </p>
-
-            <% if (session.access_level==='admin' ) { %>
-                <a href="/participants/<%= participant.id %>/edit" class="btn btn-warning">Edit</a>
-
-                <form action="/participants/<%= participant.id %>/delete" method="POST" style="display:inline;">
-                    <button class="btn btn-danger">Delete</button>
-                </form>
-                <% } %>
-
-                    <br><br>
-                    <a href="/participants" class="btn btn-secondary">Back</a>
+    <div class="detail-card">
+        <div class="detail-row">
+            <span class="detail-label">Name</span>
+            <span class="detail-value">
+                <%= participant.FirstName %> <%= participant.LastName %>
+            </span>
         </div>
 
-</body>
+        <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value"><%= participant.Email %></span>
+        </div>
 
-</html>
+        <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value"><%= participant.Phone %></span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">City</span>
+            <span class="detail-value">
+                <%= participant.City %>, <%= participant.State %> <%= participant.Zip %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">School / Employment</span>
+            <span class="detail-value"><%= participant.SchoolOrEmployment %></span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Field of Interest</span>
+            <span class="detail-value"><%= participant.FieldOfInterest %></span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Total Donations</span>
+            <span class="detail-value">$<%= participant.TotalDonations %></span>
+        </div>
+
+        <% if (session && session.access_level === "manager") { %>
+            <div class="detail-actions">
+                <a href="/participants/<%= participant.ParticipantID %>/edit">Edit</a>
+            </div>
+        <% } %>
+    </div>
+
+</div>

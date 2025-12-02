@@ -1,43 +1,47 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <h1 class="page-title">Participants</h1>
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <% if (session && session.access_level === "manager") { %>
+        <a href="/participants/new" class="btn btn-primary btn-small mb-4">
+            + Add Participant
+        </a>
+    <% } %>
 
-<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>Field of Interest</th>
+                <th>Total Donations</th>
+                <th></th>
+            </tr>
+        </thead>
 
-    <%- include("../partials/navbar") %>
+        <tbody>
+            <% participants.forEach(p => { %>
+                <tr>
+                    <td><%= p.FirstName %> <%= p.LastName %></td>
+                    <td><%= p.Email %></td>
+                    <td><%= p.City %>, <%= p.State %></td>
+                    <td><%= p.FieldOfInterest %></td>
+                    <td>$<%= p.TotalDonations %></td>
 
-        <div class="container mt-4">
+                    <td class="table-actions">
+                        <a href="/participants/<%= p.ParticipantID %>">View</a>
 
-            <h1>Participants</h1>
+                        <% if (session && session.access_level === "manager") { %>
+                            <a href="/participants/<%= p.ParticipantID %>/edit">Edit</a>
+                            <form action="/participants/<%= p.ParticipantID %>/delete" method="POST" style="display:inline;">
+                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">Delete</button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
 
-            <% if (session.access_level==="admin" ) { %>
-                <a href="/participants/new" class="btn btn-primary mb-3">Add Participant</a>
-                <% } %>
-
-                    <ul class="list-group">
-                        <% participants.forEach(p=> { %>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>
-                                    <%= p.first_name %>
-                                        <%= p.last_name %>
-                                </span>
-                                <a href="/participants/<%= p.id %>" class="btn btn-sm btn-outline-secondary">
-                                    Details
-                                </a>
-                            </li>
-                            <% }) %>
-                    </ul>
-
-        </div>
-
-</body>
-
-</html>
+</div>

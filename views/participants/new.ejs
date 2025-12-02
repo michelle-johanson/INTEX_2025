@@ -1,54 +1,46 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <h1 class="page-title">Add Participant</h1>
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <form action="/participants/new" method="POST" class="form">
 
-<body>
-    <%- include("../partials/navbar") %>
+        <label>Email</label>
+        <input type="email" name="Email" required />
 
-        <div class="container mt-4" style="max-width: 600px;">
-            <h1>Add Participant</h1>
+        <label>First Name</label>
+        <input type="text" name="FirstName" required />
 
-            <form action="/participants/new" method="POST">
+        <label>Last Name</label>
+        <input type="text" name="LastName" required />
 
-                <div class="mb-3">
-                    <label>First Name</label>
-                    <input name="first_name" class="form-control" required>
-                </div>
+        <label>Date of Birth</label>
+        <input type="date" name="DOB" required />
 
-                <div class="mb-3">
-                    <label>Last Name</label>
-                    <input name="last_name" class="form-control" required>
-                </div>
+        <label>Role</label>
+        <input type="text" name="Role" />
 
-                <div class="mb-3">
-                    <label>Email</label>
-                    <input name="email" type="email" class="form-control">
-                </div>
+        <label>Phone</label>
+        <input type="text" name="Phone" />
 
-                <div class="mb-3">
-                    <label>Phone</label>
-                    <input name="phone" class="form-control">
-                </div>
+        <label>City</label>
+        <input type="text" name="City" />
 
-                <div class="mb-3">
-                    <label>Program</label>
-                    <input name="program" class="form-control">
-                </div>
+        <label>State</label>
+        <input type="text" name="State" />
 
-                <button class="btn btn-success">Add Participant</button>
+        <label>Zip Code</label>
+        <input type="text" name="Zip" />
 
-            </form>
+        <label>School or Employment</label>
+        <input type="text" name="SchoolOrEmployment" />
 
-        </div>
+        <label>Field of Interest</label>
+        <input type="text" name="FieldOfInterest" />
 
-</body>
+        <label>Total Donations</label>
+        <input type="number" name="TotalDonations" min="0" />
 
-</html>
+        <button class="btn-submit">Create Participant</button>
+    </form>
+
+</div>
