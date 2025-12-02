@@ -1,43 +1,46 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <h1 class="page-title">Donation Details</h1>
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <div class="detail-card">
 
-<body>
-
-    <%- include("../partials/navbar") %>
-
-        <div class="container mt-4">
-
-            <h1>Donation Details</h1>
-
-            <p><strong>Donor:</strong>
-                <%= donation.donor %>
-            </p>
-            <p><strong>Amount:</strong> $<%= donation.amount %>
-            </p>
-            <p><strong>Message:</strong>
-                <%= donation.message || "No message" %>
-            </p>
-
-            <a href="/donations/<%= donation.id %>/edit" class="btn btn-warning">Edit</a>
-
-            <form action="/donations/<%= donation.id %>/delete" method="POST" style="display:inline;">
-                <button class="btn btn-danger">Delete</button>
-            </form>
-
-            <br><br>
-            <a href="/donations" class="btn btn-secondary">Back</a>
-
+        <div class="detail-row">
+            <span class="detail-label">Donation ID</span>
+            <span class="detail-value">#<%= donation.DonationID %></span>
         </div>
 
-</body>
+        <div class="detail-row">
+            <span class="detail-label">Participant</span>
+            <span class="detail-value">
+                <% if (participant) { %>
+                    <%= participant.FirstName %>
+                        <%= participant.LastName %> (ID #<%= participant.ParticipantID %>)
+                                <% } else { %>
+                                    —
+                                    <% } %>
+            </span>
+        </div>
 
-</html>
+        <div class="detail-row">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">
+                <%= donation.DonationDate %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Amount</span>
+            <span class="detail-value">
+                $<%= donation.DonationAmount.toFixed ? donation.DonationAmount.toFixed(2) : donation.DonationAmount %>
+            </span>
+        </div>
+
+        <% if (session && session.access_level==="manager" ) { %>
+            <div class="detail-actions">
+                <a href="/donations/<%= donation.DonationID %>/edit">Edit</a>
+            </div>
+            <% } %>
+
+    </div>
+
+</div>

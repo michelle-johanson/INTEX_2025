@@ -1,43 +1,31 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <h1 class="page-title">Make a Donation</h1>
+    <p class="page-subtitle">
+        Support Ella Rises by making a one-time donation. You can optionally
+        designate your gift to support a specific participant.
+    </p>
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <form action="/donations/new" method="POST" class="form">
 
-<body>
+        <label for="ParticipantID">Participant (optional)</label>
+        <select id="ParticipantID" name="ParticipantID">
+            <option value="">No specific participant</option>
+            <% participants.forEach(p=> { %>
+                <option value="<%= p.ParticipantID %>">
+                    <%= p.FirstName %>
+                        <%= p.LastName %> (ID #<%= p.ParticipantID %>)
+                </option>
+                <% }) %>
+        </select>
 
-    <%- include("../partials/navbar") %>
+        <label for="DonationDate">Donation Date</label>
+        <input id="DonationDate" type="date" name="DonationDate" required />
 
-        <div class="container mt-4" style="max-width: 600px;">
-            <h1>Make a Donation</h1>
+        <label for="DonationAmount">Donation Amount (USD)</label>
+        <input id="DonationAmount" type="number" name="DonationAmount" min="1" step="0.01" required />
 
-            <form action="/donations/new" method="POST" class="mt-3">
+        <button class="btn-submit">Submit Donation</button>
+    </form>
 
-                <div class="mb-3">
-                    <label class="form-label">Your Name</label>
-                    <input type="text" name="donor" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Amount ($)</label>
-                    <input type="number" name="amount" class="form-control" required min="1">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Message (optional)</label>
-                    <textarea name="message" class="form-control"></textarea>
-                </div>
-
-                <button class="btn btn-success">Submit Donation</button>
-            </form>
-        </div>
-
-</body>
-
-</html>
+</div>
