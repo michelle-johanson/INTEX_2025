@@ -1,0 +1,47 @@
+/* =====================================
+   HOMEPAGE SECTIONS
+===================================== */
+
+.hero-full {
+    width: 100%;
+    background: var(--light-pink);
+    text-align: center;
+    padding: 5rem 0 6rem;
+}
+
+.hero-title {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+}
+
+.hero-text {
+    max-width: 650px;
+    margin: 0 auto 2rem;
+    font-size: 1.2rem;
+}
+
+.impact-full {
+    width: 100%;
+    background: var(--cream);
+    padding: 4rem 0;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.2rem;
+}
+
+.impact-card {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.donate-full {
+    width: 100%;
+    background: var(--pink);
+    text-align: center;
+    padding: 4rem 0;
+}

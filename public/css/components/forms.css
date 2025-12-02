@@ -1,78 +1,50 @@
-/* ============================================================
-    FORMS
-============================================================ */
-input[type="text"],
-input[type="email"],
-input[type="number"],
-input[type="password"],
-textarea,
-select {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--form-border);
-    background: var(--form-bg);
-    color: var(--form-text);
-    font-family: var(--font-body);
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    margin-bottom: 0.8rem;
-}
+/* =====================================
+   FORMS
+===================================== */
 
-input:focus,
-textarea:focus,
-select:focus {
-    border-color: var(--form-focus-border);
-    outline: none;
-    box-shadow: 0 0 0 3px var(--form-focus-shadow);
+form {
+    max-width: 600px;
 }
 
 label {
     display: block;
     font-weight: 600;
-    color: var(--form-label-text);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 
-/* Form buttons */
-.btn-submit {
-    width: 100%;
-    background: var(--form-button-bg);
-    color: var(--form-button-text);
-    padding: 0.8rem 1.4rem;
-    border-radius: var(--border-radius);
-    font-size: 1.05rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-submit:hover {
-    background: var(--form-button-hover-bg);
-}
-
-/* Error messages */
-.form-error {
-    color: var(--form-error-text);
-    font-size: 0.9rem;
-    margin-top: -0.8rem;
-    margin-bottom: 1rem;
-}
-
-.form-control {
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+input[type="datetime-local"],
+textarea,
+select {
     width: 100%;
     padding: 0.7rem 1rem;
     border-radius: var(--border-radius);
-    border: 1px solid var(--form-border);
-    background: var(--form-bg);
-    color: var(--form-text);
-    font-family: var(--font-body);
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    box-shadow: none;
+    border: 1px solid #ddd;
+    margin-bottom: 1rem;
+    background: white;
 }
 
-.form-control:focus {
-    border-color: var(--form-focus-border);
-    box-shadow: 0 0 0 3px var(--form-focus-shadow);
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--rose);
     outline: none;
+    box-shadow: 0 0 0 3px rgba(206, 50, 91, 0.2);
+}
+
+.btn-submit {
+    width: 100%;
+    background: var(--rose);
+    color: white;
+    padding: 0.9rem 1.4rem;
+    font-size: 1.05rem;
+    border-radius: var(--btn-radius);
+}
+
+.btn-submit:hover {
+    background: #a82848;
 }

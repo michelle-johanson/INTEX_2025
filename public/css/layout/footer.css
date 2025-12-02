@@ -1,0 +1,21 @@
+/* =====================================
+   FOOTER
+===================================== */
+
+.footer {
+    background: var(--charcoal);
+    color: white;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+.footer-inner {
+    max-width: var(--page-max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.footer p {
+    margin: 0.3rem 0;
+    opacity: 0.85;
+}

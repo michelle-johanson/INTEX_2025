@@ -1,9 +1,7 @@
-/* ============================================================
-    BUTTON SYSTEM
-    Base + Variants (Primary, Secondary, Danger)
-============================================================ */
+/* =====================================
+   BUTTON SYSTEM
+===================================== */
 
-/* ----- Base Button ----- */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -11,73 +9,44 @@
 
     padding: var(--btn-padding-y) var(--btn-padding-x);
     border-radius: var(--btn-radius);
-    font-family: var(--btn-font);
     font-weight: 600;
-
-    cursor: pointer;
-    border: none;
-
-    background: var(--btn-bg);
-    color: var(--btn-text);
     transition: var(--transition);
-    text-decoration: none;
-    /* for <a> buttons */
 }
 
-.btn:hover {
-    background: var(--btn-hover-bg);
-    color: var(--btn-text);
-}
-
-/* ----- Primary Button (default) ----- */
 .btn-primary {
-    background: var(--btn-bg);
-    color: var(--btn-text);
+    background: var(--rose);
+    color: white;
 }
 
 .btn-primary:hover {
-    background: var(--btn-hover-bg);
+    background: #a82848;
 }
 
-/* ----- Secondary Button (outline/light) ----- */
 .btn-secondary {
-    background: var(--btn-secondary-bg);
-    color: var(--btn-secondary-text);
-    border: 2px solid var(--btn-secondary-border);
-    border-radius: var(--border-radius);
-    padding: var(--btn-padding-y) var(--btn-padding-x);
-    font-family: var(--font-body);
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    justify-content: center;
-    width: 100%;
-    transition: var(--transition);
+    border: 2px solid var(--charcoal);
+    color: var(--charcoal);
 }
 
 .btn-secondary:hover {
-    background: var(--btn-secondary-hover-bg);
-    color: var(--btn-secondary-hover-text);
-    border-color: var(--btn-secondary-hover-bg);
+    background: var(--charcoal);
+    color: white;
 }
 
-/* ----- Danger Button ----- */
 .btn-danger {
-    background: var(--btn-danger-bg);
-    color: var(--btn-danger-text);
+    background: #d9534f;
+    color: white;
 }
 
 .btn-danger:hover {
-    background: var(--btn-danger-hover-bg);
+    background: #c9302c;
 }
 
-/* ----- Sizes ----- */
 .btn-small {
-    padding: 0.35rem 0.9rem;
+    padding: 0.4rem 1rem;
     font-size: 0.9rem;
 }
 
 .btn-large {
-    padding: 0.85rem 1.6rem;
+    padding: 0.8rem 1.6rem;
     font-size: 1.1rem;
 }
