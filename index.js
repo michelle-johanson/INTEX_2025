@@ -110,6 +110,12 @@ app.use("/surveys", surveyRoutes);
 const milestoneRoutes = require("./routes/milestones");
 app.use("/milestones", milestoneRoutes);
 
+
+// Teapot 418 Error Code
+app.get('/teapot', (req, res) => {
+  // This sends the 418 header and a text body
+  res.status(418).send("I'm a little teapot, short and stout.");
+});
 /* ============================================================
     START SERVER
 ============================================================ */
