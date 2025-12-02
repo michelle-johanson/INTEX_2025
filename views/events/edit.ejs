@@ -1,53 +1,39 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <h1 class="page-title">Edit Event Template</h1>
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <form action="/events/<%= event.EventID %>/edit" method="POST" class="form">
 
-<body>
+        <label for="EventName">Event Name</label>
+        <input id="EventName"
+               type="text"
+               name="EventName"
+               value="<%= event.EventName %>"
+               required />
 
-    <%- include("../partials/navbar") %>
+        <label for="EventType">Event Type</label>
+        <input id="EventType"
+               type="text"
+               name="EventType"
+               value="<%= event.EventType %>" />
 
-        <div class="container mt-4" style="max-width: 600px;">
+        <label for="EventRecurrencePattern">Recurrence Pattern</label>
+        <input id="EventRecurrencePattern"
+               type="text"
+               name="EventRecurrencePattern"
+               value="<%= event.EventRecurrencePattern %>" />
 
-            <h1>Edit Event</h1>
+        <label for="EventDescription">Description</label>
+        <textarea id="EventDescription" name="EventDescription" rows="3"><%= event.EventDescription %></textarea>
 
-            <form action="/events/<%= event.id %>/edit" method="POST">
+        <label for="EventDefaultCapacity">Default Capacity</label>
+        <input id="EventDefaultCapacity"
+               type="number"
+               name="EventDefaultCapacity"
+               value="<%= event.EventDefaultCapacity %>"
+               min="1" />
 
-                <div class="mb-3">
-                    <label>Event Name</label>
-                    <input name="name" class="form-control" value="<%= event.name %>" required>
-                </div>
+        <button class="btn-submit">Save Changes</button>
+    </form>
 
-                <div class="mb-3">
-                    <label>Date</label>
-                    <input name="date" type="date" class="form-control" value="<%= event.date %>" required>
-                </div>
-
-                <div class="mb-3">
-                    <label>Location</label>
-                    <input name="location" class="form-control" value="<%= event.location %>">
-                </div>
-
-                <div class="mb-3">
-                    <label>Event Type</label>
-                    <input name="event_type" class="form-control" value="<%= event.event_type %>">
-                </div>
-
-                <button class="btn btn-success">Save Changes</button>
-            </form>
-
-            <br>
-            <a href="/events" class="btn btn-secondary">Cancel</a>
-
-        </div>
-
-</body>
-
-</html>
+</div>

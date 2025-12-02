@@ -1,48 +1,38 @@
-<!DOCTYPE html>
-<html>
+<div class="page-container">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <h1 class="page-title">Event Template Details</h1>
 
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-
-<body>
-
-    <%- include("../partials/navbar") %>
-
-        <div class="container mt-4">
-
-            <h1>
-                <%= event.name %>
-            </h1>
-
-            <p><strong>Date:</strong>
-                <%= event.date %>
-            </p>
-            <p><strong>Location:</strong>
-                <%= event.location %>
-            </p>
-            <p><strong>Type:</strong>
-                <%= event.event_type %>
-            </p>
-
-            <% if (session.access_level==="admin" ) { %>
-                <a href="/events/<%= event.id %>/edit" class="btn btn-warning">Edit</a>
-
-                <form action="/events/<%= event.id %>/delete" method="POST" style="display:inline;">
-                    <button class="btn btn-danger">Delete</button>
-                </form>
-                <% } %>
-
-                    <br><br>
-                    <a href="/events" class="btn btn-secondary">Back</a>
-
+    <div class="detail-card">
+        <div class="detail-row">
+            <span class="detail-label">Name</span>
+            <span class="detail-value"><%= event.EventName %></span>
         </div>
 
-</body>
+        <div class="detail-row">
+            <span class="detail-label">Type</span>
+            <span class="detail-value"><%= event.EventType %></span>
+        </div>
 
-</html>
+        <div class="detail-row">
+            <span class="detail-label">Recurrence</span>
+            <span class="detail-value"><%= event.EventRecurrencePattern %></span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Default Capacity</span>
+            <span class="detail-value"><%= event.EventDefaultCapacity %></span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Description</span>
+            <span class="detail-value"><%= event.EventDescription %></span>
+        </div>
+
+        <% if (session && session.access_level === "manager") { %>
+            <div class="detail-actions">
+                <a href="/events/<%= event.EventID %>/edit">Edit</a>
+            </div>
+        <% } %>
+    </div>
+
+</div>

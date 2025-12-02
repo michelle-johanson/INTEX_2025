@@ -1,0 +1,35 @@
+<div class="page-container">
+
+    <h1 class="page-title">Schedule Event Occurrence</h1>
+
+    <form action="/eventOccurrences/new" method="POST" class="form">
+
+        <label for="EventID">Event Template</label>
+        <select id="EventID" name="EventID" required>
+            <option value="">Select an event…</option>
+            <% events.forEach(e=> { %>
+                <option value="<%= e.EventID %>">
+                    <%= e.EventName %>
+                </option>
+                <% }) %>
+        </select>
+
+        <label for="EventDateTimeStart">Start Date &amp; Time</label>
+        <input id="EventDateTimeStart" type="datetime-local" name="EventDateTimeStart" required />
+
+        <label for="EventDateTimeEnd">End Date &amp; Time</label>
+        <input id="EventDateTimeEnd" type="datetime-local" name="EventDateTimeEnd" required />
+
+        <label for="EventLocation">Location</label>
+        <input id="EventLocation" type="text" name="EventLocation" required />
+
+        <label for="EventCapacity">Capacity</label>
+        <input id="EventCapacity" type="number" name="EventCapacity" min="1" required />
+
+        <label for="EventRegistrationDeadline">Registration Deadline</label>
+        <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline" required />
+
+        <button class="btn-submit">Create Occurrence</button>
+    </form>
+
+</div>
