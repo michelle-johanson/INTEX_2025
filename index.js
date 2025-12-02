@@ -1,9 +1,5 @@
-// Load environment variables from .env file into memory
+// Load environment variables
 require("dotenv").config();
-
-/* ============================================================
-    INSTALL DEPENDENCIES
-============================================================ */
 
 // Core Libraries
 const express = require("express");
@@ -11,58 +7,32 @@ const session = require("express-session");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 
-// Database
-const knex = require("knex")({
-    client: "pg",
-    connection: {
-        host: process.env.RDS_HOSTNAME || "localhost",
-        user: process.env.RDS_USERNAME || "postgres",
-        password: process.env.RDS_PASSWORD || "SuperSecretPassword",
-        database: process.env.RDS_DB_NAME || "intex",
-        port: process.env.RDS_PORT || 5432,
-        ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false
-    }
-});
-
-// Additional Dependencies
-const multer = require("multer");
-const bodyParser = require("body-parser");
-
 // Initialize Express App
 const app = express();
 
 /* ============================================================
-    GLOBAL MIDDLEWARE
+   GLOBAL MIDDLEWARE
 ============================================================ */
-
-// Parse forms + JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// Static files (CSS, images, JS)
 app.use(express.static(path.join(__dirname, "public")));
 
 // EJS Setup
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
-// enable layouts
 app.use(expressLayouts);
 app.set("layout", "layout");
 
 // Sessions
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "supersecret",
-        resave: false,
-        saveUninitialized: false,
-    })
-);
+app.use(session({
+    secret: process.env.SESSION_SECRET || "supersecret",
+    resave: false,
+    saveUninitialized: false,
+}));
 
-// Make session available inside EJS views
+// Session Locals
 app.use((req, res, next) => {
     const s = req.session;
-
     res.locals.session = {
         isLoggedIn: s.isLoggedIn || false,
         user_id: s.user_id || null,
@@ -70,12 +40,11 @@ app.use((req, res, next) => {
         firstname: s.firstname || null,
         access_level: s.access_level || null
     };
-
     next();
 });
 
 /* ============================================================
-    ROUTES
+   ROUTES (The "Switchboard")
 ============================================================ */
 
 // Home
@@ -110,16 +79,28 @@ app.use("/surveys", surveyRoutes);
 const milestoneRoutes = require("./routes/milestones");
 app.use("/milestones", milestoneRoutes);
 
+// --- NEW ADDITIONS START HERE ---
 
-// Teapot 418 Error Code
+// Registrations
+const registrationRoutes = require("./routes/registrations");
+app.use("/registrations", registrationRoutes);
+
+// Dashboard
+// Warning: This requires a file at ./routes/dashboard.js to exist!
+// const dashboardRoutes = require("./routes/dashboard");
+// app.use("/dashboard", dashboardRoutes);
+
+// --- NEW ADDITIONS END HERE ---
+
+
+// Teapot
 app.get('/teapot', (req, res) => {
-  // This sends the 418 header and a text body
   res.status(418).send("I'm a little teapot, short and stout.");
 });
-/* ============================================================
-    START SERVER
-============================================================ */
 
+/* ============================================================
+   START SERVER
+============================================================ */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
     console.log(`🚀 Website is running! Visit http://localhost:${PORT}`)
