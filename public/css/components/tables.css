@@ -1,35 +1,61 @@
 /* =====================================
-   TABLES
+   CLEAN MODERN TABLE STYLES
 ===================================== */
 
-table {
+/* Card wrapper */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+}
+
+/* Table */
+.er-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    color: var(--charcoal);
 }
 
-thead th {
+/* Header */
+.er-table thead th {
     background: var(--blue);
     color: white;
-    padding: 0.75rem 1rem;
-    text-align: left;
-}
-
-tbody td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #ddd;
-}
-
-tbody tr:hover {
-    background: var(--light-pink);
-}
-
-.table-actions a {
     font-weight: 600;
-    margin-right: 1rem;
+    padding: 0.9rem 1rem;
+    text-align: left;
+    letter-spacing: 0.03em;
+}
+
+/* Body */
+.er-table tbody td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #ddd;
+    color: var(--charcoal);
+    /* FIXED: readable text */
+}
+
+/* Hover highlight */
+.er-table tbody tr:hover {
+    background: #f8f8f8;
+}
+
+/* View link */
+.view-link {
+    font-weight: 600;
     color: var(--rose);
 }
 
-.table-actions a:hover {
+.view-link:hover {
     text-decoration: underline;
+}
+
+/* Actions layout */
+.table-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
 }

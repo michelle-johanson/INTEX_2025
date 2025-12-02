@@ -9,39 +9,40 @@ const EventOccurrences = require("../models/eventOccurrences");
 const Events = require("../models/events");
 
 /* ============================================================
-   LIST EVENT OCCURRENCES (LOGIN REQUIRED)
+   LIST EVENT OCCURRENCES
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        // The model now performs the SQL Join, so 'occurrences' 
-        // already has 'event_name' inside it!
+        // SQL version: already includes event_name via JOIN
         const occurrences = await EventOccurrences.getAll();
 
         res.render("eventOccurrences/index", {
             title: "Event Occurrences",
-            occurrences
+            occurrences,
+            session: req.session
         });
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Database Error");
     }
 });
 
-
 /* ============================================================
-   CREATE EVENT OCCURRENCE (ADMIN ONLY)
+   NEW OCCURRENCE
 ============================================================ */
 
 // Show form
 router.get("/new", requireAdmin, async (req, res) => {
     try {
-        // We still need the list of events for the <select> dropdown
-        const events = await Events.getAll();
+        const events = await Events.getAll(); // Needed for dropdown
 
         res.render("eventOccurrences/new", {
             title: "New Event Occurrence",
-            events
+            events,
+            session: req.session
         });
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading form");
@@ -51,7 +52,6 @@ router.get("/new", requireAdmin, async (req, res) => {
 // Submit new occurrence
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        // MAP FORM DATA TO DATABASE COLUMNS
         const newOccurrence = {
             event_id: Number(req.body.EventID),
             starts_at: req.body.EventDateTimeStart,
@@ -70,24 +70,25 @@ router.post("/new", requireAdmin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
-   EDIT EVENT OCCURRENCE (ADMIN ONLY)
+   EDIT OCCURRENCE
 ============================================================ */
 
 // Show form
 router.get("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const occurrence = await EventOccurrences.getById(req.params.id);
-        const events = await Events.getAll(); // Need for dropdown
+        const events = await Events.getAll();
 
         if (!occurrence) return res.status(404).send("Occurrence not found");
 
         res.render("eventOccurrences/edit", {
             title: "Edit Event Occurrence",
             occurrence,
-            events
+            events,
+            session: req.session
         });
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading edit form");
@@ -115,37 +116,37 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
-   DELETE OCCURRENCE (ADMIN ONLY)
+   DELETE OCCURRENCE
 ============================================================ */
 router.post("/:id/delete", requireAdmin, async (req, res) => {
     try {
         await EventOccurrences.delete(req.params.id);
         res.redirect("/eventOccurrences");
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Error deleting occurrence");
     }
 });
 
-
 /* ============================================================
-   SHOW SINGLE OCCURRENCE (LOGIN REQUIRED)
+   SHOW SINGLE OCCURRENCE
 ============================================================ */
 router.get("/:id", requireLogin, async (req, res) => {
     try {
-        // Our getById already joins the Event info!
         const occurrence = await EventOccurrences.getById(req.params.id);
 
         if (!occurrence) return res.status(404).send("Occurrence not found");
 
-        // We don't need to fetch 'event' separately anymore, 
-        // the name is inside 'occurrence.event_name'
         res.render("eventOccurrences/show", {
-            title: "Event Occurrence Details",
-            occurrence
+            title: occurrence.event_name
+                ? `${occurrence.event_name} Occurrence`
+                : "Event Occurrence Details",
+            occurrence,
+            session: req.session
         });
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading details");
