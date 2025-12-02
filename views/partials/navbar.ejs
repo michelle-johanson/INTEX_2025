@@ -25,25 +25,25 @@
             ]; %>
 
             <% menus.forEach(menu => { %>
-                <li class="er-nav-item dropdown">
-                    <a class="er-nav-link dropdown-toggle"
-                        href="#"
-                        data-bs-toggle="dropdown">
+                <li class="nav-item dropdown">
+                    <a class="er-nav-link nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <%= menu.label %>
                     </a>
 
                     <ul class="dropdown-menu">
-                        <% menu.items.forEach(i => { %>
-                            <li><a class="dropdown-item" href="<%= i.href %>"><%= i.text %></a></li>
-                        <% }) %>
+                        <% menu.items.forEach(i=> { %>
+                            <li>
+                                <a class="dropdown-item" href="<%= i.href %>">
+                                    <%= i.text %>
+                                </a>
+                            </li>
+                            <% }) %>
                     </ul>
                 </li>
             <% }) %>
 
             <!-- DONATE BUTTON -->
-            <li>
-                <a class="er-navbar-donate" href="/donations/new">DONATE</a>
-            </li>
+            <a class="er-navbar-donate" href="/donations/new">DONATE</a>
         </ul>
     </div>
 
@@ -52,23 +52,19 @@
         <% if (!session || !session.isLoggedIn) { %>
             <a href="/auth/login" class="er-navbar-login">LOGIN</a>
         <% } else { %>
-
-            <div class="dropdown er-account-dropdown">
-                <a class="er-nav-link dropdown-toggle"
-                    href="#"
-                    data-bs-toggle="dropdown">
+            <div class="nav-item dropdown er-account-dropdown">
+                <a class="er-nav-link nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                     <%= session.username %>
                 </a>
-
+            
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <% if (session.access_level === "manager") { %>
-                    <li><a class="dropdown-item" href="/users">Manage Users</a></li>
-                    <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
-                    <li><hr class="dropdown-divider"></li>
+                    <% if (session.access_level==="manager" ) { %>
+                        <li><a class="dropdown-item" href="/users">Manage Users</a></li>
+                        <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                        <li><hr class="dropdown-divider"></li>
                     <% } %>
-
-                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
-                </ul>
+                    
+                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>                </ul>
             </div>
 
         <% } %>
