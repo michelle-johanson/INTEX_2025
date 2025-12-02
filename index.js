@@ -98,6 +98,9 @@ app.use("/participants", participantRoutes);
 const eventRoutes = require("./routes/events");
 app.use("/events", eventRoutes);
 
+const eventOccurrenceRoutes = require("./routes/eventOccurrences");
+app.use("/eventOccurrences", eventOccurrenceRoutes);
+
 // Surveys
 const surveyRoutes = require("./routes/surveys");
 app.use("/surveys", surveyRoutes);
