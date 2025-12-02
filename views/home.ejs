@@ -60,3 +60,27 @@
         <a href="/donations/new" class="btn btn-primary btn-large">Donate Today</a>
     </div>
 </section>
+
+<footer>  
+    <span id="teapot-trigger" style="cursor: pointer; font-size: 20px;" title="Click me for a surprise">
+    🫖 </span>
+</footer>
+
+
+<script>
+document.getElementById('teapot-trigger').addEventListener('click', () => {
+  // 1. Make a request to your new backend route
+  fetch('/teapot')
+    .then(response => {
+      // 2. Log it to the console so you can see it working via code as well
+      console.log(`Status Code received: ${response.status}`);
+      console.log(`Status Text: ${response.statusText}`);
+      
+      // Optional: Alert the user or play a sound
+      if (response.status === 418) {
+        console.log("Easter egg found!");
+      }
+    })
+    .catch(error => console.error('Error fetching the teapot:', error));
+});
+</script>
