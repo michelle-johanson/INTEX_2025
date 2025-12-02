@@ -1,0 +1,115 @@
+/* -----------------------------------------------------
+   GLOBAL PAGE DEFAULTS / RESET
+----------------------------------------------------- */
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--cream);
+    font-family: var(--font-body);
+    color: var(--charcoal);
+}
+
+/* Universal reset for box sizing */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* -----------------------------------------------------
+   PAGE WRAPPER
+----------------------------------------------------- */
+
+.page-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+/* -----------------------------------------------------
+   PAGE TITLES
+----------------------------------------------------- */
+
+.page-title {
+    font-family: var(--font-heading);
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+    color: var(--charcoal);
+}
+
+/* -----------------------------------------------------
+   SUBTITLE
+----------------------------------------------------- */
+
+.page-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: var(--charcoal);
+    opacity: 0.8;
+}
+
+/* -----------------------------------------------------
+   CARDS (Reusable container styling)
+----------------------------------------------------- */
+
+.card-er {
+    background: white;
+    padding: 1.8rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+/* -----------------------------------------------------
+   TABLES
+----------------------------------------------------- */
+
+.table-er {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-er th,
+.table-er td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-er th {
+    font-weight: 600;
+    background: var(--blue);
+    color: white;
+}
+
+.table-er tr:hover {
+    background: #fafafa;
+}
+
+/* -----------------------------------------------------
+   FORMS
+----------------------------------------------------- */
+
+.input-er,
+.select-er {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--charcoal);
+    font-family: var(--font-body);
+    margin-bottom: 1rem;
+}
+
+.btn-er {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    background: var(--rose);
+    color: white;
+    border: none;
+    transition: var(--transition);
+    font-family: var(--font-body);
+}
+
+.btn-er:hover {
+    background: var(--charcoal);
+}

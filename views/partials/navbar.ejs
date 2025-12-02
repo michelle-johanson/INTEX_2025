@@ -1,53 +1,73 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
-    <div class="container">
+<nav class="navbar">
+    <div class="container-fluid">
 
-        <!-- Brand -->
-        <a class="navbar-brand fw-bold" href="/">Ella Rises</a>
+        <!-- LEFT SECTION: Logo + Program Hub dropdown -->
+        <div class="navbar-section">
 
-        <!-- Mobile menu toggle -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <!-- Logo (links to home) -->
+            <a href="/" class="navbar-brand">Ella Rises</a>
 
-        <!-- Right-side menu -->
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto align-items-center">
+            <!-- Program Hub dropdown (only when logged in) -->
+            <% if (session && session.isLoggedIn) { %>
+                <div class="dropdown">
+                    <a href="#" class="navbar-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                        Program Hub
+                    </a>
 
-                <li class="nav-item me-3">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
+                    <ul class="dropdown-menu">
 
-                <li class="nav-item me-3">
-                    <a class="nav-link" href="/donations/new">Donations</a>
-                </li>
+                        <!-- Everyone can view these pages; managers see edit controls there -->
+                        <li><a class="dropdown-item" href="/participants">Participants</a></li>
+                        <li><a class="dropdown-item" href="/surveys">Surveys</a></li>
+                        <li><a class="dropdown-item" href="/milestones">Milestones</a></li>
 
-                <% if (!session.isLoggedIn) { %>
+                    </ul>
+                </div>
+                <% } %>
 
-                    <!-- LOGIN BUTTON -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/auth/login">Login</a>
-                    </li>
+        </div>
 
-                    <% } else { %>
+        <!-- RIGHT SECTION: Donate + Login/User dropdown -->
+        <div class="navbar-section" style="justify-content: flex-end;">
 
-                        <!-- GREETING -->
-                        <li class="nav-item me-3">
-                            <span class="navbar-text">
-                                Hello, <strong>
-                                    <%= session.username %>
-                                </strong>
-                            </span>
-                        </li>
+            <!-- Donate is always visible -->
+            <a href="/donations/new" class="navbar-button">Donate</a>
 
-                        <!-- LOGOUT -->
-                        <li class="nav-item">
-                            <a class="nav-link text-danger" href="/auth/logout">Logout</a>
-                        </li>
+            <% if (!session || !session.isLoggedIn) { %>
+                <!-- Login link for guests -->
+                <a href="/auth/login" class="navbar-link">Login</a>
 
-                        <% } %>
+                <% } else { %>
+                    <!-- Username dropdown for logged-in users -->
+                    <div class="dropdown">
+                        <a href="#" class="navbar-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                            <%= session.username %>
+                        </a>
 
-            </ul>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+
+                            <% if (session.access_level==='X' ) { %>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="/users">Manage Users</a></li>
+                                <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                                <% } %>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                    <% } %>
+
         </div>
 
     </div>
 </nav>
+
+<!-- Bootstrap JS for dropdowns (we already went with the "easy" option) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" defer></script>

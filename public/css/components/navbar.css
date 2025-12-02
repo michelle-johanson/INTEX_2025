@@ -1,0 +1,149 @@
+/* ============================================================
+   ELLA RISES NAVBAR
+   Based on your previous working project
+============================================================ */
+
+/* We re-use your semantic pattern from the old project and
+   adapt it to the Ella Rises palette */
+.navbar {
+    /* Semantic tokens for this component */
+    --navbar-bg: var(--blue);
+    /* main bar color */
+    --navbar-text: var(--charcoal);
+    --navbar-hover-bg: rgba(255, 255, 255, 0.18);
+
+    --button-bg: var(--rose);
+    --button-text: #ffffff;
+    --button-hover-bg: var(--charcoal);
+
+    --dropdown-bg: #ffffff;
+    --dropdown-text: var(--charcoal);
+    --dropdown-hover-bg: var(--rose);
+    --dropdown-hover-text: #ffffff;
+
+    background-color: var(--navbar-bg);
+    height: 65px;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Use the full height inside the navbar */
+.navbar .container-fluid {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Left + right sections */
+.navbar-section {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+/* LOGO */
+.navbar-brand {
+    flex: 0;
+    margin-right: 1.5rem;
+    color: var(--navbar-text) !important;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    font-family: var(--font-script);
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* ============================================================
+   NAV LINKS (FULL HEIGHT)
+   Used for:
+   - Primary nav items
+   - Dropdown toggles (Events, Username)
+============================================================ */
+
+.navbar-link {
+    height: 100%;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--navbar-text) !important;
+    font-weight: 500;
+    font-family: var(--font-body);
+    border-radius: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-link:hover {
+    background-color: var(--navbar-hover-bg);
+}
+
+/* Make dropdown toggles look exactly like links */
+.navbar .dropdown-toggle {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.navbar .dropdown-toggle::after {
+    margin-left: 0.35rem;
+}
+
+/* ============================================================
+   DONATE BUTTON (separate from links)
+============================================================ */
+
+.navbar-button {
+    background-color: var(--button-bg);
+    color: var(--button-text) !important;
+    padding: 0.45rem 1.2rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-family: var(--font-body);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-button:hover {
+    background-color: var(--button-hover-bg);
+    color: var(--button-text) !important;
+}
+
+/* ============================================================
+   DROPDOWN MENU
+============================================================ */
+
+.navbar .dropdown-menu {
+    background-color: var(--dropdown-bg);
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    box-shadow: var(--shadow);
+    border: none;
+}
+
+.navbar .dropdown-menu a {
+    color: var(--dropdown-text);
+    font-family: var(--font-body);
+    padding: 0.6rem 1rem;
+}
+
+.navbar .dropdown-menu a:hover {
+    background-color: var(--dropdown-hover-bg);
+    color: var(--dropdown-hover-text) !important;
+}
+
+.navbar .dropdown-divider {
+    margin: 0.35rem 0;
+}
