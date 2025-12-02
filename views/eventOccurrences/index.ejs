@@ -1,14 +1,5 @@
-<div class="page-container">
-
-    <h1 class="page-title">Event Occurrences</h1>
-
-    <% if (session && session.access_level === "manager") { %>
-        <a href="/eventOccurrences/new" class="btn btn-primary btn-small mb-4">
-            + Schedule New Occurrence
-        </a>
-    <% } %>
-
-    <table>
+<div class="table-card">
+    <table class="er-table">
         <thead>
             <tr>
                 <th>Event</th>
@@ -17,9 +8,10 @@
                 <th>Location</th>
                 <th>Capacity</th>
                 <th>Reg Deadline</th>
-                <th></th>
+                <th>View</th>
             </tr>
         </thead>
+
         <tbody>
             <% occurrences.forEach(o => { %>
                 <tr>
@@ -30,23 +22,17 @@
                     <td><%= o.EventCapacity %></td>
                     <td><%= o.EventRegistrationDeadline %></td>
 
-                    <td class="table-actions">
-                        <a href="/eventOccurrences/<%= o.EventOccurrenceID %>">View</a>
-
-                        <% if (session && session.access_level === "manager") { %>
-                            <a href="/eventOccurrences/<%= o.EventOccurrenceID %>/edit">Edit</a>
-                            <form action="/eventOccurrences/<%= o.EventOccurrenceID %>/delete"
-                                  method="POST"
-                                  style="display:inline;">
-                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
-                                    Delete
-                                </button>
-                            </form>
-                        <% } %>
+                    <td>
+                        <a href="/eventOccurrences/<%= o.EventOccurrenceID %>" class="view-link">
+                            View
+                        </a>
                     </td>
                 </tr>
             <% }) %>
         </tbody>
     </table>
-
 </div>
+
+<a href="/eventOccurrences/new" class="btn btn-primary mt-3">
+    + Schedule New Occurrence
+</a>

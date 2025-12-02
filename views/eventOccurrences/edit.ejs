@@ -1,38 +1,24 @@
-<div class="page-container">
+<h1>Edit Event Occurrence</h1>
 
-    <h1 class="page-title">Edit Event Occurrence</h1>
+<form action="/eventOccurrences/<%= occurrence.id %>/edit" method="POST" class="form">
 
-    <form action="/eventOccurrences/<%= occurrence.EventOccurrenceID %>/edit" method="POST" class="form">
+    <label>Event Name</label>
+    <input type="text" name="event_name" value="<%= occurrence.event_name %>" required>
 
-        <label for="EventID">Event Template</label>
-        <select id="EventID" name="EventID" required>
-            <% events.forEach(e=> { %>
-                <option value="<%= e.EventID %>" <%=e.EventID===occurrence.EventID ? "selected" : "" %>>
-                    <%= e.EventName %>
-                </option>
-                <% }) %>
-        </select>
+    <label>Start</label>
+    <input type="datetime-local" name="start" value="<%= occurrence.start %>" required>
 
-        <label for="EventDateTimeStart">Start Date &amp; Time</label>
-        <input id="EventDateTimeStart" type="datetime-local" name="EventDateTimeStart"
-            value="<%= occurrence.EventDateTimeStart %>" required />
+    <label>End</label>
+    <input type="datetime-local" name="end" value="<%= occurrence.end %>" required>
 
-        <label for="EventDateTimeEnd">End Date &amp; Time</label>
-        <input id="EventDateTimeEnd" type="datetime-local" name="EventDateTimeEnd"
-            value="<%= occurrence.EventDateTimeEnd %>" required />
+    <label>Location</label>
+    <input type="text" name="location" value="<%= occurrence.location %>" required>
 
-        <label for="EventLocation">Location</label>
-        <input id="EventLocation" type="text" name="EventLocation" value="<%= occurrence.EventLocation %>" required />
+    <label>Capacity</label>
+    <input type="number" name="capacity" value="<%= occurrence.capacity %>" required>
 
-        <label for="EventCapacity">Capacity</label>
-        <input id="EventCapacity" type="number" name="EventCapacity" value="<%= occurrence.EventCapacity %>" min="1"
-            required />
+    <label>Registration Deadline</label>
+    <input type="date" name="registration_deadline" value="<%= occurrence.registration_deadline %>" required>
 
-        <label for="EventRegistrationDeadline">Registration Deadline</label>
-        <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline"
-            value="<%= occurrence.EventRegistrationDeadline %>" required />
-
-        <button class="btn-submit">Save Changes</button>
-    </form>
-
-</div>
+    <button class="btn btn-primary btn-submit mt-3">Save Changes</button>
+</form>

@@ -1,5 +1,4 @@
 // routes/eventOccurrences.js
-// Handles scheduled sessions of event templates
 
 const express = require("express");
 const router = express.Router();
@@ -10,15 +9,12 @@ const EventOccurrences = require("../models/eventOccurrences");
 const Events = require("../models/events");
 
 /* ============================================================
-   LIST EVENT OCCURRENCES (LOGIN REQUIRED)
+   LIST EVENT OCCURRENCES
 ============================================================ */
 router.get("/", requireLogin, (req, res) => {
     const occurrences = EventOccurrences.getAll();
-
-    // also bring event templates to show names
     const events = Events.getAll();
 
-    // join for display
     const enhanced = occurrences.map(o => {
         const event = events.find(e => e.EventID === o.EventID);
         return {
@@ -29,24 +25,22 @@ router.get("/", requireLogin, (req, res) => {
 
     res.render("eventOccurrences/index", {
         title: "Event Occurrences",
-        occurrences: enhanced
+        occurrences: enhanced,
+        session: req.session
     });
 });
 
-
 /* ============================================================
-   CREATE EVENT OCCURRENCE (ADMIN ONLY)
+   NEW OCCURRENCE
 ============================================================ */
-
-// Show form
 router.get("/new", requireAdmin, (req, res) => {
     res.render("eventOccurrences/new", {
         title: "New Event Occurrence",
-        events: Events.getAll()
+        events: Events.getAll(),
+        session: req.session
     });
 });
 
-// Submit new occurrence
 router.post("/new", requireAdmin, (req, res) => {
     EventOccurrences.create({
         EventID: Number(req.body.EventID),
@@ -60,12 +54,9 @@ router.post("/new", requireAdmin, (req, res) => {
     res.redirect("/eventOccurrences");
 });
 
-
 /* ============================================================
-   EDIT EVENT OCCURRENCE (ADMIN ONLY)
+   EDIT OCCURRENCE
 ============================================================ */
-
-// Show form
 router.get("/:id/edit", requireAdmin, (req, res) => {
     const occurrence = EventOccurrences.getById(req.params.id);
     if (!occurrence) return res.status(404).send("Occurrence not found");
@@ -73,11 +64,11 @@ router.get("/:id/edit", requireAdmin, (req, res) => {
     res.render("eventOccurrences/edit", {
         title: "Edit Event Occurrence",
         occurrence,
-        events: Events.getAll()
+        events: Events.getAll(),
+        session: req.session
     });
 });
 
-// Submit edits
 router.post("/:id/edit", requireAdmin, (req, res) => {
     EventOccurrences.update(req.params.id, {
         EventID: Number(req.body.EventID),
@@ -91,29 +82,33 @@ router.post("/:id/edit", requireAdmin, (req, res) => {
     res.redirect("/eventOccurrences");
 });
 
-
 /* ============================================================
-   DELETE OCCURRENCE (ADMIN ONLY)
+   DELETE OCCURRENCE
 ============================================================ */
 router.post("/:id/delete", requireAdmin, (req, res) => {
     EventOccurrences.delete(req.params.id);
     res.redirect("/eventOccurrences");
 });
 
-
 /* ============================================================
-   SHOW SINGLE OCCURRENCE (LOGIN REQUIRED)
+   SHOW SINGLE OCCURRENCE
 ============================================================ */
 router.get("/:id", requireLogin, (req, res) => {
     const occurrence = EventOccurrences.getById(req.params.id);
     if (!occurrence) return res.status(404).send("Occurrence not found");
 
-    const event = Events.getById(occurrence.EventID);
+    const parentEvent = Events.getById(occurrence.EventID) || {
+        EventName: "Unknown Event",
+        EventDescription: "",
+        EventType: "",
+        EventLocation: ""
+    };
 
     res.render("eventOccurrences/show", {
-        title: "Event Occurrence Details",
+        title: `${parentEvent.EventName} Occurrence`,
         occurrence,
-        event
+        parentEvent,
+        session: req.session
     });
 });
 

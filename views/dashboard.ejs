@@ -1,0 +1,51 @@
+<section class="container mt-4">
+    <h1 class="page-title">Ella Rises Dashboard</h1>
+    <p class="page-subtitle">
+        Explore event effectiveness, participant satisfaction, and long-term success indicators.
+    </p>
+
+    <!-- Filters (optional — you can enhance later) -->
+    <div class="dashboard-filters mb-4">
+        <form method="GET" action="/dashboard">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Event Type</label>
+                    <select class="form-select" name="eventType">
+                        <option value="">All Events</option>
+                        <% eventTypes.forEach(type => { %>
+                            <option value="<%= type %>" <%= selectedEvent === type ? "selected" : "" %>>
+                                <%= type %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Participant Demographic</label>
+                    <select class="form-select" name="demo">
+                        <option value="">All Participants</option>
+                        <% demographics.forEach(d => { %>
+                            <option value="<%= d %>" <%= selectedDemo === d ? "selected" : "" %>>
+                                <%= d %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" type="submit">Apply Filters</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Embedded Dashboard -->
+    <div class="dashboard-frame">
+        <iframe 
+            src="<%= dashboardUrl %>" 
+            frameborder="0"
+            allowfullscreen
+            class="dashboard-iframe">
+        </iframe>
+    </div>
+</section>

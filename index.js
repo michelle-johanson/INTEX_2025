@@ -102,6 +102,10 @@ app.use("/events", eventRoutes);
 const eventOccurrenceRoutes = require("./routes/eventOccurrences");
 app.use("/eventOccurrences", eventOccurrenceRoutes);
 
+// Registrations
+const registrationsRoutes = require("./routes/registrations");
+app.use("/registrations", registrationsRoutes);
+
 // Surveys
 const surveyRoutes = require("./routes/surveys");
 app.use("/surveys", surveyRoutes);
@@ -109,6 +113,10 @@ app.use("/surveys", surveyRoutes);
 // Milestones
 const milestoneRoutes = require("./routes/milestones");
 app.use("/milestones", milestoneRoutes);
+
+// Dashboard
+const dashboardRouter = require('./routes/dashboard');
+app.use('/dashboard', dashboardRouter);
 
 /* ============================================================
     START SERVER
