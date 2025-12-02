@@ -45,7 +45,7 @@
 
                 <!-- DONATE as plain link -->
                 <li class="er-navbar-item">
-                    <a class="er-navbar-link" href="/donations/new">
+                    <a class="er-navbar-donate" href="/donations/new">
                         DONATE
                     </a>
                 </li>
@@ -56,15 +56,16 @@
         <!-- RIGHT: login / account -->
         <div class="er-navbar-right">
             <% if (!session || !session.isLoggedIn) { %>
-                <a href="/auth/login" class="er-navbar-login">Login</a>
+                <a href="/auth/login" class="er-navbar-login">LOGIN</a>
                 <% } else { %>
                     <div class="dropdown er-account-dropdown">
-                        <a class="er-navbar-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <a class="er-navbar-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                             <%= session.username %>
                         </a>
+                    
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-
+                    
                             <% if (session.access_level==="manager" ) { %>
                                 <li>
                                     <hr class="dropdown-divider">
@@ -72,13 +73,14 @@
                                 <li><a class="dropdown-item" href="/users">Manage Users</a></li>
                                 <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
                                 <% } %>
-
+                    
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
                         </ul>
                     </div>
+
                     <% } %>
         </div>
 

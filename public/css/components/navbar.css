@@ -38,7 +38,7 @@
 
 /* Logo image stays true to original PNG proportions */
 .er-navbar-logo img {
-    height: 55px;
+    height: 70px;
     width: auto;
     object-fit: contain;
     display: block;
@@ -135,4 +135,45 @@
     .er-has-dropdown:hover>.dropdown-menu {
         display: block;
     }
+}
+
+/* Girls-Who-Code style dropdown enhancements */
+.er-navbar .dropdown-menu {
+    min-width: 180px;
+    padding: 0.75rem 0;
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.er-navbar .dropdown-item {
+    padding: 0.8rem 1.25rem;
+    font-size: 0.95rem;
+}
+
+.er-navbar .dropdown-item:hover {
+    background: var(--er-navbar-dropdown-hover-bg);
+    color: var(--er-navbar-dropdown-hover-text);
+    border-radius: 0;
+}
+
+/* Donate button */
+.er-navbar-donate {
+    padding: 0.65rem 1.3rem;
+    border: 2px solid var(--er-navbar-donate-border);
+    border-radius: 5px; 
+    font-size: 0.95rem;
+    color: var(--er-navbar-donate-text);
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.25s var(--transition);
+}
+
+.er-navbar-donate:hover {
+    background: var(--er-navbar-donate-hover-bg);
+    color: var(--er-navbar-donate-hover-text);
+}
+
+.er-account-dropdown {
+    position: relative;
 }

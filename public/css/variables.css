@@ -50,6 +50,11 @@
     --er-navbar-dropdown-text: var(--charcoal);
     --er-navbar-dropdown-hover-bg: var(--rose);
     --er-navbar-dropdown-hover-text: white;
+
+    --er-navbar-donate-border: var(--rose);
+    --er-navbar-donate-text: var(--charcoal);
+    --er-navbar-donate-hover-bg: var(--rose);
+    --er-navbar-donate-hover-text: white;
 }
 
 /* ============================================================
