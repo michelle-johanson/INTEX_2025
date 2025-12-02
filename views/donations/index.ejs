@@ -13,38 +13,41 @@
         </thead>
 
         <tbody>
-            <% donations.forEach(d=> {
-                const participant = participants.find(p => p.ParticipantID === d.ParticipantID);
-                %>
+            <% donations.forEach(d => { %>
                 <tr>
                     <td>
-                        <% if (participant) { %>
-                            <%= participant.FirstName %>
-                                <%= participant.LastName %> (ID #<%= participant.ParticipantID %>)
-                                        <% } else { %>
-                                            —
-                                            <% } %>
+                        <% if (d.first_name) { %>
+                            <%= d.first_name %> <%= d.last_name %> (ID #<%= d.participant_id %>)
+                        <% } else { %>
+                            Participant #<%= d.participant_id %>
+                        <% } %>
                     </td>
+                    
                     <td>
-                        <%= d.DonationDate %>
+                        <%= new Date(d.donation_date).toLocaleDateString() %>
                     </td>
-                    <td>$<%= d.DonationAmount.toFixed ? d.DonationAmount.toFixed(2) : d.DonationAmount %>
+                    
+                    <td>
+                        $<%= Number(d.amount).toFixed(2) %>
                     </td>
 
                     <td class="table-actions">
-                        <a href="/donations/<%= d.DonationID %>">View</a>
+                        <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>">View</a>
 
-                        <% if (session && session.access_level==="manager" ) { %>
-                            <a href="/donations/<%= d.DonationID %>/edit">Edit</a>
-                            <form action="/donations/<%= d.DonationID %>/delete" method="POST" style="display:inline;">
+                        <% if (session && session.access_level === "manager") { %>
+                            <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>/edit">Edit</a>
+                            
+                            <form action="/donations/<%= d.participant_id %>/<%= d.donation_no %>/delete" 
+                                  method="POST" 
+                                  style="display:inline;">
                                 <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
                                     Delete
                                 </button>
                             </form>
-                            <% } %>
+                        <% } %>
                     </td>
                 </tr>
-                <% }) %>
+            <% }) %>
         </tbody>
     </table>
 

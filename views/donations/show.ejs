@@ -5,41 +5,37 @@
     <div class="detail-card">
 
         <div class="detail-row">
-            <span class="detail-label">Donation ID</span>
-            <span class="detail-value">#<%= donation.DonationID %></span>
+            <span class="detail-label">Donation No</span>
+            <span class="detail-value">#<%= donation.donation_no %></span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Participant</span>
             <span class="detail-value">
-                <% if (participant) { %>
-                    <%= participant.FirstName %>
-                        <%= participant.LastName %> (ID #<%= participant.ParticipantID %>)
-                                <% } else { %>
-                                    —
-                                    <% } %>
+                <%= donation.first_name %> <%= donation.last_name %> 
+                (ID #<%= donation.participant_id %>)
             </span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Date</span>
             <span class="detail-value">
-                <%= donation.DonationDate %>
+                <%= new Date(donation.donation_date).toLocaleDateString() %>
             </span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Amount</span>
             <span class="detail-value">
-                $<%= donation.DonationAmount.toFixed ? donation.DonationAmount.toFixed(2) : donation.DonationAmount %>
+                $<%= Number(donation.amount).toFixed(2) %>
             </span>
         </div>
 
-        <% if (session && session.access_level==="manager" ) { %>
+        <% if (session && session.access_level === "manager") { %>
             <div class="detail-actions">
-                <a href="/donations/<%= donation.DonationID %>/edit">Edit</a>
+                <a href="/donations/<%= donation.participant_id %>/<%= donation.donation_no %>/edit">Edit</a>
             </div>
-            <% } %>
+        <% } %>
 
     </div>
 
