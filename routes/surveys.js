@@ -6,21 +6,38 @@ const router = express.Router();
 const { requireAdmin, requireLogin } = require("../middleware/auth");
 
 const Surveys = require("../models/surveys");
-// We still need these for the "New/Edit" dropdown menus
 const Participants = require("../models/participants");
 const EventOccurrences = require("../models/eventOccurrences");
 
 /* ============================================================
-   LIST SURVEYS (LOGIN REQUIRED)
+   MAIN INDEX ROUTE (SPLIT VIEW LOGIC)
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const surveys = await Surveys.getAll();
+        // Safe role check (lowercase)
+        const role = (req.session.access_level || "").toLowerCase();
 
+        // SCENARIO 1: MANAGER LOGGED IN
+        // Show a Directory of EVENTS so they can pick one to view results for.
+        if (role === "manager" || role === "admin") {
+            const occurrences = await EventOccurrences.getAll();
+            
+            return res.render("surveys/manager_index", {
+                title: "Survey Management",
+                occurrences
+            });
+        }
+
+        // SCENARIO 2: PARTICIPANT LOGGED IN
+        // Show only their OWN surveys.
+        const mySurveys = await Surveys.getByParticipant(req.session.userID);
+        
         res.render("surveys/index", {
-            title: "Post-Event Surveys",
-            surveys
+            title: "My Surveys",
+            surveys: mySurveys,
+            contextName: "My" // Header will say "My Surveys"
         });
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Database Error");
@@ -29,13 +46,37 @@ router.get("/", requireLogin, async (req, res) => {
 
 
 /* ============================================================
+   MANAGER DRILL-DOWN: View Surveys for ONE Event
+   URL: /surveys/occurrence/5
+============================================================ */
+router.get("/occurrence/:id", requireAdmin, async (req, res) => {
+    try {
+        const occurrenceId = req.params.id;
+
+        // Fetch all surveys for this specific event occurrence
+        const eventSurveys = await Surveys.getByOccurrence(occurrenceId);
+        
+        // Fetch the occurrence details just for the Page Title
+        const occurrence = await EventOccurrences.getById(occurrenceId);
+
+        res.render("surveys/index", {
+            title: `Surveys for ${occurrence.event_name}`,
+            surveys: eventSurveys,
+            contextName: `${occurrence.event_name}` // Header: "STEAM Night Surveys"
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading event surveys");
+    }
+});
+
+
+/* ============================================================
    NEW SURVEY (ADMIN ONLY)
 ============================================================ */
-
-// Show form
 router.get("/new", requireAdmin, async (req, res) => {
     try {
-        // Fetch data for dropdowns
         const participants = await Participants.getAll();
         const occurrences = await EventOccurrences.getAll();
 
@@ -50,10 +91,8 @@ router.get("/new", requireAdmin, async (req, res) => {
     }
 });
 
-// Submit
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        // MAP FORM DATA TO DATABASE COLUMNS
         const newSurvey = {
             event_occurrence_id: Number(req.body.EventOccurrenceID),
             participant_id: Number(req.body.ParticipantID),
@@ -66,7 +105,9 @@ router.post("/new", requireAdmin, async (req, res) => {
         };
 
         await Surveys.create(newSurvey);
-        res.redirect("/surveys");
+        
+        // Redirect back to that specific event's list
+        res.redirect(`/surveys/occurrence/${newSurvey.event_occurrence_id}`);
 
     } catch (err) {
         console.error(err);
@@ -99,7 +140,6 @@ router.get("/:oid/:pid/edit", requireAdmin, async (req, res) => {
     }
 });
 
-// Submit edits
 router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
@@ -112,7 +152,9 @@ router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
         };
 
         await Surveys.update(req.params.oid, req.params.pid, updates);
-        res.redirect("/surveys");
+        
+        // Redirect back to that event's list
+        res.redirect(`/surveys/occurrence/${req.params.oid}`);
 
     } catch (err) {
         console.error(err);
@@ -127,7 +169,9 @@ router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
 router.post("/:oid/:pid/delete", requireAdmin, async (req, res) => {
     try {
         await Surveys.delete(req.params.oid, req.params.pid);
-        res.redirect("/surveys");
+        
+        // Redirect back to that event's list
+        res.redirect(`/surveys/occurrence/${req.params.oid}`);
     } catch (err) {
         console.error(err);
         res.status(500).send("Error deleting survey");
@@ -140,10 +184,18 @@ router.post("/:oid/:pid/delete", requireAdmin, async (req, res) => {
 ============================================================ */
 router.get("/:oid/:pid", requireLogin, async (req, res) => {
     try {
-        // The Model JOIN already grabbed the names we need!
         const survey = await Surveys.getByIds(req.params.oid, req.params.pid);
 
         if (!survey) return res.status(404).send("Survey not found");
+
+        // SECURITY CHECK
+        const role = (req.session.access_level || "").toLowerCase();
+        const isAuthorized = (role === 'manager' || role === 'admin') || 
+                             (req.session.userID === survey.participant_id);
+
+        if (!isAuthorized) {
+             return res.status(403).send("Unauthorized Access");
+        }
 
         res.render("surveys/show", {
             title: "Survey Details",
