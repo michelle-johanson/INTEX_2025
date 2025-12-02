@@ -2,7 +2,7 @@
 const knex = require("../db");
 
 module.exports = {
-    // Get all milestones (Joined with Participant name for display)
+    // Get all milestones (Keep this for administrative exports if needed)
     getAll: () => {
         return knex("milestones")
             .join("participants", "milestones.participant_id", "=", "participants.participant_id")
@@ -13,6 +13,21 @@ module.exports = {
             )
             .orderBy("milestones.achieved_date", "desc");
     },
+
+    // --- NEW FUNCTION ---
+    // Get all milestones for a SPECIFIC participant
+    getByParticipant: (participantId) => {
+        return knex("milestones")
+            .join("participants", "milestones.participant_id", "=", "participants.participant_id")
+            .select(
+                "milestones.*",
+                "participants.first_name",
+                "participants.last_name"
+            )
+            .where({ "milestones.participant_id": participantId })
+            .orderBy("milestones.achieved_date", "desc");
+    },
+    // --------------------
 
     // Get specific milestone (Needs TWO IDs)
     getById: (participantId, milestoneNo) => {
@@ -32,16 +47,13 @@ module.exports = {
 
     // Create new milestone (Auto-increments milestone_no per user)
     create: async (data) => {
-        // 1. Find the highest milestone number this user currently has
         const result = await knex("milestones")
             .max("milestone_no as max_no")
             .where({ participant_id: data.participant_id })
             .first();
 
-        // 2. Add 1 to it (or start at 1 if they have none)
         const nextNo = (result.max_no || 0) + 1;
 
-        // 3. Insert the new record
         return knex("milestones").insert({
             participant_id: data.participant_id,
             milestone_no: nextNo,
@@ -50,7 +62,7 @@ module.exports = {
         });
     },
 
-    // Update (Needs TWO IDs)
+    // Update
     update: (participantId, milestoneNo, data) => {
         return knex("milestones")
             .where({ 
@@ -60,7 +72,7 @@ module.exports = {
             .update(data);
     },
 
-    // Delete (Needs TWO IDs)
+    // Delete
     delete: (participantId, milestoneNo) => {
         return knex("milestones")
             .where({ 
