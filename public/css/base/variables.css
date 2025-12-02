@@ -31,4 +31,9 @@
 
     /* Transitions */
     --transition: 0.25s ease;
+
+    /* Add missing tokens */
+    --page-max-width: 1250px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --er-navbar-bg: white;
 }
