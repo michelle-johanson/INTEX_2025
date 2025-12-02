@@ -1,51 +1,32 @@
 // models/events.js
-// Event Templates (NOT occurrences)
-
-let events = [
-    {
-        EventID: 1,
-        EventName: "STEAM Night",
-        EventType: "STEAM",
-        EventRecurrencePattern: "Monthly",
-        EventDescription: "Hands-on STEAM activities",
-        EventDefaultCapacity: 50
-    },
-    {
-        EventID: 2,
-        EventName: "Mentor Kickoff",
-        EventType: "Workshop",
-        EventRecurrencePattern: "Once",
-        EventDescription: "Meet your mentors",
-        EventDefaultCapacity: 30
-    }
-];
+const knex = require("../db"); // Import the shared connection
 
 module.exports = {
-    getAll: () => events,
+    // Get all events, sorted by ID
+    getAll: () => {
+        return knex("events").select("*").orderBy("event_id", "asc");
+    },
 
-    getById: (id) =>
-        events.find(e => e.EventID === Number(id)),
+    // Get specific event
+    getById: (id) => {
+        return knex("events").where({ event_id: id }).first();
+    },
 
+    // Create new event
+    // We return the IDs to confirm it worked
     create: (data) => {
-        const newEvent = {
-            EventID:
-                events.length > 0
-                    ? events[events.length - 1].EventID + 1
-                    : 1,
-            ...data
-        };
-        events.push(newEvent);
-        return newEvent;
+        return knex("events").insert(data).returning("event_id");
     },
 
-    update: (id, updated) => {
-        const e = events.find(e => e.EventID === Number(id));
-        if (!e) return null;
-        Object.assign(e, updated);
-        return e;
+    // Update event
+    update: (id, data) => {
+        return knex("events")
+            .where({ event_id: id })
+            .update(data);
     },
 
+    // Delete event
     delete: (id) => {
-        events = events.filter(e => e.EventID !== Number(id));
+        return knex("events").where({ event_id: id }).del();
     }
 };

@@ -7,42 +7,51 @@
         <div class="detail-row">
             <span class="detail-label">Event</span>
             <span class="detail-value">
-                <% if (event) { %>
-                    <%= event.EventName %>
-                <% } else { %>
-                    Event ID #<%= occurrence.EventID %>
-                <% } %>
+                <%= occurrence.event_name ? occurrence.event_name : 'Event ID #' + occurrence.event_id %>
             </span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Start</span>
-            <span class="detail-value"><%= occurrence.EventDateTimeStart %></span>
+            <span class="detail-value">
+                <%= new Date(occurrence.starts_at).toLocaleString() %>
+            </span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">End</span>
-            <span class="detail-value"><%= occurrence.EventDateTimeEnd %></span>
+            <span class="detail-value">
+                <%= new Date(occurrence.ends_at).toLocaleString() %>
+            </span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Location</span>
-            <span class="detail-value"><%= occurrence.EventLocation %></span>
+            <span class="detail-value"><%= occurrence.location %></span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Capacity</span>
-            <span class="detail-value"><%= occurrence.EventCapacity %></span>
+            <span class="detail-value"><%= occurrence.capacity %></span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Registration Deadline</span>
-            <span class="detail-value"><%= occurrence.EventRegistrationDeadline %></span>
+            <span class="detail-value">
+                <%= occurrence.registration_deadline ? new Date(occurrence.registration_deadline).toLocaleDateString() : 'None' %>
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Description</span>
+            <span class="detail-value">
+                <%= occurrence.event_description || 'No description available.' %>
+            </span>
         </div>
 
         <% if (session && session.access_level === "manager") { %>
             <div class="detail-actions">
-                <a href="/eventOccurrences/<%= occurrence.EventOccurrenceID %>/edit">Edit</a>
+                <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit">Edit</a>
             </div>
         <% } %>
 

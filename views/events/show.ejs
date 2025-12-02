@@ -5,32 +5,32 @@
     <div class="detail-card">
         <div class="detail-row">
             <span class="detail-label">Name</span>
-            <span class="detail-value"><%= event.EventName %></span>
+            <span class="detail-value"><%= event.name %></span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Type</span>
-            <span class="detail-value"><%= event.EventType %></span>
+            <span class="detail-value"><%= event.type %></span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Recurrence</span>
-            <span class="detail-value"><%= event.EventRecurrencePattern %></span>
+            <span class="detail-value"><%= event.recurrence_pattern %></span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Default Capacity</span>
-            <span class="detail-value"><%= event.EventDefaultCapacity %></span>
+            <span class="detail-value"><%= event.default_capacity %></span>
         </div>
 
         <div class="detail-row">
             <span class="detail-label">Description</span>
-            <span class="detail-value"><%= event.EventDescription %></span>
+            <span class="detail-value"><%= event.description %></span>
         </div>
 
         <% if (session && session.access_level === "manager") { %>
             <div class="detail-actions">
-                <a href="/events/<%= event.EventID %>/edit">Edit</a>
+                <a href="/events/<%= event.event_id %>/edit">Edit</a>
             </div>
         <% } %>
     </div>
