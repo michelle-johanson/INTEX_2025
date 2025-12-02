@@ -23,20 +23,28 @@
         <tbody>
             <% occurrences.forEach(o => { %>
                 <tr>
-                    <td><%= o.EventName %></td>
-                    <td><%= o.EventDateTimeStart %></td>
-                    <td><%= o.EventDateTimeEnd %></td>
-                    <td><%= o.EventLocation %></td>
-                    <td><%= o.EventCapacity %></td>
-                    <td><%= o.EventRegistrationDeadline %></td>
+                    <td><strong><%= o.event_name %></strong></td>
+
+                    <td><%= new Date(o.starts_at).toLocaleString() %></td>
+
+                    <td><%= new Date(o.ends_at).toLocaleString() %></td>
+
+                    <td><%= o.location %></td>
+
+                    <td><%= o.capacity %></td>
+
+                    <td>
+                        <%= o.registration_deadline ? new Date(o.registration_deadline).toLocaleDateString() : 'None' %>
+                    </td>
 
                     <td class="table-actions">
-                        <a href="/eventOccurrences/<%= o.EventOccurrenceID %>">View</a>
+                        <a href="/eventOccurrences/<%= o.event_occurrence_id %>">View</a>
 
                         <% if (session && session.access_level === "manager") { %>
-                            <a href="/eventOccurrences/<%= o.EventOccurrenceID %>/edit">Edit</a>
-                            <form action="/eventOccurrences/<%= o.EventOccurrenceID %>/delete"
-                                  method="POST"
+                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>/edit">Edit</a>
+                            
+                            <form action="/eventOccurrences/<%= o.event_occurrence_id %>/delete" 
+                                  method="POST" 
                                   style="display:inline;">
                                 <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
                                     Delete

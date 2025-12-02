@@ -1,57 +1,48 @@
 // models/eventOccurrences.js
-
-let eventOccurrences = [
-    {
-        EventOccurrenceID: 1,
-        EventID: 1,
-        EventDateTimeStart: "2024-03-15T18:00",
-        EventDateTimeEnd: "2024-03-15T20:00",
-        EventLocation: "STEM Lab",
-        EventCapacity: 40,
-        EventRegistrationDeadline: "2024-03-10"
-    },
-    {
-        EventOccurrenceID: 2,
-        EventID: 2,
-        EventDateTimeStart: "2024-04-10T17:00",
-        EventDateTimeEnd: "2024-04-10T19:00",
-        EventLocation: "Community Center",
-        EventCapacity: 30,
-        EventRegistrationDeadline: "2024-04-05"
-    }
-];
+const knex = require("../db");
 
 module.exports = {
-    getAll: () => eventOccurrences,
+    // Get all scheduled occurrences AND their parent event name
+    getAll: () => {
+        return knex("event_occurrences")
+            .join("events", "event_occurrences.event_id", "=", "events.event_id")
+            .select(
+                "event_occurrences.*", // Get all date/time/location info
+                "events.name as event_name", // Get the name from parent table
+                "events.type as event_type"
+            )
+            .orderBy("event_occurrences.starts_at", "asc");
+    },
 
-    getById: (id) =>
-        eventOccurrences.find(o => o.EventOccurrenceID === Number(id)),
+    // Get specific occurrence (Joined with Event info)
+    getById: (id) => {
+        return knex("event_occurrences")
+            .join("events", "event_occurrences.event_id", "=", "events.event_id")
+            .select(
+                "event_occurrences.*",
+                "events.name as event_name",
+                "events.description as event_description"
+            )
+            .where({ "event_occurrences.event_occurrence_id": id })
+            .first();
+    },
 
+    // Create new occurrence
     create: (data) => {
-        const nextID =
-            eventOccurrences.length > 0
-                ? eventOccurrences[eventOccurrences.length - 1].EventOccurrenceID + 1
-                : 1;
-
-        const newOccurrence = {
-            EventOccurrenceID: nextID,
-            ...data
-        };
-
-        eventOccurrences.push(newOccurrence);
-        return newOccurrence;
+        return knex("event_occurrences").insert(data).returning("event_occurrence_id");
     },
 
-    update: (id, updated) => {
-        const o = eventOccurrences.find(o => o.EventOccurrenceID === Number(id));
-        if (!o) return null;
-        Object.assign(o, updated);
-        return o;
+    // Update occurrence
+    update: (id, data) => {
+        return knex("event_occurrences")
+            .where({ event_occurrence_id: id })
+            .update(data);
     },
 
+    // Delete occurrence
     delete: (id) => {
-        eventOccurrences = eventOccurrences.filter(
-            o => o.EventOccurrenceID !== Number(id)
-        );
+        return knex("event_occurrences")
+            .where({ event_occurrence_id: id })
+            .del();
     }
 };

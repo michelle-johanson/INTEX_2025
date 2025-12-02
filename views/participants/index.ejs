@@ -23,19 +23,28 @@
         <tbody>
             <% participants.forEach(p => { %>
                 <tr>
-                    <td><%= p.FirstName %> <%= p.LastName %></td>
-                    <td><%= p.Email %></td>
-                    <td><%= p.City %>, <%= p.State %></td>
-                    <td><%= p.FieldOfInterest %></td>
-                    <td>$<%= p.TotalDonations %></td>
+                    <td><%= p.first_name %> <%= p.last_name %></td>
+                    
+                    <td><%= p.email %></td>
+                    
+                    <td><%= p.city %>, <%= p.state %></td>
+                    
+                    <td><%= p.field_of_interest %></td>
+
+                    <td>$<%= p.total_donations || 0 %></td>
 
                     <td class="table-actions">
-                        <a href="/participants/<%= p.ParticipantID %>">View</a>
+                        <a href="/participants/<%= p.participant_id %>">View</a>
 
                         <% if (session && session.access_level === "manager") { %>
-                            <a href="/participants/<%= p.ParticipantID %>/edit">Edit</a>
-                            <form action="/participants/<%= p.ParticipantID %>/delete" method="POST" style="display:inline;">
-                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">Delete</button>
+                            <a href="/participants/<%= p.participant_id %>/edit">Edit</a>
+                            
+                            <form action="/participants/<%= p.participant_id %>/delete" 
+                                  method="POST" 
+                                  style="display:inline;">
+                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                    Delete
+                                </button>
                             </form>
                         <% } %>
                     </td>

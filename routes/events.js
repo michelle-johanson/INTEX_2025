@@ -1,21 +1,26 @@
-// routes/events.js (Event Templates)
+// routes/events.js
 
 const express = require("express");
 const router = express.Router();
 
 const { requireAdmin, requireLogin } = require("../middleware/auth");
-const Events = require("../models/events");   // NEW ERD MODEL
+const Events = require("../models/events"); 
 
 /* ============================================================
    LIST EVENT TEMPLATES (LOGIN REQUIRED)
 ============================================================ */
-router.get("/", requireLogin, (req, res) => {
-    const events = Events.getAll();
-
-    res.render("events/index", {
-        title: "Event Templates",
-        events
-    });
+router.get("/", requireLogin, async (req, res) => {
+    try {
+        const events = await Events.getAll();
+        
+        res.render("events/index", {
+            title: "Event Templates",
+            events
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 });
 
 
@@ -23,7 +28,7 @@ router.get("/", requireLogin, (req, res) => {
    CREATE NEW EVENT TEMPLATE (ADMIN ONLY)
 ============================================================ */
 
-// Show form
+// Show form (No Async needed here, just rendering HTML)
 router.get("/new", requireAdmin, (req, res) => {
     res.render("events/new", {
         title: "Add Event Template"
@@ -31,16 +36,25 @@ router.get("/new", requireAdmin, (req, res) => {
 });
 
 // Submit
-router.post("/new", requireAdmin, (req, res) => {
-    Events.create({
-        EventName: req.body.EventName,
-        EventType: req.body.EventType,
-        EventRecurrencePattern: req.body.EventRecurrencePattern,
-        EventDescription: req.body.EventDescription,
-        EventDefaultCapacity: Number(req.body.EventDefaultCapacity)
-    });
+router.post("/new", requireAdmin, async (req, res) => {
+    try {
+        // MAP FORM DATA TO DATABASE COLUMNS
+        // Left Side: DB Column Name | Right Side: HTML Input Name
+        const newEvent = {
+            name: req.body.EventName,
+            type: req.body.EventType,
+            recurrence_pattern: req.body.EventRecurrencePattern,
+            description: req.body.EventDescription,
+            default_capacity: Number(req.body.EventDefaultCapacity)
+        };
 
-    res.redirect("/events");
+        await Events.create(newEvent);
+        res.redirect("/events");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error creating event");
+    }
 });
 
 
@@ -49,50 +63,80 @@ router.post("/new", requireAdmin, (req, res) => {
 ============================================================ */
 
 // Show edit form
-router.get("/:id/edit", requireAdmin, (req, res) => {
-    const event = Events.getById(req.params.id);
-    if (!event) return res.status(404).send("Event template not found");
+router.get("/:id/edit", requireAdmin, async (req, res) => {
+    try {
+        const event = await Events.getById(req.params.id);
+        
+        if (!event) return res.status(404).send("Event template not found");
 
-    res.render("events/edit", {
-        title: "Edit Event Template",
-        event
-    });
+        res.render("events/edit", {
+            title: "Edit Event Template",
+            event
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error fetching event");
+    }
 });
 
 // Submit edits
-router.post("/:id/edit", requireAdmin, (req, res) => {
-    Events.update(req.params.id, {
-        EventName: req.body.EventName,
-        EventType: req.body.EventType,
-        EventRecurrencePattern: req.body.EventRecurrencePattern,
-        EventDescription: req.body.EventDescription,
-        EventDefaultCapacity: Number(req.body.EventDefaultCapacity)
-    });
+router.post("/:id/edit", requireAdmin, async (req, res) => {
+    try {
+        // MAP FORM DATA TO DATABASE COLUMNS
+        const updates = {
+            name: req.body.EventName,
+            type: req.body.EventType,
+            recurrence_pattern: req.body.EventRecurrencePattern,
+            description: req.body.EventDescription,
+            default_capacity: Number(req.body.EventDefaultCapacity)
+        };
 
-    res.redirect("/events");
+        await Events.update(req.params.id, updates);
+        res.redirect("/events");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating event");
+    }
 });
 
 
 /* ============================================================
    DELETE EVENT TEMPLATE (ADMIN ONLY)
 ============================================================ */
-router.post("/:id/delete", requireAdmin, (req, res) => {
-    Events.delete(req.params.id);
-    res.redirect("/events");
+router.post("/:id/delete", requireAdmin, async (req, res) => {
+    try {
+        await Events.delete(req.params.id);
+        res.redirect("/events");
+    } catch (err) {
+        // Foreign Key Violation Check:
+        // If this event has scheduled occurrences, Postgres will throw an error (Code 23503)
+        if (err.code === '23503') {
+            return res.status(400).send("Cannot delete this event because it has scheduled occurrences or history attached to it.");
+        }
+        console.error(err);
+        res.status(500).send("Error deleting event");
+    }
 });
 
 
 /* ============================================================
    SHOW SINGLE EVENT TEMPLATE (LOGIN REQUIRED)
 ============================================================ */
-router.get("/:id", requireLogin, (req, res) => {
-    const event = Events.getById(req.params.id);
-    if (!event) return res.status(404).send("Event template not found");
+router.get("/:id", requireLogin, async (req, res) => {
+    try {
+        const event = await Events.getById(req.params.id);
+        
+        if (!event) return res.status(404).send("Event template not found");
 
-    res.render("events/show", {
-        title: "Event Template Details",
-        event
-    });
+        res.render("events/show", {
+            title: "Event Template Details",
+            event
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading event");
+    }
 });
 
 module.exports = router;
