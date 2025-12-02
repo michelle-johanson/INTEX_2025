@@ -44,10 +44,21 @@
     background: var(--btn-secondary-bg);
     color: var(--btn-secondary-text);
     border: 2px solid var(--btn-secondary-border);
+    border-radius: var(--border-radius);
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+    transition: var(--transition);
 }
 
 .btn-secondary:hover {
     background: var(--btn-secondary-hover-bg);
+    color: var(--btn-secondary-hover-text);
+    border-color: var(--btn-secondary-hover-bg);
 }
 
 /* ----- Danger Button ----- */

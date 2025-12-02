@@ -49,6 +49,15 @@ body {
     margin-bottom: 2rem;
 }
 
+.page-card-wide {
+    max-width: 420px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background: var(--page-card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
 /* Spacing utilities */
 .mt-2 {
     margin-top: 1rem;

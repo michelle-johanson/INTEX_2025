@@ -104,6 +104,7 @@
     --btn-secondary-text: var(--charcoal);
     --btn-secondary-border: var(--charcoal);
     --btn-secondary-hover-bg: var(--lavender);
+    --btn-secondary-hover-text: white;
 
     --btn-danger-bg: var(--rose);
     --btn-danger-text: white;

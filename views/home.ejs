@@ -10,23 +10,35 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 
-<body>
+<body class="page">
 
-    <%- include("partials/navbar") %>
+    <%- include("partials/navbar", { session }) %>
 
-        <div class="container mt-5 text-center">
+        <div class="page-container text-center">
 
-            <h1 class="display-5 mb-3">Welcome to Ella Rises</h1>
+            <h1 class="page-title">Empowering the Rising Generation</h1>
 
-            <% if (session.isLoggedIn) { %>
-                <p class="lead">
-                    Hello, <strong>
-                        <%= session.username %>
-                    </strong>! We're glad you're here.
+            <p class="page-subtitle">
+                Ella Rises helps young women develop confidence and pursue higher education
+                through STEAM workshops, mentoring, and leadership opportunities.
+            </p>
+
+            <a href="/donations/new" class="btn btn-primary btn-large">
+                Support the Mission
+            </a>
+
+            <div class="page-card mt-4">
+                <h2 class="page-title" style="font-size: 1.8rem;">Our Impact</h2>
+                <p class="page-subtitle">
+                    We track participant milestones, post-event survey responses, and long-term STEAM outcomes.
                 </p>
-                <% } else { %>
-                    <p class="lead">This is your placeholder homepage. Your routing is working!</p>
+
+                <% if (session && session.isLoggedIn) { %>
+                    <a href="/dashboard" class="btn btn-secondary btn-large mt-2">
+                        View Dashboard
+                    </a>
                     <% } %>
+            </div>
 
         </div>
 

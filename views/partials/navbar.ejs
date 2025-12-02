@@ -1,53 +1,49 @@
 <nav class="navbar">
     <div class="container-fluid">
 
-        <!-- LEFT SECTION: Logo + Program Hub dropdown -->
+        <!-- LEFT -->
         <div class="navbar-section">
-
-            <!-- Logo (links to home) -->
             <a href="/" class="navbar-brand">Ella Rises</a>
 
-            <!-- Program Hub dropdown (only when logged in) -->
             <% if (session && session.isLoggedIn) { %>
                 <div class="dropdown">
-                    <a href="#" class="navbar-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                    <a href="#" class="navbar-link dropdown-toggle" data-bs-toggle="dropdown">
                         Program Hub
                     </a>
 
                     <ul class="dropdown-menu">
-
-                        <!-- Everyone can view these pages; managers see edit controls there -->
                         <li><a class="dropdown-item" href="/participants">Participants</a></li>
                         <li><a class="dropdown-item" href="/surveys">Surveys</a></li>
                         <li><a class="dropdown-item" href="/milestones">Milestones</a></li>
-
+                        <li><a class="dropdown-item" href="/events">Events</a></li>
+                        <li><a class="dropdown-item" href="/eventOccurrences">Event Occurrences</a></li>
+                        <li><a class="dropdown-item" href="/registrations">Registrations</a></li>
                     </ul>
                 </div>
                 <% } %>
-
         </div>
 
-        <!-- RIGHT SECTION: Donate + Login/User dropdown -->
-        <div class="navbar-section" style="justify-content: flex-end;">
+        <!-- RIGHT -->
+        <div class="navbar-section">
 
-            <!-- Donate is always visible -->
             <a href="/donations/new" class="navbar-button">Donate</a>
 
             <% if (!session || !session.isLoggedIn) { %>
-                <!-- Login link for guests -->
+
                 <a href="/auth/login" class="navbar-link">Login</a>
 
                 <% } else { %>
-                    <!-- Username dropdown for logged-in users -->
+
                     <div class="dropdown">
-                        <a href="#" class="navbar-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                        <a href="#" class="navbar-link dropdown-toggle" data-bs-toggle="dropdown">
                             <%= session.username %>
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end">
+
                             <li><a class="dropdown-item" href="/profile">My Profile</a></li>
 
-                            <% if (session.access_level==='X' ) { %>
+                            <% if (session.access_level==="X" ) { %>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
@@ -59,15 +55,15 @@
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+
                         </ul>
                     </div>
+
                     <% } %>
 
         </div>
-
     </div>
 </nav>
 
-<!-- Bootstrap JS for dropdowns (we already went with the "easy" option) -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" defer></script>

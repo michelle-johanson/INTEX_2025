@@ -1,7 +1,6 @@
 /* ============================================================
     FORMS
 ============================================================ */
-
 input[type="text"],
 input[type="email"],
 input[type="number"],
@@ -16,7 +15,7 @@ select {
     color: var(--form-text);
     font-family: var(--font-body);
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.8rem;
 }
 
 input:focus,
@@ -36,10 +35,12 @@ label {
 
 /* Form buttons */
 .btn-submit {
+    width: 100%;
     background: var(--form-button-bg);
     color: var(--form-button-text);
-    padding: 0.7rem 1.4rem;
+    padding: 0.8rem 1.4rem;
     border-radius: var(--border-radius);
+    font-size: 1.05rem;
     font-weight: 600;
     border: none;
     cursor: pointer;
@@ -56,4 +57,22 @@ label {
     font-size: 0.9rem;
     margin-top: -0.8rem;
     margin-bottom: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--form-border);
+    background: var(--form-bg);
+    color: var(--form-text);
+    font-family: var(--font-body);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: var(--form-focus-border);
+    box-shadow: 0 0 0 3px var(--form-focus-shadow);
+    outline: none;
 }

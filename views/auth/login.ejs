@@ -1,44 +1,43 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>
-        <%= title %>
-    </title>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
 
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 
-<body>
+<body class="page">
 
-    <%- include("../partials/navbar") %>
+    <%- include("../partials/navbar", { session }) %>
 
-        <div class="container mt-4" style="max-width: 400px;">
-            <h2>Login</h2>
+    <div class="page-card-wide form">
 
-            <% if (error) { %>
-                <div class="alert alert-danger">
-                    <%= error %>
-                </div>
-                <% } %>
+        <h2 class="page-title" style="text-align:center; margin-bottom:1rem;">
+            Login
+        </h2>
 
-                    <form action="/auth/login" method="POST">
+        <% if (error) { %>
+            <div class="form-error" style="text-align:center;">
+                <%= error %>
+            </div>
+        <% } %>
 
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input name="username" type="text" class="form-control" required>
-                        </div>
+        <form action="/auth/login" method="POST">
 
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input name="password" type="password" class="form-control" required>
-                        </div>
+            <label for="username">Username</label>
+            <input id="username" type="text" name="username" class="form-control" required>
 
-                        <button class="btn btn-primary w-100">Login</button>
-                    </form>
-        </div>
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" class="form-control" required>
+
+            <button type="submit" class="btn-submit">
+                Login
+            </button>
+
+        </form>
+
+    </div>
 
 </body>
-
 </html>
