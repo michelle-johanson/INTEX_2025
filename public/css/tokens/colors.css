@@ -1,0 +1,43 @@
+:root {
+    /* Brand palette */
+    --blue: #99B7C6;
+    --lavender: #97BCE4;
+    --cream: #F9F5EA;
+    --light-pink: #FFD8D1;
+    --pink: #F9AFB1;
+    --sage: #9AB59D;
+    --charcoal: #3A3F3B;
+    --coral: #F4B092;
+    --rose: #CE325B;
+
+    /* Semantic tokens */
+    --form-border: var(--blue);
+    --form-focus-shadow: rgba(153, 183, 198, 0.35);
+
+    --card-bg: #fff;
+    --card-border: #e6e6e6;
+
+    --btn-primary-bg: var(--rose);
+    --btn-primary-text: white;
+    --btn-primary-border: var(--rose);
+
+    --btn-primary-hover-bg: #b82b50;
+    --btn-primary-hover-text: white;
+    --btn-primary-hover-border: #b82b50;
+
+    --btn-details-bg: var(--lavender);
+    --btn-details-text: white;
+    --btn-details-border: var(--lavender);
+
+    --btn-details-hover-bg: #7aa9d7;
+    --btn-details-hover-text: white;
+    --btn-details-hover-border: #7aa9d7;
+
+    --success-bg: #e7f7ea;
+    --success-border: #9dd9a7;
+    --success-text: #1f6b2e;
+
+    --error-bg: #fde8e8;
+    --error-border: #e49a9a;
+    --error-text: #8a1f1f;
+}

@@ -1,0 +1,31 @@
+.btn-submit {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--btn-primary-border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-submit:hover {
+    background: var(--btn-primary-hover-bg);
+    color: var(--btn-primary-hover-text);
+    border-color: var(--btn-primary-hover-border);
+}
+
+.btn-table-details {
+    background: var(--btn-details-bg);
+    color: var(--btn-details-text);
+    border: 1px solid var(--btn-details-border);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.btn-table-details:hover {
+    background: var(--btn-details-hover-bg);
+    color: var(--btn-details-hover-text);
+    border-color: var(--btn-details-hover-border);
+}

@@ -1,0 +1,19 @@
+.form-success,
+.form-error {
+    padding: 0.9rem 1.2rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.form-success {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+}
+
+.form-error {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
+}
