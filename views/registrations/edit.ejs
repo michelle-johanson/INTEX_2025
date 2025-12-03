@@ -2,45 +2,41 @@
 
     <h1 class="page-title">Edit Registration</h1>
 
-    <form action="/registrations/<%= registration.EventOccurrenceID %>/<%= registration.ParticipantID %>/edit"
-        method="POST" class="form">
+    <form action="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit" 
+          method="POST" 
+          class="form">
 
-        <label>Participant</label>
-        <select name="ParticipantID" disabled>
-            <% participants.forEach(p=> { %>
-                <option value="<%= p.ParticipantID %>" <%=p.ParticipantID===registration.ParticipantID ? "selected" : ""
-                    %>>
-                    <%= p.FirstName %>
-                        <%= p.LastName %>
-                </option>
-                <% }) %>
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <strong>Event:</strong> <%= registration.event_name %><br>
+            <strong>Participant:</strong> <%= registration.first_name %> <%= registration.last_name %>
+        </div>
+
+        <label for="RegistrationStatus">Status</label>
+        <select id="RegistrationStatus" name="RegistrationStatus">
+            <option value="Registered" <%= registration.status === 'Registered' ? 'selected' : '' %>>Registered</option>
+            <option value="Waitlist" <%= registration.status === 'Waitlist' ? 'selected' : '' %>>Waitlist</option>
+            <option value="Cancelled" <%= registration.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
         </select>
 
-        <label>Event Occurrence</label>
-        <select name="EventOccurrenceID" disabled>
-            <% occurrences.forEach(o=> { %>
-                <option value="<%= o.EventOccurrenceID %>" <%=o.EventOccurrenceID===registration.EventOccurrenceID
-                    ? "selected" : "" %>>
-                    <%= o.EventDateTimeStart %>
-                </option>
-                <% }) %>
-        </select>
+        <div style="margin: 1rem 0;">
+            <label style="display:inline-flex; align-items:center; gap: 0.5rem;">
+                <input type="checkbox" 
+                       name="RegistrationAttendedFlag" 
+                       style="width:auto; margin:0;" 
+                       <%= registration.attended ? 'checked' : '' %> />
+                Attended Event?
+            </label>
+        </div>
 
-        <label>Status</label>
-        <input type="text" name="RegistrationStatus" value="<%= registration.RegistrationStatus %>" />
+        <label for="RegistrationCheckInTime">Check-In Time</label>
+        <input type="datetime-local" 
+               name="RegistrationCheckInTime" 
+               value="<%= registration.check_in_time ? new Date(new Date(registration.check_in_time).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" />
 
-        <label>Attended?</label>
-        <input type="checkbox" name="RegistrationAttendedFlag" <%=registration.RegistrationAttendedFlag ? "checked" : ""
-            %> />
-
-        <label>Check-In Time</label>
-        <input type="datetime-local" name="RegistrationCheckInTime"
-            value="<%= registration.RegistrationCheckInTime %>" />
-
-        <label>Created At</label>
-        <input type="date" name="RegistrationCreatedAt" value="<%= registration.RegistrationCreatedAt %>" />
-
-        <button class="btn-submit">Save Changes</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Save Changes</button>
+            <a href="/registrations/event/<%= registration.event_occurrence_id %>" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
     </form>
 
 </div>

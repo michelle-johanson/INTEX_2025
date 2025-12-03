@@ -2,8 +2,9 @@
 
     <h1 class="page-title">Registration Details</h1>
 
-    <div class="detail-card">
+    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
 
+    <div class="detail-card">
         <div class="detail-row">
             <span class="detail-label">Event</span>
             <span class="detail-value">
@@ -47,18 +48,31 @@
         </div>
 
         <div class="detail-row">
-            <span class="detail-label">Created At</span>
+            <span class="detail-label">Registered On</span>
             <span class="detail-value">
                 <%= registration.created_at ? new Date(registration.created_at).toLocaleDateString() : 'N/A' %>
             </span>
         </div>
 
-        <% if (session && session.access_level === "manager") { %>
-            <div class="detail-actions">
+        <% if (isManager) { %>
+            <div class="detail-actions" style="border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem;">
                 <a href="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit">Edit</a>
+                
+                <a href="/registrations/event/<%= registration.event_occurrence_id %>" style="margin-left: 1rem; font-size: 0.9em;">
+                    View All Registrants for this Event
+                </a>
             </div>
         <% } %>
-
     </div>
+
+    <% if (isManager) { %>
+        <div style="margin-top: 2rem;">
+            <a href="/registrations/event/<%= registration.event_occurrence_id %>" class="btn btn-secondary">← Back to Event List</a>
+        </div>
+    <% } else { %>
+        <div style="margin-top: 2rem;">
+            <a href="/registrations" class="btn btn-secondary">← Back to My Registrations</a>
+        </div>
+    <% } %>
 
 </div>
