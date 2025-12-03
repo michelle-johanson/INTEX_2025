@@ -8,24 +8,31 @@
 
     <form action="/donations/new" method="POST" class="form">
 
-        <label for="ParticipantID">Participant (optional)</label>
-        <select id="ParticipantID" name="ParticipantID">
-            <option value="">No specific participant</option>
-            <% participants.forEach(p=> { %>
-                <option value="<%= p.ParticipantID %>">
-                    <%= p.FirstName %>
-                        <%= p.LastName %> (ID #<%= p.ParticipantID %>)
+        <label for="ParticipantID">Participant (Required)</label>
+        <select id="ParticipantID" name="ParticipantID" required>
+            <option value="">Select a participant...</option>
+            
+            <% participants.forEach(p => { %>
+                <option value="<%= p.participant_id %>">
+                    <%= p.first_name %> <%= p.last_name %> (ID #<%= p.participant_id %>)
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
         <label for="DonationDate">Donation Date</label>
-        <input id="DonationDate" type="date" name="DonationDate" required />
+        <input id="DonationDate" 
+               type="date" 
+               name="DonationDate" 
+               value="<%= new Date().toISOString().split('T')[0] %>" 
+               required />
 
         <label for="DonationAmount">Donation Amount (USD)</label>
         <input id="DonationAmount" type="number" name="DonationAmount" min="1" step="0.01" required />
 
-        <button class="btn-submit">Submit Donation</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Submit Donation</button>
+            <a href="/donations" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
     </form>
 
 </div>
