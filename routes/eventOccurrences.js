@@ -8,17 +8,19 @@ const EventOccurrences = require("../models/eventOccurrences");
 const Events = require("../models/events");
 
 /* ============================================================
-   LIST UPCOMING EVENT OCCURRENCES
+   LIST EVENT OCCURRENCES (With Search)
    GET /eventOccurrences
 ============================================================ */
 
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const occurrences = await EventOccurrences.getUpcoming();
+        const searchTerm = req.query.search || "";
+        const occurrences = await EventOccurrences.getAll(searchTerm);
 
         res.render("eventOccurrences/index", {
-            title: "Upcoming Events",
+            title: "Scheduled Events",
             occurrences,
+            searchTerm,
             session: req.session
         });
 
@@ -41,6 +43,8 @@ router.get("/new", requireAdmin, async (req, res) => {
         res.render("eventOccurrences/new", {
             title: "Schedule New Occurrence",
             events,
+            // UPDATED: Pass query params (like ?event_id=5) to the view
+            query: req.query, 
             session: req.session
         });
 
@@ -60,15 +64,17 @@ router.post("/new", requireAdmin, async (req, res) => {
     try {
         const data = {
             event_id: Number(req.body.EventID),
-            starts_at: req.body.StartsAt,
-            ends_at: req.body.EndsAt,
-            location: req.body.Location,
-            capacity: req.body.Capacity,
-            registration_deadline: req.body.RegDeadline
+            starts_at: req.body.EventDateTimeStart,
+            ends_at: req.body.EventDateTimeEnd,
+            location: req.body.EventLocation,
+            capacity: req.body.EventCapacity,
+            registration_deadline: req.body.EventRegistrationDeadline
         };
 
         await EventOccurrences.create(data);
 
+        // Smart Redirect: If we came from a specific event page, go back there?
+        // For simplicity, we go to the main list, but you could enhance this later.
         res.redirect("/eventOccurrences");
 
     } catch (err) {
@@ -141,11 +147,11 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
             event_id: Number(req.body.EventID),
-            starts_at: req.body.StartsAt,
-            ends_at: req.body.EndsAt,
-            location: req.body.Location,
-            capacity: req.body.Capacity,
-            registration_deadline: req.body.RegDeadline
+            starts_at: req.body.EventDateTimeStart,
+            ends_at: req.body.EventDateTimeEnd,
+            location: req.body.EventLocation,
+            capacity: req.body.EventCapacity,
+            registration_deadline: req.body.EventRegistrationDeadline
         };
 
         await EventOccurrences.update(req.params.id, updates);

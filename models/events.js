@@ -2,8 +2,17 @@ const knex = require("../db");
 
 // EVENTS MODEL
 module.exports = {
-    getAll() {
-        return knex("events").orderBy("event_id");
+    getAll(searchTerm = null) {
+        const query = knex("events");
+
+        if (searchTerm) {
+            query.where(builder => {
+                builder.where("name", "ilike", `%${searchTerm}%`)
+                       .orWhere("type", "ilike", `%${searchTerm}%`);
+            });
+        }
+
+        return query.orderBy("event_id");
     },
 
     getById(id) {
@@ -17,7 +26,9 @@ module.exports = {
             .insert({
                 name: data.name,
                 description: data.description,
-                event_type: data.event_type
+                type: data.type,
+                recurrence_pattern: data.recurrence_pattern,
+                default_capacity: data.default_capacity
             })
             .returning("*");
     },
@@ -28,7 +39,9 @@ module.exports = {
             .update({
                 name: data.name,
                 description: data.description,
-                event_type: data.event_type
+                type: data.type,
+                recurrence_pattern: data.recurrence_pattern,
+                default_capacity: data.default_capacity
             })
             .returning("*");
     },
@@ -37,13 +50,5 @@ module.exports = {
         return knex("events")
             .where({ event_id: id })
             .del();
-    },
-
-    // Pull all future occurrences for this event
-    getUpcomingOccurrences(id) {
-        return knex("event_occurrences")
-            .where("event_id", id)
-            .andWhere("start_datetime", ">", knex.fn.now())
-            .orderBy("start_datetime");
     }
 };

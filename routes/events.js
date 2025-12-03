@@ -7,15 +7,18 @@ const Events = require("../models/events");
 const EventOccurrences = require("../models/eventOccurrences");
 
 /* ============================================================
-   LIST ALL EVENT TEMPLATES
+   LIST ALL EVENT TEMPLATES (Level 1)
 ============================================================ */
-
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const events = await Events.getAll();
+        const searchTerm = req.query.search || "";
+        const events = await Events.getAll(searchTerm);
+        
         res.render("events/index", {
             title: "Event Types",
-            events
+            events,
+            searchTerm,
+            session: req.session // <--- ADD THIS so the EJS doesn't crash
         });
     } catch (err) {
         console.error(err);
@@ -23,29 +26,22 @@ router.get("/", requireLogin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
    NEW EVENT TEMPLATE (ADMIN)
 ============================================================ */
-
 router.get("/new", requireAdmin, (req, res) => {
-    res.render("events/new", {
-        title: "Create New Event Type"
-    });
+    res.render("events/new", { title: "Create New Event Type" });
 });
 
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        // Left: DB Column | Right: HTML Input Name
-        const newEvent = {
-            name: req.body.EventName,                  // Matches form
-            description: req.body.EventDescription,    // Matches form
-            event_type: req.body.EventType,           // Matches form
-            recurrence_pattern: req.body.EventRecurrencePattern
-        };
-
-        await Events.create(newEvent);
-
+        await Events.create({
+            name: req.body.EventName,
+            description: req.body.EventDescription,
+            type: req.body.EventType, 
+            recurrence_pattern: req.body.EventRecurrencePattern,
+            default_capacity: Number(req.body.EventDefaultCapacity)
+        });
         res.redirect("/events");
     } catch (err) {
         console.error(err);
@@ -53,23 +49,27 @@ router.post("/new", requireAdmin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
-   VIEW SINGLE EVENT TYPE
+   VIEW SINGLE EVENT & OCCURRENCES (Level 2)
+/* ============================================================
+   VIEW SINGLE EVENT & OCCURRENCES (Level 2)
 ============================================================ */
-
 router.get("/:id", requireLogin, async (req, res) => {
     try {
+        // 1. Get Event Details
         const event = await Events.getById(req.params.id);
-
         if (!event) return res.status(404).send("Event not found");
 
-        const occurrences = await Events.getUpcomingOccurrences(req.params.id);
+        // 2. Get Occurrences (with Search)
+        const searchTerm = req.query.search || "";
+        const occurrences = await EventOccurrences.getByEventId(req.params.id, searchTerm);
 
         res.render("events/show", {
             title: event.name,
             event,
-            occurrences
+            occurrences,
+            searchTerm,
+            session: req.session // <--- YOU MUST ADD THIS LINE
         });
     } catch (err) {
         console.error(err);
@@ -77,21 +77,14 @@ router.get("/:id", requireLogin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
    EDIT EVENT TEMPLATE (ADMIN)
 ============================================================ */
-
 router.get("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const event = await Events.getById(req.params.id);
-
         if (!event) return res.status(404).send("Event not found");
-
-        res.render("events/edit", {
-            title: "Edit Event Type",
-            event
-        });
+        res.render("events/edit", { title: "Edit Event Type", event });
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading event for edit");
@@ -103,9 +96,10 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
         await Events.update(req.params.id, {
             name: req.body.EventName,
             description: req.body.EventDescription,
-            event_type: req.body.EventType
+            type: req.body.EventType, 
+            recurrence_pattern: req.body.EventRecurrencePattern,
+            default_capacity: Number(req.body.EventDefaultCapacity)
         });
-
         res.redirect("/events/" + req.params.id);
     } catch (err) {
         console.error(err);
@@ -113,23 +107,15 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
    DELETE EVENT TEMPLATE (ADMIN)
 ============================================================ */
-
 router.post("/:id/delete", requireAdmin, async (req, res) => {
     try {
         await Events.delete(req.params.id);
         res.redirect("/events");
     } catch (err) {
-        // Foreign key protection
-        if (err.code === "23503") {
-            return res.status(400).send(
-                "Cannot delete this event because it has scheduled occurrences."
-            );
-        }
-
+        if (err.code === "23503") return res.status(400).send("Cannot delete this event because it has scheduled occurrences.");
         console.error(err);
         res.status(500).send("Error deleting event");
     }
