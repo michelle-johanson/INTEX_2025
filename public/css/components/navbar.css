@@ -16,8 +16,8 @@
     --nav-link-font-size: 0.95rem;
     --nav-link-letterspacing: 0.04em;
 
-    --nav-link-color: var(--charcoal, #333);
-    --nav-link-hover-color: var(--rose, #e63946);
+    --nav-link-color: var(--charcoal);
+    --nav-link-hover-color: var(--rose);
     --nav-item-hover-bg: rgba(0, 0, 0, 0.04);
 
     /* Dropdown Menu */
@@ -32,7 +32,7 @@
     --dropdown-item-line-height: 1.2;
 
     --dropdown-hover-bg: #fef3f1;
-    --dropdown-hover-text: var(--rose, #e63946);
+    --dropdown-hover-text: var(--rose);
 
     /* Mobile */
     --navbar-height-mobile: 70px;
@@ -199,7 +199,7 @@
 }
 
 /* =============================================================================
-   DONATE BUTTON
+   DONATE BUTTON (Desktop only)
 ============================================================================= */
 
 .er-navbar-donate {
@@ -208,13 +208,16 @@
     border-radius: 6px;
     color: var(--nav-link-hover-color);
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, color 0.3s ease;
     display: inline-block;
 }
 
-.er-navbar-donate:hover {
-    background: var(--nav-link-hover-color);
-    color: white;
+/* Desktop donate button hover - NO background change */
+@media (min-width: 769px) {
+    .er-navbar-donate:hover {
+        border-color: var(--nav-link-hover-color);
+        color: var(--nav-link-hover-color);
+    }
 }
 
 /* =============================================================================
@@ -243,10 +246,19 @@
     display: none;
 }
 
-/* Hide mobile-only items on desktop */
-.mobile-login-item,
-.mobile-account-dropdown {
-    display: none;
+/* Hide mobile-only items on desktop - CRITICAL */
+@media (min-width: 769px) {
+
+    .mobile-login-item,
+    .mobile-admin-dropdown,
+    .mobile-logout-item {
+        display: none !important;
+    }
+
+    /* Hide dropdown containers on desktop - they should be inside parent */
+    .dropdown-items-container {
+        display: none !important;
+    }
 }
 
 /* =============================================================================
@@ -347,33 +359,51 @@
         justify-content: flex-start;
     }
 
-    /* Show mobile-only items */
+    /* Show mobile-only items ONLY in mobile */
     .mobile-login-item,
-    .mobile-account-dropdown {
-        display: flex;
+    .mobile-admin-dropdown,
+    .mobile-logout-item {
+        display: flex !important;
     }
 
-    /* ---------------- Accordion Dropdowns (Click to expand) ---------------- */
+    /* ---------------- Accordion Dropdowns (Hover + Click) ---------------- */
+
+    /* Hide dropdown container by default */
+    .dropdown-items-container {
+        display: none !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Show dropdown container when parent has open class OR is hovered */
+    .dropdown.open+.dropdown-items-container,
+    .dropdown:hover+.dropdown-items-container,
+    .mobile-admin-dropdown.open+.dropdown-items-container,
+    .mobile-admin-dropdown:hover+.dropdown-items-container {
+        display: block !important;
+    }
+
+    /* Dropdown menu styling */
     .dropdown-menu {
         position: static !important;
+        display: block !important;
         width: 100%;
         background: var(--mobile-dropdown-bg);
         padding: 0;
+        margin: 0;
         border-left: 4px solid var(--nav-link-hover-color);
         border-radius: 0;
         box-shadow: none;
         border-top: none;
         border-right: none;
         border-bottom: none;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease, padding 0.3s ease;
+        list-style: none;
     }
 
-    .dropdown.open .dropdown-menu {
-        display: block !important;
-        max-height: 500px;
-        padding: 0.25rem 0;
+    /* Make dropdown items indented */
+    .dropdown-menu .dropdown-item {
+        padding: 0.75rem 2.5rem;
     }
 
     .dropdown-item {
@@ -398,6 +428,7 @@
         letter-spacing: var(--nav-link-letterspacing);
         color: var(--nav-link-color);
         text-transform: uppercase;
+        transition: background 0.25s ease, color 0.25s ease;
     }
 
     .er-navbar-donate:hover {
@@ -432,8 +463,8 @@
 
 @media (max-width: 950px) and (min-width: 769px) {
     :root {
-        --nav-item-gap: 1rem;
-        --nav-item-padding-x: 0.75rem;
+        /* --nav-item-gap: 1rem; */
+        /* --nav-item-padding-x: 0.75rem; */
         --nav-link-font-size: 0.88rem;
     }
 

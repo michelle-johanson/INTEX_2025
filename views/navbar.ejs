@@ -10,11 +10,12 @@
             <!-- DESKTOP & MOBILE MENU -->
             <ul class="er-navbar-menu" id="mobileMenu">
                 <% const isManager=session && session.access_level && (session.access_level.toLowerCase()==="manager" ||
-                    session.access_level.toLowerCase()==="admin" ); const menus=[ { label: "EVENTS" , href: "/events" },
-                    { label: "REGISTER" , items: [ { text: "Registrations" , href: "/registrations" }, {
-                    text: "Participants" , href: "/participants" }, { text: "Milestones" , href: "/milestones" } ]}, {
-                    label: "SURVEY" , items: [ { text: "Surveys" , href: "/surveys" }, { text: "Dashboard" ,
-                    href: "/dashboard" } ]} ]; %>
+                    session.access_level.toLowerCase()==="admin" ); const isLoggedIn=session && session.isLoggedIn;
+                    const menus=[ { label: "EVENTS" , href: "/events" }, { label: "REGISTER" , items: [ {
+                    text: "Registrations" , href: "/registrations" }, { text: "Participants" , href: "/participants" },
+                    { text: "Milestones" , href: "/milestones" } ] } ]; if (isLoggedIn) { menus.push({ label: "SURVEY" ,
+                    items: [ { text: "Surveys" , href: "/surveys" }, { text: "Dashboard" , href: "/dashboard" } ] }); }
+                    %>
 
                     <% menus.forEach(menu=> { %>
                         <% if (menu.href) { %>
@@ -25,11 +26,11 @@
                             </li>
                             <% } else { %>
                                 <li class="nav-item dropdown">
-                                    <!-- Desktop: Regular link with hover, Mobile: Click to expand -->
                                     <a href="#" class="er-nav-link dropdown-toggle" data-dropdown-toggle>
                                         <%= menu.label %>
                                     </a>
-
+                                </li>
+                                <li class="nav-item dropdown-items-container">
                                     <ul class="dropdown-menu">
                                         <% menu.items.forEach(item=> { %>
                                             <li>
@@ -48,41 +49,48 @@
                                             <a class="er-navbar-donate" href="/donations/new">DONATE</a>
                                         </li>
 
-                                        <!-- MOBILE LOGIN (only visible in mobile menu) -->
-                                        <% if (!session || !session.isLoggedIn) { %>
+                                        <!-- MOBILE ONLY - LOGIN (only visible if not logged in) -->
+                                        <% if (!isLoggedIn) { %>
                                             <li class="nav-item mobile-login-item">
                                                 <a href="/auth/login" class="er-nav-link">LOGIN</a>
                                             </li>
-                                            <% } else { %>
-                                                <li class="nav-item dropdown mobile-account-dropdown">
-                                                    <a href="#" class="er-nav-link dropdown-toggle"
-                                                        data-dropdown-toggle>
-                                                        Tools
-                                                    </a>
+                                            <% } %>
 
-                                                    <ul class="dropdown-menu">
-                                                        <% if (isManager) { %>
+                                                <!-- MOBILE ONLY - ADMIN TOOLS (only visible if logged in as admin) -->
+                                                <% if (isLoggedIn && isManager) { %>
+                                                    <li class="nav-item mobile-admin-dropdown">
+                                                        <a href="#" class="er-nav-link dropdown-toggle"
+                                                            data-dropdown-toggle>
+                                                            ADMIN TOOLS
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item dropdown-items-container mobile-admin-dropdown">
+                                                        <ul class="dropdown-menu">
                                                             <li><a class="dropdown-item" href="/users">Manage Users</a>
                                                             </li>
                                                             <li><a class="dropdown-item" href="/donations">Manage
                                                                     Donations</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <% } %>
+
+                                                        <!-- MOBILE ONLY - LOGOUT (only visible if logged in) -->
+                                                        <% if (isLoggedIn) { %>
+                                                            <li class="nav-item mobile-logout-item">
+                                                                <a href="/auth/logout" class="er-nav-link">LOGOUT</a>
+                                                            </li>
                                                             <% } %>
-                                                                <li><a class="dropdown-item"
-                                                                        href="/auth/logout">Logout</a></li>
-                                                    </ul>
-                                                </li>
-                                                <% } %>
             </ul>
         </div>
 
         <!-- RIGHT: Desktop Login / Username -->
         <div class="er-navbar-right">
-            <% if (!session || !session.isLoggedIn) { %>
+            <% if (!isLoggedIn) { %>
                 <a href="/auth/login" class="er-nav-link">LOGIN</a>
                 <% } else { %>
                     <div class="nav-item dropdown er-account-dropdown">
                         <a class="er-nav-link dropdown-toggle" href="#">
-                            <%= session.firstname %>
+                            <%= session.firstname || session.username %>
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -128,14 +136,31 @@
 
         // Toggle mobile dropdown accordion (click/tap)
         document.querySelectorAll("[data-dropdown-toggle]").forEach(toggle => {
+            // Click handler for mobile
             toggle.addEventListener("click", (e) => {
                 if (isMobile()) {
                     e.preventDefault();
                     e.stopPropagation();
-                    const dropdown = toggle.closest(".dropdown");
-                    dropdown.classList.toggle("open");
+                    const dropdownParent = toggle.closest(".dropdown, .mobile-admin-dropdown");
+                    dropdownParent.classList.toggle("open");
                 }
             });
+
+            // Hover handler for split-screen desktop mode
+            const dropdownParent = toggle.closest(".dropdown, .mobile-admin-dropdown");
+            if (dropdownParent) {
+                dropdownParent.addEventListener("mouseenter", () => {
+                    if (isMobile()) {
+                        dropdownParent.classList.add("open");
+                    }
+                });
+
+                dropdownParent.addEventListener("mouseleave", () => {
+                    if (isMobile()) {
+                        dropdownParent.classList.remove("open");
+                    }
+                });
+            }
         });
 
         // Close mobile menu when clicking navigation links (but not dropdown toggles)
@@ -156,8 +181,8 @@
 
         // Close dropdowns when clicking outside
         document.addEventListener("click", (e) => {
-            if (isMobile() && !e.target.closest(".dropdown") && !e.target.closest(".er-navbar-hamburger")) {
-                document.querySelectorAll(".dropdown.open").forEach(dropdown => {
+            if (isMobile() && !e.target.closest(".dropdown") && !e.target.closest(".mobile-admin-dropdown") && !e.target.closest(".er-navbar-hamburger")) {
+                document.querySelectorAll(".dropdown.open, .mobile-admin-dropdown.open").forEach(dropdown => {
                     dropdown.classList.remove("open");
                 });
             }
