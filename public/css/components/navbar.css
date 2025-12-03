@@ -1,8 +1,53 @@
 /* =============================================================================
-   NAVBAR (Ella Rises) — FINAL VERSION (Desktop + Mobile + Animations)
+   CSS VARIABLES
 ============================================================================= */
 
-/* Reset Bootstrap interference */
+:root {
+    /* Navbar Dimensions */
+    --navbar-height: 90px;
+    --navbar-padding-x: 3rem;
+    --navbar-max-width: 1400px;
+
+    /* Top-Level Nav Items */
+    --nav-item-gap: 2.2rem;
+    --nav-item-padding-x: 1rem;
+
+    --nav-link-font-weight: 600;
+    --nav-link-font-size: 0.95rem;
+    --nav-link-letterspacing: 0.04em;
+
+    --nav-link-color: var(--charcoal, #333);
+    --nav-link-hover-color: var(--rose, #e63946);
+    --nav-item-hover-bg: rgba(0, 0, 0, 0.04);
+
+    /* Dropdown Menu */
+    --dropdown-width-min: 190px;
+    --dropdown-radius: 8px;
+    --dropdown-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --dropdown-border-color: #e4e4e4;
+
+    /* Dropdown Items */
+    --dropdown-item-font-weight: 600;
+    --dropdown-item-font-size: 0.95rem;
+    --dropdown-item-line-height: 1.2;
+
+    --dropdown-hover-bg: #fef3f1;
+    --dropdown-hover-text: var(--rose, #e63946);
+
+    /* Mobile */
+    --navbar-height-mobile: 70px;
+    --navbar-padding-x-mobile: 1.25rem;
+    --mobile-menu-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --mobile-dropdown-bg: #fafafa;
+
+    --hamburger-size: 28px;
+    --hamburger-thickness: 3px;
+}
+
+/* =============================================================================
+   RESET BOOTSTRAP INTERFERENCE
+============================================================================= */
+
 .er-navbar *,
 .er-navbar *::before,
 .er-navbar *::after {
@@ -10,27 +55,27 @@
     text-decoration: none !important;
 }
 
-/* ---------------- DESKTOP NAVBAR ---------------- */
+/* =============================================================================
+   DESKTOP NAVBAR
+============================================================================= */
 
 .er-navbar {
     width: 100%;
     background: white;
-    box-shadow: var(--shadow);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 5000;
 }
 
 .er-navbar-inner {
-    max-width: 1400px;
+    max-width: var(--navbar-max-width);
     margin: 0 auto;
     padding: 0 var(--navbar-padding-x);
     height: var(--navbar-height);
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* THE CORRECT SETTING */
 }
 
 /* LEFT SECTION (logo + menu) */
@@ -39,12 +84,16 @@
     align-items: center;
     gap: 2.5rem;
     flex: 1;
-    /* expands left region, helps left justify menu */
+}
+
+.er-navbar-logo {
+    flex-shrink: 0;
 }
 
 .er-navbar-logo img {
     height: 62px;
     width: auto;
+    min-height: 50px;
 }
 
 /* NAV MENU (Desktop) */
@@ -78,6 +127,7 @@
     color: var(--nav-link-color);
     text-transform: uppercase;
     transition: color 0.25s ease;
+    font-family: inherit;
 }
 
 .er-nav-link:hover {
@@ -88,7 +138,9 @@
     background: var(--nav-item-hover-bg);
 }
 
-/* ---------------- DROPDOWNS (DESKTOP) ---------------- */
+/* =============================================================================
+   DROPDOWNS (DESKTOP)
+============================================================================= */
 
 .dropdown {
     position: relative;
@@ -99,11 +151,10 @@
 }
 
 .dropdown-menu {
-    display: none !important;
+    display: none;
     position: absolute;
     top: 100%;
     left: 0;
-
     background: white;
     padding: 0.4rem 0;
     border-radius: var(--dropdown-radius);
@@ -112,19 +163,27 @@
     min-width: var(--dropdown-width-min);
     overflow: hidden;
     z-index: 9999;
+    list-style: none;
+    margin: 0;
 }
 
-.dropdown:hover .dropdown-menu {
-    display: block !important;
+/* Desktop hover behavior */
+@media (min-width: 769px) {
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
 }
 
 .dropdown-item {
+    display: block;
     padding: 0.75rem 1.25rem;
     font-weight: var(--dropdown-item-font-weight);
     font-size: var(--dropdown-item-font-size);
     line-height: var(--dropdown-item-line-height);
-    color: var(--charcoal);
+    color: #333;
     transition: background 0.25s ease, color 0.25s ease;
+    width: 100%;
+    text-align: left;
 }
 
 .dropdown-item:hover {
@@ -132,53 +191,82 @@
     color: var(--dropdown-hover-text);
 }
 
-/* ---------------- DONATE BUTTON ---------------- */
+.dropdown-divider {
+    height: 0;
+    margin: 0.5rem 0;
+    overflow: hidden;
+    border-top: 1px solid var(--dropdown-border-color);
+}
+
+/* =============================================================================
+   DONATE BUTTON
+============================================================================= */
 
 .er-navbar-donate {
     padding: 0.55rem 1.2rem;
-    border: 2px solid var(--rose);
+    border: 2px solid var(--nav-link-hover-color);
     border-radius: 6px;
-    color: var(--rose);
+    color: var(--nav-link-hover-color);
     font-weight: 600;
-    transition: var(--transition);
+    transition: all 0.3s ease;
+    display: inline-block;
 }
 
 .er-navbar-donate:hover {
-    background: var(--rose);
+    background: var(--nav-link-hover-color);
     color: white;
 }
 
-/* ---------------- RIGHT SECTION (Desktop) ---------------- */
+/* =============================================================================
+   RIGHT SECTION (Desktop)
+============================================================================= */
 
 .er-navbar-right {
     display: flex;
     align-items: center;
     gap: 2rem;
-    margin-left: auto;
-    /* push right side fully right */
+    margin-left: 2rem;
+    flex-shrink: 0;
 }
 
-/* ============================================================================
+.er-account-dropdown {
+    position: relative;
+}
+
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+/* Hide hamburger on desktop */
+.er-navbar-hamburger {
+    display: none;
+}
+
+/* Hide mobile-only items on desktop */
+.mobile-login-item,
+.mobile-account-dropdown {
+    display: none;
+}
+
+/* =============================================================================
    MOBILE NAVIGATION
-============================================================================ */
+============================================================================= */
 
 @media (max-width: 768px) {
 
     .er-navbar-inner {
         height: var(--navbar-height-mobile);
         padding: 0 var(--navbar-padding-x-mobile);
-
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        position: relative;
     }
 
     .er-navbar-left {
         flex: unset;
-        /* prevents it from covering the hamburger */
         gap: 1rem;
+    }
+
+    .er-navbar-logo img {
+        height: 50px;
     }
 
     /* ---------------- Hamburger ---------------- */
@@ -186,21 +274,17 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-
         width: var(--hamburger-size);
         height: var(--hamburger-size);
-
         position: relative;
         z-index: 6000;
-        /* ensures it's always clickable */
-
         cursor: pointer;
     }
 
     .er-navbar-hamburger span {
         height: var(--hamburger-thickness);
         width: 100%;
-        background: var(--charcoal);
+        background: #333;
         border-radius: 3px;
         transition: transform 0.25s ease, opacity 0.25s ease;
     }
@@ -221,17 +305,21 @@
     .er-navbar-menu {
         display: none;
         flex-direction: column;
-
-        position: absolute;
+        position: fixed;
         top: var(--navbar-height-mobile);
         left: 0;
-
         width: 100%;
         background: white;
         box-shadow: var(--mobile-menu-shadow);
         padding: 1rem 0;
-
         z-index: 4000;
+        max-height: calc(100vh - var(--navbar-height-mobile));
+        overflow-y: auto;
+    }
+
+    .er-navbar-menu.open {
+        display: flex !important;
+        animation: menuSlideDown 0.25s ease-out;
     }
 
     @keyframes menuSlideDown {
@@ -246,11 +334,6 @@
         }
     }
 
-    .er-navbar-menu.open {
-        display: flex !important; /* <--- ADDED !important */
-        animation: menuSlideDown 0.25s ease-out;
-    }
-
     .er-navbar-menu .nav-item {
         width: 100%;
         align-items: flex-start;
@@ -261,34 +344,100 @@
         width: 100%;
         padding: 1rem 1.5rem;
         height: auto;
+        justify-content: flex-start;
     }
 
-    /* ---------------- Accordion Dropdowns ---------------- */
+    /* Show mobile-only items */
+    .mobile-login-item,
+    .mobile-account-dropdown {
+        display: flex;
+    }
 
+    /* ---------------- Accordion Dropdowns (Click to expand) ---------------- */
     .dropdown-menu {
         position: static !important;
         width: 100%;
         background: var(--mobile-dropdown-bg);
-        padding: 0.25rem 0;
-        border-left: 4px solid var(--rose);
+        padding: 0;
+        border-left: 4px solid var(--nav-link-hover-color);
         border-radius: 0;
         box-shadow: none;
-
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.3s ease;
+        transition: max-height 0.3s ease, padding 0.3s ease;
     }
 
     .dropdown.open .dropdown-menu {
+        display: block !important;
         max-height: 500px;
+        padding: 0.25rem 0;
     }
 
     .dropdown-item {
         padding: 0.75rem 2rem;
     }
 
+    /* Donate button mobile - styled like other nav items */
+    .er-navbar-donate-wrapper {
+        width: 100%;
+    }
+
+    .er-navbar-donate {
+        display: block;
+        width: 100%;
+        padding: 1rem 1.5rem;
+        text-align: left;
+        border: none;
+        border-radius: 0;
+        background: none;
+        font-weight: var(--nav-link-font-weight);
+        font-size: var(--nav-link-font-size);
+        letter-spacing: var(--nav-link-letterspacing);
+        color: var(--nav-link-color);
+        text-transform: uppercase;
+    }
+
+    .er-navbar-donate:hover {
+        background: var(--nav-item-hover-bg);
+        color: var(--nav-link-hover-color);
+    }
+
     /* Hide desktop right section */
     .er-navbar-right {
         display: none;
+    }
+}
+
+/* More responsive breakpoint for logo shrinking */
+@media (max-width: 1100px) and (min-width: 769px) {
+    .er-navbar-inner {
+        padding: 0 1.5rem;
+    }
+
+    .er-navbar-left {
+        gap: 1.5rem;
+    }
+
+    .er-navbar-menu {
+        gap: 1.2rem;
+    }
+
+    .er-navbar-right {
+        margin-left: 1rem;
+    }
+}
+
+@media (max-width: 950px) and (min-width: 769px) {
+    :root {
+        --nav-item-gap: 1rem;
+        --nav-item-padding-x: 0.75rem;
+        --nav-link-font-size: 0.88rem;
+    }
+
+    .er-navbar-logo img {
+        height: 55px;
     }
 }
