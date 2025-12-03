@@ -37,17 +37,15 @@ router.post("/login", async (req, res) => {
             });
         }
 
-        // 3. Update Session Data to match your new Database Schema
-        req.session.isLoggedIn = true;
-        
-        // Schema: 'email', Model: 'email'
-        req.session.username = user.email; 
-        
-        // Schema: 'role', Model: 'role' (Mapped from AccessLevel)
-        req.session.access_level = user.role || 'guest'; 
-        
-        // Schema: 'participant_id'
+        // I didn't want to mess anything up but we should standardize later
         req.session.userID = user.participant_id; 
+        req.session.user_id = user.participant_id; 
+
+        req.session.isLoggedIn = true;
+        req.session.username = user.email;
+        req.session.firstname = user.first_name;
+        req.session.lastname = user.last_name;
+        req.session.access_level = user.role;
 
         res.redirect("/");
 

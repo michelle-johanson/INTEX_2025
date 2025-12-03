@@ -7,7 +7,7 @@
                 <img src="/img/logo-no-bg.png" alt="Ella Rises Logo">
             </a>
 
-            <!-- DESKTOP MENU -->
+            <!-- DESKTOP & MOBILE MENU -->
             <ul class="er-navbar-menu" id="mobileMenu">
                 <% const isManager=session && session.access_level && (session.access_level.toLowerCase()==="manager" ||
                     session.access_level.toLowerCase()==="admin" ); const menus=[ { label: "EVENTS" , href: "/events" },
@@ -17,7 +17,6 @@
                     href: "/dashboard" } ]} ]; %>
 
                     <% menus.forEach(menu=> { %>
-
                         <% if (menu.href) { %>
                             <li class="nav-item">
                                 <a href="<%= menu.href %>" class="er-nav-link">
@@ -26,7 +25,8 @@
                             </li>
                             <% } else { %>
                                 <li class="nav-item dropdown">
-                                    <a class="er-nav-link dropdown-toggle mobile-toggle" href="#">
+                                    <!-- Desktop: Regular link with hover, Mobile: Click to expand -->
+                                    <a href="#" class="er-nav-link dropdown-toggle" data-dropdown-toggle>
                                         <%= menu.label %>
                                     </a>
 
@@ -41,11 +41,37 @@
                                     </ul>
                                 </li>
                                 <% } %>
-
                                     <% }) %>
 
-                                        <!-- DONATE -->
-                                        <a class="er-navbar-donate" href="/donations/new">DONATE</a>
+                                        <!-- DONATE (styled as link in mobile) -->
+                                        <li class="nav-item er-navbar-donate-wrapper">
+                                            <a class="er-navbar-donate" href="/donations/new">DONATE</a>
+                                        </li>
+
+                                        <!-- MOBILE LOGIN (only visible in mobile menu) -->
+                                        <% if (!session || !session.isLoggedIn) { %>
+                                            <li class="nav-item mobile-login-item">
+                                                <a href="/auth/login" class="er-nav-link">LOGIN</a>
+                                            </li>
+                                            <% } else { %>
+                                                <li class="nav-item dropdown mobile-account-dropdown">
+                                                    <a href="#" class="er-nav-link dropdown-toggle"
+                                                        data-dropdown-toggle>
+                                                        Tools
+                                                    </a>
+
+                                                    <ul class="dropdown-menu">
+                                                        <% if (isManager) { %>
+                                                            <li><a class="dropdown-item" href="/users">Manage Users</a>
+                                                            </li>
+                                                            <li><a class="dropdown-item" href="/donations">Manage
+                                                                    Donations</a></li>
+                                                            <% } %>
+                                                                <li><a class="dropdown-item"
+                                                                        href="/auth/logout">Logout</a></li>
+                                                    </ul>
+                                                </li>
+                                                <% } %>
             </ul>
         </div>
 
@@ -56,7 +82,7 @@
                 <% } else { %>
                     <div class="nav-item dropdown er-account-dropdown">
                         <a class="er-nav-link dropdown-toggle" href="#">
-                            <%= session.username %>
+                            <%= session.firstname %>
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -73,7 +99,7 @@
                     <% } %>
         </div>
 
-        <!-- MOBILE HAMBURGER (Now clickable!) -->
+        <!-- MOBILE HAMBURGER -->
         <div class="er-navbar-hamburger" id="hamburger">
             <span></span>
             <span></span>
@@ -88,18 +114,53 @@
         const hamburger = document.getElementById("hamburger");
         const menu = document.getElementById("mobileMenu");
 
+        // Toggle hamburger menu
         hamburger.addEventListener("click", () => {
             hamburger.classList.toggle("active");
             menu.classList.toggle("open");
-
             document.body.style.overflow = menu.classList.contains("open") ? "hidden" : "";
         });
 
-        document.querySelectorAll(".mobile-toggle").forEach(toggle => {
-            toggle.addEventListener("click", e => {
-                e.preventDefault();
-                toggle.closest(".dropdown").classList.toggle("open");
+        // Check if we're in mobile view
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
+
+        // Toggle mobile dropdown accordion (click/tap)
+        document.querySelectorAll("[data-dropdown-toggle]").forEach(toggle => {
+            toggle.addEventListener("click", (e) => {
+                if (isMobile()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const dropdown = toggle.closest(".dropdown");
+                    dropdown.classList.toggle("open");
+                }
             });
+        });
+
+        // Close mobile menu when clicking navigation links (but not dropdown toggles)
+        document.querySelectorAll(".er-navbar-menu a:not([data-dropdown-toggle])").forEach(link => {
+            link.addEventListener("click", () => {
+                if (menu.classList.contains("open")) {
+                    hamburger.classList.remove("active");
+                    menu.classList.remove("open");
+                    document.body.style.overflow = "";
+
+                    // Close any open dropdowns
+                    document.querySelectorAll(".dropdown.open").forEach(dropdown => {
+                        dropdown.classList.remove("open");
+                    });
+                }
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", (e) => {
+            if (isMobile() && !e.target.closest(".dropdown") && !e.target.closest(".er-navbar-hamburger")) {
+                document.querySelectorAll(".dropdown.open").forEach(dropdown => {
+                    dropdown.classList.remove("open");
+                });
+            }
         });
     });
 </script>

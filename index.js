@@ -35,9 +35,10 @@ app.use((req, res, next) => {
     const s = req.session;
     res.locals.session = {
         isLoggedIn: s.isLoggedIn || false,
-        user_id: s.user_id || null,
+        user_id: s.user_id || s.userID || null,
         username: s.username || null,
         firstname: s.firstname || null,
+        lastname: s.lastname || null,
         access_level: s.access_level || null
     };
     next();
