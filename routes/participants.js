@@ -7,16 +7,30 @@ const { requireAdmin, requireLogin } = require("../middleware/auth");
 const Participants = require("../models/participants");
 
 /* ============================================================
-   LIST PARTICIPANTS (LOGIN REQUIRED)
+   LIST PARTICIPANTS (SPLIT LOGIC)
+   - Manager: Sees the full list (Index)
+   - Participant: Is redirected immediately to their own Profile (Show)
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const participants = await Participants.getAll();
-        
-        res.render("participants/index", {
-            title: "Participants",
-            participants
-        });
+        // Safe role check
+        const role = (req.session.access_level || "").toLowerCase();
+
+        // SCENARIO 1: MANAGER
+        // Show the directory of all participants
+        if (role === "manager" || role === "admin") {
+            const participants = await Participants.getAll();
+            
+            return res.render("participants/index", {
+                title: "Participant Directory",
+                participants
+            });
+        }
+
+        // SCENARIO 2: PARTICIPANT
+        // Redirect them directly to their own detail page
+        res.redirect(`/participants/${req.session.userID}`);
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Database Error");
@@ -43,7 +57,7 @@ router.post("/new", requireAdmin, async (req, res) => {
             email: req.body.Email,
             first_name: req.body.FirstName,
             last_name: req.body.LastName,
-            dob: req.body.DOB || null, // Handle empty date strings
+            dob: req.body.DOB || null,
             role: req.body.Role,
             phone: req.body.Phone,
             city: req.body.City,
@@ -51,8 +65,6 @@ router.post("/new", requireAdmin, async (req, res) => {
             zip: req.body.Zip,
             school_or_employer: req.body.SchoolOrEmployment,
             field_of_interest: req.body.FieldOfInterest
-            // Note: We do NOT insert 'TotalDonations' here. 
-            // That is calculated from the 'donations' table.
         };
 
         await Participants.create(newParticipant);
@@ -132,13 +144,26 @@ router.post("/:id/delete", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   SHOW SINGLE PARTICIPANT (LOGIN REQUIRED)
+   SHOW SINGLE PARTICIPANT (PROFILE)
+   - Secure: Users can only see THEIR OWN profile (or Manager)
 ============================================================ */
 router.get("/:id", requireLogin, async (req, res) => {
     try {
         const participant = await Participants.getById(req.params.id);
         
         if (!participant) return res.status(404).send("Participant not found");
+
+        // SECURITY CHECK
+        // Get role safely (handle uppercase/lowercase)
+        const role = (req.session.access_level || "").toLowerCase();
+        
+        // Allow if Manager OR if the logged-in ID matches the requested ID
+        const isAuthorized = (role === 'manager' || role === 'admin') || 
+                             (String(req.session.userID) === String(participant.participant_id));
+
+        if (!isAuthorized) {
+            return res.status(403).send("Unauthorized Access");
+        }
 
         res.render("participants/show", {
             title: "Participant Details",

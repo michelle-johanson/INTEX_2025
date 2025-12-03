@@ -1,44 +1,51 @@
 <div class="page-container">
 
-    <h1 class="page-title">Add Registration</h1>
+    <h1 class="page-title">New Registration</h1>
 
     <form action="/registrations/new" method="POST" class="form">
 
-        <label>Participant</label>
-        <select name="ParticipantID" required>
-            <option value="">Select a participant…</option>
-            <% participants.forEach(p=> { %>
-                <option value="<%= p.ParticipantID %>">
-                    <%= p.FirstName %>
-                        <%= p.LastName %>
+        <label for="EventOccurrenceID">Event Occurrence</label>
+        <select id="EventOccurrenceID" name="EventOccurrenceID" required>
+            <option value="">Select an event...</option>
+            <% occurrences.forEach(o => { %>
+                <option value="<%= o.event_occurrence_id %>" 
+                    <%= (typeof query !== 'undefined' && query.event_occurrence_id == o.event_occurrence_id) ? 'selected' : '' %>>
+                    <%= o.event_name %> - <%= new Date(o.starts_at).toLocaleString() %>
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
-        <label>Event Occurrence</label>
-        <select name="EventOccurrenceID" required>
-            <option value="">Select an event occurrence…</option>
-            <% occurrences.forEach(o=> { %>
-                <option value="<%= o.EventOccurrenceID %>">
-                    <%= events.find(e=> e.EventID === o.EventID)?.EventName %>
-                        — <%= o.EventDateTimeStart %>
+        <label for="ParticipantID">Participant</label>
+        <select id="ParticipantID" name="ParticipantID" required>
+            <option value="">Select a participant...</option>
+            <% participants.forEach(p => { %>
+                <option value="<%= p.participant_id %>">
+                    <%= p.first_name %> <%= p.last_name %> (<%= p.email %>)
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
-        <label>Status</label>
-        <input type="text" name="RegistrationStatus" placeholder="Registered, Waitlisted, etc." />
+        <label for="RegistrationStatus">Status</label>
+        <select id="RegistrationStatus" name="RegistrationStatus">
+            <option value="Registered">Registered</option>
+            <option value="Waitlist">Waitlist</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
 
-        <label>Attended?</label>
-        <input type="checkbox" name="RegistrationAttendedFlag" />
+        <div style="margin: 1rem 0;">
+            <label style="display:inline-flex; align-items:center; gap: 0.5rem;">
+                <input type="checkbox" name="RegistrationAttendedFlag" style="width:auto; margin:0;" />
+                Attended Event?
+            </label>
+        </div>
 
-        <label>Check-In Time (optional)</label>
-        <input type="datetime-local" name="RegistrationCheckInTime" />
+        <label for="RegistrationCreatedAt">Registration Date</label>
+        <input type="date" name="RegistrationCreatedAt" value="<%= new Date().toISOString().split('T')[0] %>" />
 
-        <label>Created At</label>
-        <input type="date" name="RegistrationCreatedAt" required />
-
-        <button class="btn-submit">Create Registration</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Create Registration</button>
+            <a href="/registrations" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
     </form>
 
 </div>

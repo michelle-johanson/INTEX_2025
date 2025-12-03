@@ -2,45 +2,47 @@
 
     <h1 class="page-title">Edit Participant</h1>
 
-    <form action="/participants/<%= participant.ParticipantID %>/edit" method="POST" class="form">
+    <form action="/participants/<%= participant.participant_id %>/edit" method="POST" class="form">
 
         <label>Email</label>
-        <input type="email" name="Email" value="<%= participant.Email %>" required />
+        <input type="email" name="Email" value="<%= participant.email %>" required />
 
         <label>First Name</label>
-        <input type="text" name="FirstName" value="<%= participant.FirstName %>" required />
+        <input type="text" name="FirstName" value="<%= participant.first_name %>" required />
 
         <label>Last Name</label>
-        <input type="text" name="LastName" value="<%= participant.LastName %>" required />
+        <input type="text" name="LastName" value="<%= participant.last_name %>" required />
 
         <label>Date of Birth</label>
-        <input type="date" name="DOB" value="<%= participant.DOB %>" required />
+        <input type="date" 
+               name="DOB" 
+               value="<%= participant.dob ? new Date(participant.dob).toISOString().split('T')[0] : '' %>" 
+               required />
 
         <label>Role</label>
-        <input type="text" name="Role" value="<%= participant.Role %>" />
+        <input type="text" name="Role" value="<%= participant.role %>" />
 
         <label>Phone</label>
-        <input type="text" name="Phone" value="<%= participant.Phone %>" />
+        <input type="text" name="Phone" value="<%= participant.phone %>" />
 
         <label>City</label>
-        <input type="text" name="City" value="<%= participant.City %>" />
+        <input type="text" name="City" value="<%= participant.city %>" />
 
         <label>State</label>
-        <input type="text" name="State" value="<%= participant.State %>" />
+        <input type="text" name="State" value="<%= participant.state %>" />
 
         <label>Zip Code</label>
-        <input type="text" name="Zip" value="<%= participant.Zip %>" />
+        <input type="text" name="Zip" value="<%= participant.zip %>" />
 
         <label>School or Employment</label>
-        <input type="text" name="SchoolOrEmployment" value="<%= participant.SchoolOrEmployment %>" />
+        <input type="text" name="SchoolOrEmployment" value="<%= participant.school_or_employer %>" />
 
         <label>Field of Interest</label>
-        <input type="text" name="FieldOfInterest" value="<%= participant.FieldOfInterest %>" />
+        <input type="text" name="FieldOfInterest" value="<%= participant.field_of_interest %>" />
 
-        <label>Total Donations</label>
-        <input type="number" name="TotalDonations" value="<%= participant.TotalDonations %>" min="0" />
-
-        <button class="btn-submit">Save Changes</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Save Changes</button>
+            <a href="/participants/<%= participant.participant_id %>" style="text-decoration: none; color: #666;">Cancel</a>        </div>
     </form>
 
 </div>

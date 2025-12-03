@@ -1,58 +1,66 @@
 <div class="page-container">
 
-    <h1 class="page-title">Post-Event Surveys</h1>
+    <h1 class="page-title"><%= contextName || 'Post-Event' %> Surveys</h1>
 
-    <% if (session && session.access_level === "manager") { %>
-        <a href="/surveys/new" class="btn btn-primary btn-small mb-4">
+    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+
+    <% if (isManager) { %>
+        <% const currentOccurrenceId = surveys.length > 0 ? surveys[0].event_occurrence_id : ''; %>
+        <a href="/surveys/new?event_occurrence_id=<%= currentOccurrenceId %>" class="btn btn-primary btn-small mb-4">
             + Add Survey
         </a>
     <% } %>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Event</th>
-                <th>Date</th>
-                <th>Participant</th>
-                <th>Overall Score</th>
-                <th></th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <% surveys.forEach(s => { %>
+    <% if (surveys.length === 0) { %>
+        <p>No surveys found.</p>
+    <% } else { %>
+        <table>
+            <thead>
                 <tr>
-                    <td>
-                        <%= s.event_name %>
-                    </td>
-                    <td>
-                        <%= new Date(s.starts_at).toLocaleDateString() %>
-                    </td>
-                    <td>
-                        <%= s.first_name %> <%= s.last_name %>
-                    </td>
-                    <td>
-                        <%= s.overall_score %>
-                    </td>
-
-                    <td class="table-actions">
-                        <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>">View</a>
-
-                        <% if (session && session.access_level === "manager") { %>
-                            <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/edit">Edit</a>
-                            
-                            <form action="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/delete"
-                                  method="POST" 
-                                  style="display:inline;">
-                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
-                                    Delete
-                                </button>
-                            </form>
-                        <% } %>
-                    </td>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Participant</th>
+                    <th>Overall Score</th>
+                    <th></th>
                 </tr>
-            <% }) %>
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                <% surveys.forEach(s => { %>
+                    <tr>
+                        <td><%= s.event_name %></td>
+                        
+                        <td><%= new Date(s.starts_at).toLocaleDateString() %></td>
+                        
+                        <td><%= s.first_name %> <%= s.last_name %></td>
+                        
+                        <td><%= s.overall_score %> / 5</td>
+
+                        <td class="table-actions">
+                            <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>">View</a>
+
+                            <% if (isManager) { %>
+                                <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/edit">Edit</a>
+                                
+                                <form action="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/delete"
+                                      method="POST" 
+                                      style="display:inline;">
+                                    <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                        Delete
+                                    </button>
+                                </form>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+
+    <% if (isManager) { %>
+        <div style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
+            <a href="/surveys" class="btn btn-secondary">← Back to Event Directory</a>
+        </div>
+    <% } %>
 
 </div>
