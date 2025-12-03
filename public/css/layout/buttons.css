@@ -1,3 +1,4 @@
+/* Primary button */
 .btn-submit {
     background: var(--btn-primary-bg);
     color: var(--btn-primary-text);
@@ -14,6 +15,7 @@
     border-color: var(--btn-primary-hover-border);
 }
 
+/* Table detail buttons */
 .btn-table-details {
     background: var(--btn-details-bg);
     color: var(--btn-details-text);

@@ -1,9 +1,12 @@
+/* Custom Table Styling (Bootstrap override) */
+
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
     border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
 thead {

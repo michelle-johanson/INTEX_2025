@@ -1,3 +1,5 @@
+/* STANDARD FORMS */
+
 form {
     max-width: 600px;
 }
@@ -5,7 +7,7 @@ form {
 label {
     display: block;
     font-weight: 600;
-    margin-bottom: 0.4rem;
+    margin-bottom: var(--space-2);
 }
 
 input,
@@ -15,7 +17,7 @@ textarea {
     padding: 0.7rem 1rem;
     border-radius: var(--radius);
     border: 1px solid var(--form-border);
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
     background: white;
     transition: var(--transition);
 }
@@ -31,17 +33,39 @@ textarea:focus {
 .form-control {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--space-1);
 }
 
-/* Horizontal label + input option */
+/* Horizontal label+input option */
 .form-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-4);
 }
 
 .form-row label {
     margin: 0;
     white-space: nowrap;
+}
+
+/* ALERTS (merged from alerts.css) */
+
+.form-success,
+.form-error {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-4);
+    font-weight: 500;
+}
+
+.form-success {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+}
+
+.form-error {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
 }

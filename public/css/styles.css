@@ -1,21 +1,23 @@
-/* Base */
-@import url("./base/reset.css");
-@import url("./base/variables.css");
-@import url("./base/typography.css");
-@import url("./base/utilities.css");
+/* TOKENS */
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/effects.css";
+@import "./tokens/navbar.css";
 
-/* Layout */
-@import url("./layout/layout.css");
-@import url("./layout/header.css");
-@import url("./layout/footer.css");
+/* BASE */
+@import "./base/reset.css";
+@import "./base/globals.css";
 
-/* Components */
-@import url("./components/buttons.css");
-@import url("./components/forms.css");
-@import url("./components/tables.css");
-@import url("./components/cards.css");
+/* LAYOUT */
+@import "./layout/containers.css";
+@import "./layout/forms.css";
+@import "./layout/buttons.css";
+@import "./layout/tables.css";
 
-/* Pages */
-@import url("./pages/home.css");
-@import url("./pages/dashboard.css");
-@import url("./pages/donations.css");
+/* COMPONENTS */
+@import "./components/navbar.css";
+
+/* PAGE-SPECIFIC STYLES (create as needed) */
+/* @import "./pages/dashboard.css"; */
+/* @import "./pages/events.css"; */

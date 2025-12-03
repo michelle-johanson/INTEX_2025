@@ -1,5 +1,5 @@
 :root {
-    /* Brand palette */
+    /* Brand Palette */
     --blue: #99B7C6;
     --lavender: #97BCE4;
     --cream: #F9F5EA;
@@ -10,29 +10,35 @@
     --coral: #F4B092;
     --rose: #CE325B;
 
-    /* Semantic tokens */
+    /* Semantic Tokens */
+    --text-dark: var(--charcoal);
+    --text-light: #ffffff;
+
+    --card-bg: #ffffff;
+    --card-border: #e6e6e6;
+
     --form-border: var(--blue);
     --form-focus-shadow: rgba(153, 183, 198, 0.35);
 
-    --card-bg: #fff;
-    --card-border: #e6e6e6;
-
+    /* Button: Primary */
     --btn-primary-bg: var(--rose);
-    --btn-primary-text: white;
+    --btn-primary-text: #ffffff;
     --btn-primary-border: var(--rose);
 
     --btn-primary-hover-bg: #b82b50;
-    --btn-primary-hover-text: white;
+    --btn-primary-hover-text: #ffffff;
     --btn-primary-hover-border: #b82b50;
 
+    /* Button: Table Details */
     --btn-details-bg: var(--lavender);
-    --btn-details-text: white;
+    --btn-details-text: #ffffff;
     --btn-details-border: var(--lavender);
 
     --btn-details-hover-bg: #7aa9d7;
-    --btn-details-hover-text: white;
+    --btn-details-hover-text: #ffffff;
     --btn-details-hover-border: #7aa9d7;
 
+    /* Alerts */
     --success-bg: #e7f7ea;
     --success-border: #9dd9a7;
     --success-text: #1f6b2e;

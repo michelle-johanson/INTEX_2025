@@ -1,15 +1,8 @@
-/* ================================
-   RESET (light modern reset)
-================================ */
-
+/* Minimal, modern reset */
 *,
 *::before,
 *::after {
     box-sizing: border-box;
-}
-
-html,
-body {
     margin: 0;
     padding: 0;
 }
@@ -17,39 +10,22 @@ body {
 body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--text-dark);
 }
 
 img,
 picture,
 video,
-canvas,
-svg {
+canvas {
     display: block;
     max-width: 100%;
 }
 
-button {
-    border: none;
-    cursor: pointer;
-    background: none;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-ul,
-ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
 input,
-textarea,
 button,
+textarea,
 select {
     font: inherit;
 }
