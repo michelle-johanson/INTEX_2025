@@ -7,11 +7,11 @@
         <label for="EventID">Event Template</label>
         <select id="EventID" name="EventID" required>
             <option value="">Select an event…</option>
-            <% events.forEach(e=> { %>
-                <option value="<%= e.EventID %>">
-                    <%= e.EventName %>
+            <% events.forEach(e => { %>
+                <option value="<%= e.event_id %>">
+                    <%= e.name %>
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
         <label for="EventDateTimeStart">Start Date &amp; Time</label>
@@ -29,7 +29,10 @@
         <label for="EventRegistrationDeadline">Registration Deadline</label>
         <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline" required />
 
-        <button class="btn-submit">Create Occurrence</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Create Occurrence</button>
+            <a href="/eventOccurrences" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
     </form>
 
 </div>

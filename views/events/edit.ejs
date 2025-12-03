@@ -2,38 +2,41 @@
 
     <h1 class="page-title">Edit Event Template</h1>
 
-    <form action="/events/<%= event.EventID %>/edit" method="POST" class="form">
+    <form action="/events/<%= event.event_id %>/edit" method="POST" class="form">
 
         <label for="EventName">Event Name</label>
-        <input id="EventName"
-               type="text"
-               name="EventName"
-               value="<%= event.EventName %>"
+        <input id="EventName" 
+               type="text" 
+               name="EventName" 
+               value="<%= event.name %>" 
                required />
 
         <label for="EventType">Event Type</label>
-        <input id="EventType"
-               type="text"
-               name="EventType"
-               value="<%= event.EventType %>" />
+        <input id="EventType" 
+               type="text" 
+               name="EventType" 
+               value="<%= event.type %>" />
 
         <label for="EventRecurrencePattern">Recurrence Pattern</label>
-        <input id="EventRecurrencePattern"
-               type="text"
-               name="EventRecurrencePattern"
-               value="<%= event.EventRecurrencePattern %>" />
+        <input id="EventRecurrencePattern" 
+               type="text" 
+               name="EventRecurrencePattern" 
+               value="<%= event.recurrence_pattern %>" />
 
         <label for="EventDescription">Description</label>
-        <textarea id="EventDescription" name="EventDescription" rows="3"><%= event.EventDescription %></textarea>
+        <textarea id="EventDescription" name="EventDescription" rows="3"><%= event.description %></textarea>
 
         <label for="EventDefaultCapacity">Default Capacity</label>
-        <input id="EventDefaultCapacity"
-               type="number"
-               name="EventDefaultCapacity"
-               value="<%= event.EventDefaultCapacity %>"
+        <input id="EventDefaultCapacity" 
+               type="number" 
+               name="EventDefaultCapacity" 
+               value="<%= event.default_capacity %>" 
                min="1" />
 
-        <button class="btn-submit">Save Changes</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Save Changes</button>
+            <a href="/events" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
     </form>
 
 </div>

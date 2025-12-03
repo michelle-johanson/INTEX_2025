@@ -38,17 +38,18 @@ router.get("/new", requireAdmin, (req, res) => {
 // Submit
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        // MAP FORM DATA TO DATABASE COLUMNS
-        // Left Side: DB Column Name | Right Side: HTML Input Name
         const newEvent = {
-            name: req.body.EventName,
-            type: req.body.EventType,
+            // Left: DB Column | Right: HTML Input Name
+            name: req.body.EventName,             // Matches form!
+            type: req.body.EventType,             // Matches form!
             recurrence_pattern: req.body.EventRecurrencePattern,
             description: req.body.EventDescription,
             default_capacity: Number(req.body.EventDefaultCapacity)
         };
 
+        // If you ran the SQL fix above, this will work perfectly!
         await Events.create(newEvent);
+        
         res.redirect("/events");
 
     } catch (err) {
