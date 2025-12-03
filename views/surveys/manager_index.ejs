@@ -1,40 +1,80 @@
 <div class="page-container">
-    <h1 class="page-title">Survey Management</h1>
-    <p class="mb-4">Select an event below to view its survey results.</p>
+    <h1 class="page-title"><%= title %></h1>
+    
+    <% if (mode === 'types') { %>
+        <p class="mb-4">Select an event type below to view scheduled occurrences.</p>
+    <% } else { %>
+        <p class="mb-4">Select a specific date below to view survey results.</p>
+        <a href="/surveys" class="btn btn-secondary btn-small mb-3">&larr; Back to Event Types</a>
+    <% } %>
 
-    <a href="/surveys/new" class="btn btn-primary btn-small mb-4">
-        + Add Survey Response
-    </a>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+        <form action="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" 
+                   name="search" 
+                   placeholder="<%= mode === 'types' ? 'Search event types...' : 'Search location...' %>" 
+                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
+            >
+            <button type="submit" class="btn btn-secondary btn-small">Search</button>
+            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                <a href="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
+            <% } %>
+        </form>
+    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Event Name</th>
-                <th>Date & Time</th>
-                <th>Location</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% occurrences.forEach(o => { %>
-                <tr>
-                    <td>
-                        <strong><%= o.event_name %></strong>
-                    </td>
-                    
-                    <td>
-                        <%= new Date(o.starts_at).toLocaleString() %>
-                    </td>
-                    
-                    <td><%= o.location %></td>
-                    
-                    <td class="table-actions">
-                        <a href="/surveys/occurrence/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
-                            View Results
-                        </a>
-                    </td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
+    <% if (data.length === 0) { %>
+        <p>No records found.</p>
+    <% } else { %>
+        
+        <% if (mode === 'types') { %>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% data.forEach(item => { %>
+                        <tr>
+                            <td><strong><%= item.name %></strong></td>
+                            <td><%= item.type %></td>
+                            <td class="table-actions">
+                                <a href="/surveys/type/<%= item.event_id %>" class="btn btn-secondary btn-small">
+                                    View Occurrences
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+
+        <% } else { %>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Location</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% data.forEach(item => { %>
+                        <tr>
+                            <td><%= new Date(item.starts_at).toLocaleString() %></td>
+                            <td><%= item.location %></td>
+                            <td class="table-actions">
+                                <a href="/surveys/occurrence/<%= item.event_occurrence_id %>" class="btn btn-secondary btn-small">
+                                    View Results
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+        
+    <% } %>
 </div>

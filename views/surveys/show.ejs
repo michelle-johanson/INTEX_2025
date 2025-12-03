@@ -67,11 +67,45 @@
             </span>
         </div>
 
-        <% if (session && session.access_level === "manager") { %>
-            <div class="detail-actions">
-                <a href="/surveys/<%= survey.event_occurrence_id %>/<%= survey.participant_id %>/edit">Edit</a>
+        <% 
+            // ROBUST MANAGER CHECK
+            // Checks session.role OR session.user.role to ensure buttons appear
+            const roleRaw = session.access_level || session.role || (session.user && (session.user.access_level || session.user.role)) || "";
+            const isManager = roleRaw.toLowerCase() === "manager" || roleRaw.toLowerCase() === "admin";
+        %>
+
+        <% if (isManager) { %>
+            <div class="detail-actions" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center;">
+                
+                <a href="/surveys/<%= survey.event_occurrence_id %>/<%= survey.participant_id %>/edit" 
+                   class="btn btn-warning btn-small"
+                   style="background-color: #f0ad4e; border-color: #eea236; color: white;">
+                   Edit Survey
+                </a>
+
+                <form action="/surveys/<%= survey.event_occurrence_id %>/<%= survey.participant_id %>/delete" 
+                      method="POST" 
+                      onsubmit="return confirm('Are you sure you want to delete this survey? This action cannot be undone.');">
+                    <button type="submit" 
+                            class="btn btn-danger btn-small"
+                            style="background-color: #d9534f; border-color: #d43f3a; color: white;">
+                        Delete Survey
+                    </button>
+                </form>
             </div>
         <% } %>
+
+        <div style="margin-top: 1.5rem;">
+            <% if (isManager) { %>
+                <a href="/surveys/occurrence/<%= survey.event_occurrence_id %>" style="color: #666; text-decoration: none;">
+                    &larr; Back to Results
+                </a>
+            <% } else { %>
+                <a href="/surveys" style="color: #666; text-decoration: none;">
+                    &larr; Back to My Surveys
+                </a>
+            <% } %>
+        </div>
 
     </div>
 
