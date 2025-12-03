@@ -8,27 +8,21 @@ const Participants = require("../models/participants");
 
 /* ============================================================
    LIST PARTICIPANTS (SPLIT LOGIC)
-   - Manager: Sees the full list (Index)
-   - Participant: Is redirected immediately to their own Profile (Show)
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        // Safe role check
         const role = (req.session.access_level || "").toLowerCase();
 
-        // SCENARIO 1: MANAGER
-        // Show the directory of all participants
+        // SCENARIO 1: MANAGER - Show Directory
         if (role === "manager" || role === "admin") {
             const participants = await Participants.getAll();
-            
             return res.render("participants/index", {
                 title: "Participant Directory",
                 participants
             });
         }
 
-        // SCENARIO 2: PARTICIPANT
-        // Redirect them directly to their own detail page
+        // SCENARIO 2: PARTICIPANT - Redirect to Profile
         res.redirect(`/participants/${req.session.userID}`);
 
     } catch (err) {
@@ -42,7 +36,6 @@ router.get("/", requireLogin, async (req, res) => {
    CREATE NEW PARTICIPANT (ADMIN ONLY)
 ============================================================ */
 
-// Show form
 router.get("/new", requireAdmin, (req, res) => {
     res.render("participants/new", {
         title: "Add Participant"
@@ -52,13 +45,18 @@ router.get("/new", requireAdmin, (req, res) => {
 // Handle form submit
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        // Map Form Names -> Database Column Names
         const newParticipant = {
             email: req.body.Email,
+            // FIX 1: Capture the password from the form
+            password: req.body.Password, 
+            
             first_name: req.body.FirstName,
             last_name: req.body.LastName,
             dob: req.body.DOB || null,
-            role: req.body.Role,
+            
+            // FIX 2: Hardcode role (since we removed the input from the form)
+            role: "participant", 
+            
             phone: req.body.Phone,
             city: req.body.City,
             state: req.body.State,
@@ -67,7 +65,9 @@ router.post("/new", requireAdmin, async (req, res) => {
             field_of_interest: req.body.FieldOfInterest
         };
 
+        // The Model uses 'returning participant_id', allowing us to grab the new ID
         await Participants.create(newParticipant);
+        
         res.redirect("/participants");
 
     } catch (err) {
@@ -81,7 +81,6 @@ router.post("/new", requireAdmin, async (req, res) => {
    EDIT PARTICIPANT (ADMIN ONLY)
 ============================================================ */
 
-// Show edit form
 router.get("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const participant = await Participants.getById(req.params.id);
@@ -98,7 +97,6 @@ router.get("/:id/edit", requireAdmin, async (req, res) => {
     }
 });
 
-// Handle edit submit
 router.post("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
@@ -133,9 +131,8 @@ router.post("/:id/delete", requireAdmin, async (req, res) => {
         await Participants.delete(req.params.id);
         res.redirect("/participants");
     } catch (err) {
-        // Check for Foreign Key issues (e.g. if they have donations/registrations)
         if (err.code === '23503') {
-            return res.status(400).send("Cannot delete participant: They have associated records (donations, registrations, etc).");
+            return res.status(400).send("Cannot delete participant: They have associated records.");
         }
         console.error(err);
         res.status(500).send("Error deleting participant");
@@ -145,7 +142,6 @@ router.post("/:id/delete", requireAdmin, async (req, res) => {
 
 /* ============================================================
    SHOW SINGLE PARTICIPANT (PROFILE)
-   - Secure: Users can only see THEIR OWN profile (or Manager)
 ============================================================ */
 router.get("/:id", requireLogin, async (req, res) => {
     try {
@@ -153,11 +149,8 @@ router.get("/:id", requireLogin, async (req, res) => {
         
         if (!participant) return res.status(404).send("Participant not found");
 
-        // SECURITY CHECK
-        // Get role safely (handle uppercase/lowercase)
+        // Security Check
         const role = (req.session.access_level || "").toLowerCase();
-        
-        // Allow if Manager OR if the logged-in ID matches the requested ID
         const isAuthorized = (role === 'manager' || role === 'admin') || 
                              (String(req.session.userID) === String(participant.participant_id));
 

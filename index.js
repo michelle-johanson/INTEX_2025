@@ -84,15 +84,16 @@ const milestoneRoutes = require("./routes/milestones");
 app.use("/milestones", milestoneRoutes);
 
 // Dashboard
-const dashboardRouter = require('./routes/dashboard');
-app.use('/dashboard', dashboardRouter);
+// Warning: This requires a file at ./routes/dashboard.js to exist!
+const dashboardRoutes = require("./routes/dashboard");
+app.use("/dashboard", dashboardRoutes);
 
 /* ============================================================
    OTHER REQUIRED ROUTES
 ============================================================ */
 
 // Teapot (IS 404 requirement)
-app.get('/teapot', (req, res) => {
+app.get("/teapot", (req, res) => {
     res.status(418).send("I'm a little teapot, short and stout.");
 });
 

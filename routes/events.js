@@ -36,11 +36,15 @@ router.get("/new", requireAdmin, (req, res) => {
 
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        await Events.create({
-            name: req.body.EventName,
-            description: req.body.EventDescription,
-            event_type: req.body.EventType
-        });
+        // Left: DB Column | Right: HTML Input Name
+        const newEvent = {
+            name: req.body.EventName,                  // Matches form
+            description: req.body.EventDescription,    // Matches form
+            event_type: req.body.EventType,           // Matches form
+            recurrence_pattern: req.body.EventRecurrencePattern
+        };
+
+        await Events.create(newEvent);
 
         res.redirect("/events");
     } catch (err) {

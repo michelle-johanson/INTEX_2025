@@ -1,0 +1,76 @@
+<nav class="er-navbar">
+    <div class="er-navbar-inner">
+
+        <div class="er-navbar-left">
+            <a href="/" class="er-navbar-logo">
+                <img src="/img/logo-no-bg.png" alt="Ella Rises Logo">
+            </a>
+
+            <ul class="er-navbar-menu">
+                <% // Safe role check for manager/admin const isManager=session && session.access_level &&
+                    ["manager", "admin" ].includes(session.access_level.toLowerCase()); const menus=[ { label: "EVENTS"
+                    , items: [ { text: "Events" , href: "/events" }, { text: "Event Occurrences" ,
+                    href: "/eventOccurrences" } ] }, { label: "REGISTER" , items: [ { text: "Registrations" ,
+                    href: "/registrations" }, { text: "Participants" , href: "/participants" }, { text: "Milestones" ,
+                    href: "/milestones" } ] }, { label: "SURVEY" , items: [ { text: "Surveys" , href: "/surveys" }, {
+                    text: "Dashboard" , href: "/dashboard" , restricted: true } ] } ]; %>
+
+                    <% menus.forEach(menu=> {
+                        // Filter restricted items for non-managers
+                        const visibleItems = menu.items.filter(i => !(i.restricted && !isManager));
+                        if (visibleItems.length === 0) return;
+                        %>
+                        <li class="nav-item dropdown">
+                            <a class="er-nav-link nav-link dropdown-toggle" href="#" role="button"
+                                data-bs-toggle="dropdown">
+                                <%= menu.label %>
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <% visibleItems.forEach(i=> { %>
+                                    <li>
+                                        <a class="dropdown-item" href="<%= i.href %>">
+                                            <%= i.text %>
+                                        </a>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                        </li>
+                        <% }) %>
+
+                            <!-- DONATE BUTTON AS LIST ITEM -->
+                            <li class="nav-item">
+                                <a class="er-navbar-donate nav-link" href="/donations/new">
+                                    DONATE
+                                </a>
+                            </li>
+            </ul>
+        </div>
+
+        <div class="er-navbar-right">
+            <% if (!session || !session.isLoggedIn) { %>
+                <a href="/auth/login" class="er-navbar-login">LOGIN</a>
+                <% } else { %>
+                    <div class="nav-item dropdown er-account-dropdown">
+                        <a class="er-nav-link nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown">
+                            <%= session.username %>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <% if (isManager) { %>
+                                <li><a class="dropdown-item" href="/users">Manage Users</a></li>
+                                <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <% } %>
+
+                                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                    <% } %>
+        </div>
+
+    </div>
+</nav>
