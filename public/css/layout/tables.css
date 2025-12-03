@@ -1,0 +1,26 @@
+/* Custom Table Styling (Bootstrap override) */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+thead {
+    background: var(--blue);
+    color: white;
+    text-align: left;
+}
+
+th,
+td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background: var(--cream);
+}

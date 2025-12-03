@@ -1,39 +1,17 @@
-<div class="page-container">
+<div class="container mt-4">
+       <h1>Edit Event Type</h1>
 
-    <h1 class="page-title">Edit Event Template</h1>
+       <form action="/events/<%= event.event_id %>/edit" method="POST" class="mt-3">
 
-    <form action="/events/<%= event.EventID %>/edit" method="POST" class="form">
+              <label class="form-label">Event Name</label>
+              <input type="text" name="EventName" class="form-control" value="<%= event.name %>" required />
 
-        <label for="EventName">Event Name</label>
-        <input id="EventName"
-               type="text"
-               name="EventName"
-               value="<%= event.EventName %>"
-               required />
+              <label class="form-label mt-3">Event Type</label>
+              <input type="text" name="EventType" class="form-control" value="<%= event.event_type %>" />
 
-        <label for="EventType">Event Type</label>
-        <input id="EventType"
-               type="text"
-               name="EventType"
-               value="<%= event.EventType %>" />
+              <label class="form-label mt-3">Description</label>
+              <textarea name="EventDescription" class="form-control" rows="3"><%= event.description %></textarea>
 
-        <label for="EventRecurrencePattern">Recurrence Pattern</label>
-        <input id="EventRecurrencePattern"
-               type="text"
-               name="EventRecurrencePattern"
-               value="<%= event.EventRecurrencePattern %>" />
-
-        <label for="EventDescription">Description</label>
-        <textarea id="EventDescription" name="EventDescription" rows="3"><%= event.EventDescription %></textarea>
-
-        <label for="EventDefaultCapacity">Default Capacity</label>
-        <input id="EventDefaultCapacity"
-               type="number"
-               name="EventDefaultCapacity"
-               value="<%= event.EventDefaultCapacity %>"
-               min="1" />
-
-        <button class="btn-submit">Save Changes</button>
-    </form>
-
+              <button class="btn btn-primary mt-3">Save Changes</button>
+       </form>
 </div>

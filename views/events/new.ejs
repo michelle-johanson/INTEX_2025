@@ -1,25 +1,17 @@
-<div class="page-container">
+<div class="container mt-4">
+    <h1>Create New Event Type</h1>
 
-    <h1 class="page-title">Add Event Template</h1>
+    <form action="/events/new" method="POST" class="mt-3">
 
-    <form action="/events/new" method="POST" class="form">
+        <label class="form-label">Event Name</label>
+        <input type="text" name="EventName" class="form-control" required />
 
-        <label for="EventName">Event Name</label>
-        <input id="EventName" type="text" name="EventName" required />
+        <label class="form-label mt-3">Event Type</label>
+        <input type="text" name="EventType" class="form-control" />
 
-        <label for="EventType">Event Type</label>
-        <input id="EventType" type="text" name="EventType" placeholder="STEAM, Workshop, etc." />
+        <label class="form-label mt-3">Description</label>
+        <textarea name="EventDescription" class="form-control" rows="3"></textarea>
 
-        <label for="EventRecurrencePattern">Recurrence Pattern</label>
-        <input id="EventRecurrencePattern" type="text" name="EventRecurrencePattern" placeholder="Once, Monthly, etc." />
-
-        <label for="EventDescription">Description</label>
-        <textarea id="EventDescription" name="EventDescription" rows="3"></textarea>
-
-        <label for="EventDefaultCapacity">Default Capacity</label>
-        <input id="EventDefaultCapacity" type="number" name="EventDefaultCapacity" min="1" />
-
-        <button class="btn-submit">Create Event Template</button>
+        <button class="btn btn-primary mt-3">Create Event Type</button>
     </form>
-
 </div>

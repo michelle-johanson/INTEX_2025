@@ -1,32 +1,49 @@
-// models/events.js
-const knex = require("../db"); // Import the shared connection
+const knex = require("../db");
 
+// EVENTS MODEL
 module.exports = {
-    // Get all events, sorted by ID
-    getAll: () => {
-        return knex("events").select("*").orderBy("event_id", "asc");
+    getAll() {
+        return knex("events").orderBy("event_id");
     },
 
-    // Get specific event
-    getById: (id) => {
-        return knex("events").where({ event_id: id }).first();
-    },
-
-    // Create new event
-    // We return the IDs to confirm it worked
-    create: (data) => {
-        return knex("events").insert(data).returning("event_id");
-    },
-
-    // Update event
-    update: (id, data) => {
+    getById(id) {
         return knex("events")
             .where({ event_id: id })
-            .update(data);
+            .first();
     },
 
-    // Delete event
-    delete: (id) => {
-        return knex("events").where({ event_id: id }).del();
+    create(data) {
+        return knex("events")
+            .insert({
+                name: data.name,
+                description: data.description,
+                event_type: data.event_type
+            })
+            .returning("*");
+    },
+
+    update(id, data) {
+        return knex("events")
+            .where({ event_id: id })
+            .update({
+                name: data.name,
+                description: data.description,
+                event_type: data.event_type
+            })
+            .returning("*");
+    },
+
+    delete(id) {
+        return knex("events")
+            .where({ event_id: id })
+            .del();
+    },
+
+    // Pull all future occurrences for this event
+    getUpcomingOccurrences(id) {
+        return knex("event_occurrences")
+            .where("event_id", id)
+            .andWhere("start_datetime", ">", knex.fn.now())
+            .orderBy("start_datetime");
     }
 };

@@ -61,10 +61,31 @@
     </div>
 </section>
 
-<footer>  
+<footer class="mt-5 text-center">
+
     <span id="teapot-trigger" style="cursor: pointer; font-size: 20px;" title="Click me for a surprise">
-    🫖 </span>
+        🫖
+    </span>
+
+    <% if (session && session.isLoggedIn) { %>
+        <div class="alert alert-info mt-3 d-inline-block">
+
+            Logged in as:
+            <strong>
+                <%= session.username %>
+            </strong>
+
+            <% if (session.access_level==="admin" ) { %>
+                <span class="badge bg-danger ms-2">Admin</span>
+                <% } else { %>
+                    <span class="badge bg-secondary ms-2">Participant</span>
+                    <% } %>
+
+        </div>
+        <% } %>
+
 </footer>
+
 
 
 <script>
