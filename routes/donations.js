@@ -1,5 +1,3 @@
-// routes/donations.js
-
 const express = require("express");
 const router = express.Router();
 
@@ -57,12 +55,16 @@ router.get("/thanks", (req, res) => {
 
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const donations = await Donations.getAll();
+        // 1. Capture search term
+        const searchTerm = req.query.search || "";
+
+        // 2. Pass search term to the Model
+        const donations = await Donations.getAll(searchTerm);
         
-        // We generally don't need 'participants' list here unless you have a filter dropdown
         res.render("donations/index", {
             title: "Donations",
-            donations
+            donations,
+            searchTerm // 3. Send back to view to keep input filled
         });
     } catch (err) {
         console.error(err);
@@ -84,7 +86,6 @@ router.get("/:pid/:dno", requireLogin, async (req, res) => {
         res.render("donations/show", {
             title: "Donation Details",
             donation
-            // Participant info is already inside 'donation' object due to join
         });
     } catch (err) {
         console.error(err);
@@ -123,7 +124,6 @@ router.post("/:pid/:dno/edit", requireAdmin, async (req, res) => {
         const updates = {
             donation_date: req.body.DonationDate,
             amount: Number(req.body.DonationAmount)
-            // We usually do NOT update participant_id here to avoid breaking keys
         };
 
         await Donations.update(req.params.pid, req.params.dno, updates);

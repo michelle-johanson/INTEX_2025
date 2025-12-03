@@ -2,53 +2,89 @@
 
     <h1 class="page-title">Donations</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Participant</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th></th>
-            </tr>
-        </thead>
+    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
 
-        <tbody>
-            <% donations.forEach(d => { %>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        
+        <!-- Action Button (Manager Only) -->
+        <% if (isManager) { %>
+            <a href="/donations/new" class="btn btn-primary btn-small">
+                + Add Donation
+            </a>
+        <% } else { %>
+            <!-- Optional: Empty div to keep search bar aligned right if user is not manager -->
+            <div></div>
+        <% } %>
+
+        <!-- Search Bar -->
+        <form action="/donations" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" 
+                   name="search" 
+                   placeholder="Search donor name..." 
+                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
+            >
+            <button type="submit" class="btn btn-secondary btn-small">Search</button>
+            
+            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                <a href="/donations" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
+            <% } %>
+        </form>
+    </div>
+
+    <% if (donations.length === 0) { %>
+        <p>No donations found.</p>
+    <% } else { %>
+        <table>
+            <thead>
                 <tr>
-                    <td>
-                        <% if (d.first_name) { %>
-                            <%= d.first_name %> <%= d.last_name %> (ID #<%= d.participant_id %>)
-                        <% } else { %>
-                            Participant #<%= d.participant_id %>
-                        <% } %>
-                    </td>
-                    
-                    <td>
-                        <%= new Date(d.donation_date).toLocaleDateString() %>
-                    </td>
-                    
-                    <td>
-                        $<%= Number(d.amount).toFixed(2) %>
-                    </td>
-
-                    <td class="table-actions">
-                        <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>">View</a>
-
-                        <% if (session && session.access_level === "manager") { %>
-                            <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>/edit">Edit</a>
-                            
-                            <form action="/donations/<%= d.participant_id %>/<%= d.donation_no %>/delete" 
-                                  method="POST" 
-                                  style="display:inline;">
-                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
-                                    Delete
-                                </button>
-                            </form>
-                        <% } %>
-                    </td>
+                    <th>Participant</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th></th>
                 </tr>
-            <% }) %>
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                <% donations.forEach(d => { %>
+                    <tr>
+                        <td>
+                            <% if (d.first_name) { %>
+                                <%= d.first_name %> <%= d.last_name %> (ID #<%= d.participant_id %>)
+                            <% } else { %>
+                                Participant #<%= d.participant_id %>
+                            <% } %>
+                        </td>
+                        
+                        <td>
+                            <%= new Date(d.donation_date).toLocaleDateString() %>
+                        </td>
+                        
+                        <td>
+                            $<%= Number(d.amount).toFixed(2) %>
+                        </td>
+
+                        <td class="table-actions">
+                            <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>" class="btn btn-secondary btn-small">
+                                View
+                            </a>
+
+                            <% if (isManager) { %>
+                                <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>/edit">Edit</a>
+                                
+                                <form action="/donations/<%= d.participant_id %>/<%= d.donation_no %>/delete" 
+                                      method="POST" 
+                                      style="display:inline;">
+                                    <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                        Delete
+                                    </button>
+                                </form>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
 
 </div>
