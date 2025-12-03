@@ -6,47 +6,66 @@
         <!-- EVENT SELECTION -->
         <label class="form-label">Event</label>
         <select name="EventID" class="form-select" required>
-            <% events.forEach(e=> { %>
-                <option value="<%= e.event_id %>" <%=e.event_id===occurrence.event_id ? "selected" : "" %>>
-                    <%= e.name %> — <%= e.event_type %>
+            <% events.forEach(e => { %>
+                <!-- FIX: Use 'e.type' to match the Events table column -->
+                <option value="<%= e.event_id %>" <%= e.event_id === occurrence.event_id ? "selected" : "" %>>
+                    <%= e.name %> — <%= e.type %>
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
         <!-- START DATETIME -->
         <label for="EventDateTimeStart" class="form-label mt-3">Start Date & Time</label>
-        <input id="EventDateTimeStart" type="datetime-local" name="EventDateTimeStart" class="form-control" value="<%= occurrence.starts_at 
-                    ? new Date(new Date(occurrence.starts_at).getTime() - (new Date().getTimezoneOffset() * 60000))
-                        .toISOString().slice(0, 16)
-                    : '' %>" required />
+        <input id="EventDateTimeStart" 
+               type="datetime-local" 
+               name="EventDateTimeStart" 
+               class="form-control" 
+               value="<%= occurrence.starts_at ? new Date(new Date(occurrence.starts_at).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" 
+               required />
 
         <!-- END DATETIME -->
         <label for="EventDateTimeEnd" class="form-label mt-3">End Date & Time</label>
-        <input id="EventDateTimeEnd" type="datetime-local" name="EventDateTimeEnd" class="form-control" value="<%= occurrence.ends_at 
-                    ? new Date(new Date(occurrence.ends_at).getTime() - (new Date().getTimezoneOffset() * 60000))
-                        .toISOString().slice(0, 16)
-                    : '' %>" required />
+        <input id="EventDateTimeEnd" 
+               type="datetime-local" 
+               name="EventDateTimeEnd" 
+               class="form-control" 
+               value="<%= occurrence.ends_at ? new Date(new Date(occurrence.ends_at).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" 
+               required />
 
         <!-- LOCATION -->
         <label for="EventLocation" class="form-label mt-3">Location</label>
-        <input id="EventLocation" type="text" name="EventLocation" class="form-control"
-            value="<%= occurrence.location %>" required />
+        <input id="EventLocation" 
+               type="text" 
+               name="EventLocation" 
+               class="form-control"
+               value="<%= occurrence.location %>" 
+               required />
 
         <!-- CAPACITY -->
         <label for="EventCapacity" class="form-label mt-3">Capacity</label>
-        <input id="EventCapacity" type="number" min="1" name="EventCapacity" class="form-control"
-            value="<%= occurrence.capacity %>" required />
+        <input id="EventCapacity" 
+               type="number" 
+               min="1" 
+               name="EventCapacity" 
+               class="form-control"
+               value="<%= occurrence.capacity %>" 
+               required />
 
         <!-- REGISTRATION DEADLINE -->
         <label for="EventRegistrationDeadline" class="form-label mt-3">Registration Deadline</label>
-        <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline" class="form-control" value="<%= occurrence.registration_deadline 
-                    ? new Date(occurrence.registration_deadline).toISOString().split('T')[0] 
-                    : '' %>" required />
+        <input id="EventRegistrationDeadline" 
+               type="date" 
+               name="EventRegistrationDeadline" 
+               class="form-control" 
+               value="<%= occurrence.registration_deadline ? new Date(occurrence.registration_deadline).toISOString().split('T')[0] : '' %>" 
+               required />
 
         <!-- BUTTONS -->
         <div class="d-flex gap-3 mt-4">
             <button class="btn btn-primary">Save Changes</button>
-            <a href="/eventOccurrences" class="btn btn-secondary">Cancel</a>
+            
+            <!-- Cancel Button returns to details page instead of index -->
+            <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>" class="btn btn-secondary">Cancel</a>
         </div>
 
     </form>

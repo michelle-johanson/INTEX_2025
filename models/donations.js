@@ -1,20 +1,31 @@
-// models/donations.js
 const knex = require("../db");
 
 module.exports = {
-    // Get all donations (Joined with Participant Name)
-    getAll: () => {
-        return knex("donations")
+    // UPDATED: Now supports "First Last" name search
+    getAll: (searchTerm = null) => {
+        const query = knex("donations")
             .join("participants", "donations.participant_id", "=", "participants.participant_id")
             .select(
                 "donations.*",
                 "participants.first_name",
                 "participants.last_name"
-            )
-            .orderBy("donations.donation_date", "desc");
+            );
+
+        // --- SEARCH FILTER ---
+        if (searchTerm) {
+            query.where(builder => {
+                builder.where("participants.first_name", "ilike", `%${searchTerm}%`)
+                       .orWhere("participants.last_name", "ilike", `%${searchTerm}%`)
+                       // NEW: Concatenate First + Space + Last to search full name
+                       .orWhereRaw("CONCAT(participants.first_name, ' ', participants.last_name) ILIKE ?", [`%${searchTerm}%`]);
+            });
+        }
+        // ---------------------
+
+        return query.orderBy("donations.donation_date", "desc");
     },
 
-    // Get specific donation (Needs TWO IDs)
+    // Get specific donation
     getById: (participantId, donationNo) => {
         return knex("donations")
             .join("participants", "donations.participant_id", "=", "participants.participant_id")
@@ -31,18 +42,15 @@ module.exports = {
             .first();
     },
 
-    // Create new donation (Auto-increment donation_no per user)
+    // Create new donation
     create: async (data) => {
-        // 1. Find the highest donation number this user currently has
         const result = await knex("donations")
             .max("donation_no as max_no")
             .where({ participant_id: data.participant_id })
             .first();
 
-        // 2. Add 1 (or start at 1)
         const nextNo = (result.max_no || 0) + 1;
 
-        // 3. Insert
         return knex("donations").insert({
             participant_id: data.participant_id,
             donation_no: nextNo,
@@ -51,7 +59,7 @@ module.exports = {
         });
     },
 
-    // Update (Needs TWO IDs)
+    // Update
     update: (participantId, donationNo, data) => {
         return knex("donations")
             .where({ 
@@ -61,7 +69,7 @@ module.exports = {
             .update(data);
     },
 
-    // Delete (Needs TWO IDs)
+    // Delete
     delete: (participantId, donationNo) => {
         return knex("donations")
             .where({ 

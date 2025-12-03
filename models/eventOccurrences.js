@@ -1,15 +1,25 @@
 const knex = require("../db");
 
 module.exports = {
-    getAll() {
-        return knex("event_occurrences")
+    // Standard getAll for the main list (Level 2)
+    getAll(searchTerm = null) {
+        const query = knex("event_occurrences")
             .join("events", "event_occurrences.event_id", "events.event_id")
             .select(
                 "event_occurrences.*",
                 "events.name as event_name",
                 "events.type as event_type"
-            )
-            .orderBy("event_occurrences.starts_at", "asc");
+            );
+
+        if (searchTerm) {
+            query.where(builder => {
+                builder.where("events.name", "ilike", `%${searchTerm}%`)
+                       .orWhere("events.type", "ilike", `%${searchTerm}%`)
+                       .orWhere("event_occurrences.location", "ilike", `%${searchTerm}%`);
+            });
+        }
+
+        return query.orderBy("event_occurrences.starts_at", "asc");
     },
 
     getUpcoming() {
@@ -37,17 +47,28 @@ module.exports = {
             .first();
     },
 
-    getByEventId(eventId) {
-        return knex("event_occurrences")
+    // --- UPDATED: Now supports Search Term ---
+    // This is used when viewing a specific Event Type (e.g. searching "Provo" inside "STEAM Night")
+    getByEventId(eventId, searchTerm = null) {
+        const query = knex("event_occurrences")
             .join("events", "event_occurrences.event_id", "events.event_id")
             .select(
                 "event_occurrences.*",
                 "events.name as event_name",
                 "events.type as event_type"
             )
-            .where("event_occurrences.event_id", eventId)
-            .orderBy("event_occurrences.starts_at", "asc");
+            .where("event_occurrences.event_id", eventId);
+
+        // Search logic specific to this list
+        if (searchTerm) {
+            query.andWhere(builder => {
+                builder.where("event_occurrences.location", "ilike", `%${searchTerm}%`);
+            });
+        }
+
+        return query.orderBy("event_occurrences.starts_at", "asc");
     },
+    // -----------------------------------------
 
     create(data) {
         return knex("event_occurrences")

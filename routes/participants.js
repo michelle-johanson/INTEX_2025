@@ -1,5 +1,3 @@
-// routes/participants.js
-
 const express = require("express");
 const router = express.Router();
 
@@ -7,18 +5,24 @@ const { requireAdmin, requireLogin } = require("../middleware/auth");
 const Participants = require("../models/participants");
 
 /* ============================================================
-   LIST PARTICIPANTS (SPLIT LOGIC)
+   LIST PARTICIPANTS (With Search)
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
         const role = (req.session.access_level || "").toLowerCase();
+        
+        // 1. Capture the search term from the URL (e.g. ?search=Maria)
+        const searchQuery = req.query.search || "";
 
         // SCENARIO 1: MANAGER - Show Directory
         if (role === "manager" || role === "admin") {
-            const participants = await Participants.getAll();
+            // 2. Pass search term to the Model
+            const participants = await Participants.getAll(searchQuery);
+            
             return res.render("participants/index", {
                 title: "Participant Directory",
-                participants
+                participants,
+                searchTerm: searchQuery // 3. Send it back to the View
             });
         }
 
@@ -35,28 +39,21 @@ router.get("/", requireLogin, async (req, res) => {
 /* ============================================================
    CREATE NEW PARTICIPANT (ADMIN ONLY)
 ============================================================ */
-
 router.get("/new", requireAdmin, (req, res) => {
     res.render("participants/new", {
         title: "Add Participant"
     });
 });
 
-// Handle form submit
 router.post("/new", requireAdmin, async (req, res) => {
     try {
         const newParticipant = {
             email: req.body.Email,
-            // FIX 1: Capture the password from the form
-            password: req.body.Password, 
-            
+            password: req.body.Password,
             first_name: req.body.FirstName,
             last_name: req.body.LastName,
             dob: req.body.DOB || null,
-            
-            // FIX 2: Hardcode role (since we removed the input from the form)
-            role: "participant", 
-            
+            role: "participant",
             phone: req.body.Phone,
             city: req.body.City,
             state: req.body.State,
@@ -65,9 +62,7 @@ router.post("/new", requireAdmin, async (req, res) => {
             field_of_interest: req.body.FieldOfInterest
         };
 
-        // The Model uses 'returning participant_id', allowing us to grab the new ID
         await Participants.create(newParticipant);
-        
         res.redirect("/participants");
 
     } catch (err) {
@@ -80,7 +75,6 @@ router.post("/new", requireAdmin, async (req, res) => {
 /* ============================================================
    EDIT PARTICIPANT (ADMIN ONLY)
 ============================================================ */
-
 router.get("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const participant = await Participants.getById(req.params.id);
@@ -149,7 +143,6 @@ router.get("/:id", requireLogin, async (req, res) => {
         
         if (!participant) return res.status(404).send("Participant not found");
 
-        // Security Check
         const role = (req.session.access_level || "").toLowerCase();
         const isAuthorized = (role === 'manager' || role === 'admin') || 
                              (String(req.session.userID) === String(participant.participant_id));

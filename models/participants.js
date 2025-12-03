@@ -1,24 +1,37 @@
-// models/participants.js
 const knex = require("../db");
 
 module.exports = {
-    // Get all participants (Includes Total Donations calculation)
-    getAll: () => {
-        return knex("participants")
+    // Get all participants (Now supports Full Name search)
+    getAll: (searchTerm = null) => {
+        const query = knex("participants")
             .select("participants.*")
             .sum("donations.amount as total_donations")
-            .leftJoin("donations", "participants.participant_id", "donations.participant_id")
+            .leftJoin("donations", "participants.participant_id", "donations.participant_id");
+
+        // --- SEARCH FILTER ---
+        if (searchTerm) {
+            query.where(builder => {
+                builder.where("participants.first_name", "ilike", `%${searchTerm}%`)
+                       .orWhere("participants.last_name", "ilike", `%${searchTerm}%`)
+                       .orWhere("participants.email", "ilike", `%${searchTerm}%`)
+                       // NEW: Concatenate First + Space + Last to search full name
+                       .orWhereRaw("CONCAT(participants.first_name, ' ', participants.last_name) ILIKE ?", [`%${searchTerm}%`]);
+            });
+        }
+        // ---------------------
+
+        return query
             .groupBy("participants.participant_id")
             .orderBy("participants.last_name", "asc");
     },
 
-    // Get specific participant (FIXED: Now includes Total Donations calculation)
+    // Get specific participant
     getById: (id) => {
         return knex("participants")
             .select("participants.*")
             .sum("donations.amount as total_donations")
             .leftJoin("donations", "participants.participant_id", "donations.participant_id")
-            .where({ "participants.participant_id": id }) // Explicit table name to avoid ambiguity
+            .where({ "participants.participant_id": id })
             .groupBy("participants.participant_id")
             .first();
     },

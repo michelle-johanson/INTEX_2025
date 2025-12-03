@@ -1,64 +1,127 @@
-<div class="container mt-4">
+<div class="page-container">
 
-    <div class="d-flex justify-content-between align-items-center">
-        <h1><%= event.name %></h1>
+    <% 
+        // 1. Get the user object (it might be session.user or just session)
+        const user = session.user || session; 
+        
+        // 2. Get the role (check 'role' or 'access_level')
+        const rawRole = user.role || user.access_level || "";
+        
+        // 3. Normalize to lowercase for comparison
+        const userRole = rawRole.toLowerCase();
 
-        <% if (session && session.access_level === "admin") { %>
-            <a href="/events/<%= event.event_id %>/edit" class="btn btn-warning">Edit</a>
+        // 4. Final Boolean Check
+        const isManager = userRole === "manager" || userRole === "admin"; 
+    %>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <h1 class="page-title" style="margin-bottom: 0.5rem;"><%= event.name %></h1>
+            <p class="text-muted" style="font-size: 1.1rem; color: #666;">
+                Type: <strong><%= event.type %></strong>
+            </p>
+            <% if (event.description) { %>
+                <p style="max-width: 700px; line-height: 1.6;"><%= event.description %></p>
+            <% } %>
+        </div>
+
+        <% if (isManager) { %>
+            <div style="display: flex; gap: 0.5rem; flex-direction: column; align-items: flex-end;">
+                <a href="/events/<%= event.event_id %>/edit" class="btn btn-warning btn-small">
+                    Edit Event Info
+                </a>
+                
+                <form action="/events/<%= event.event_id %>/delete" 
+                      method="POST" 
+                      onsubmit="return confirm('Are you sure? This will fail if there are scheduled occurrences attached to this event.');">
+                    <button class="btn btn-danger btn-sm">Delete Event Type</button>
+                </form>
+            </div>
         <% } %>
     </div>
 
-    <p class="text-muted">
-        Type: <%= event.event_type %>
-    </p>
+    <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #ddd;">
 
-    <% if (event.description) { %>
-        <p><%= event.description %></p>
-    <% } %>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+        <h3>Scheduled Occurrences</h3>
 
-    <% if (session && session.access_level === "admin") { %>
-        <form 
-            action="/events/<%= event.event_id %>/delete" 
-            method="POST" 
-            onsubmit="return confirm('Delete this event type?');"
-        >
-            <button class="btn btn-danger btn-sm mt-2">Delete Event Type</button>
-        </form>
-    <% } %>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <form action="/events/<%= event.event_id %>" method="GET" style="display: flex; gap: 0.5rem;">
+                <input type="text" 
+                       name="search" 
+                       placeholder="Search location..." 
+                       value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                       style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px;">
+                <button type="submit" class="btn btn-secondary btn-small">Search</button>
+                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                    <a href="/events/<%= event.event_id %>" style="color: #666; font-size: 0.9rem;">Clear</a>
+                <% } %>
+            </form>
 
-    <hr>
-
-    <h3 class="mt-4">Upcoming Occurrences</h3>
+            <% if (isManager) { %>
+                <a href="/eventOccurrences/new?event_id=<%= event.event_id %>" class="btn btn-primary btn-small">
+                    + Schedule New
+                </a>
+            <% } %>
+        </div>
+    </div>
 
     <% if (occurrences.length === 0) { %>
-        <p class="text-muted">No upcoming occurrences.</p>
+        <div style="background: #f8f9fa; padding: 2rem; text-align: center; border-radius: 8px;">
+            <p class="text-muted" style="margin: 0;">No occurrences scheduled for this event type.</p>
+        </div>
     <% } else { %>
-
-        <table class="table table-striped mt-3">
+        <table class="table">
             <thead>
                 <tr>
-                    <th>Date</th>
+                    <th>Date & Time</th>
                     <th>Location</th>
                     <th>Capacity</th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-
             <tbody>
                 <% occurrences.forEach(o => { %>
                     <tr>
-                        <td><%= new Date(o.start_datetime).toLocaleString() %></td>
+                        <td><%= new Date(o.starts_at).toLocaleString() %></td>
+                        
                         <td><%= o.location %></td>
+                        
                         <td><%= o.capacity %></td>
-                        <td>
-                            <a href="/eventOccurrences/<%= o.occurrence_id %>"
-                                class="btn btn-sm btn-outline-primary">View</a>
+                        
+                        <td class="table-actions" style="display: flex; gap: 5px;">
+                            
+                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
+                                View
+                            </a>
+
+                            <% if (isManager) { %>
+                                <a href="/registrations/event/<%= o.event_occurrence_id %>" 
+                                   class="btn btn-info btn-small" 
+                                   style="background-color: #17a2b8; border-color: #17a2b8; color: white;">
+                                   Registrants
+                                </a>
+
+                                <a href="/eventOccurrences/<%= o.event_occurrence_id %>/edit" 
+                                   class="btn btn-warning btn-small"
+                                   style="background-color: #f0ad4e; border-color: #eea236; color: white;">
+                                   Edit
+                                </a>
+
+                                <form action="/eventOccurrences/<%= o.event_occurrence_id %>/delete" method="POST" style="display:inline;">
+                                    <button type="submit" 
+                                            class="btn btn-danger btn-small" 
+                                            style="background-color: #d9534f; border-color: #d43f3a; color: white;"
+                                            onclick="return confirm('Are you sure you want to delete this scheduled occurrence?');">
+                                        Delete
+                                    </button>
+                                </form>
+                            <% } %>
                         </td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
-
     <% } %>
 
 </div>
