@@ -1,0 +1,49 @@
+:root {
+    /* Brand Palette */
+    --blue: #99B7C6;
+    --lavender: #97BCE4;
+    --cream: #F9F5EA;
+    --light-pink: #FFD8D1;
+    --pink: #F9AFB1;
+    --sage: #9AB59D;
+    --charcoal: #3A3F3B;
+    --coral: #F4B092;
+    --rose: #CE325B;
+
+    /* Semantic Tokens */
+    --text-dark: var(--charcoal);
+    --text-light: #ffffff;
+
+    --card-bg: #ffffff;
+    --card-border: #e6e6e6;
+
+    --form-border: var(--blue);
+    --form-focus-shadow: rgba(153, 183, 198, 0.35);
+
+    /* Button: Primary */
+    --btn-primary-bg: var(--rose);
+    --btn-primary-text: #ffffff;
+    --btn-primary-border: var(--rose);
+
+    --btn-primary-hover-bg: #b82b50;
+    --btn-primary-hover-text: #ffffff;
+    --btn-primary-hover-border: #b82b50;
+
+    /* Button: Table Details */
+    --btn-details-bg: var(--lavender);
+    --btn-details-text: #ffffff;
+    --btn-details-border: var(--lavender);
+
+    --btn-details-hover-bg: #7aa9d7;
+    --btn-details-hover-text: #ffffff;
+    --btn-details-hover-border: #7aa9d7;
+
+    /* Alerts */
+    --success-bg: #e7f7ea;
+    --success-border: #9dd9a7;
+    --success-text: #1f6b2e;
+
+    --error-bg: #fde8e8;
+    --error-border: #e49a9a;
+    --error-text: #8a1f1f;
+}

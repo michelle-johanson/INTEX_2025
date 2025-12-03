@@ -16,10 +16,29 @@
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const hamburger = document.getElementById("hamburger");
+        const mobileMenu = document.getElementById("mobileMenu");
+
+        hamburger.addEventListener("click", () => {
+            hamburger.classList.toggle("active");
+            mobileMenu.classList.toggle("open");
+        });
+
+        document.querySelectorAll(".mobile-toggle").forEach(toggle => {
+            toggle.addEventListener("click", e => {
+                e.preventDefault();
+                const parent = toggle.closest(".dropdown");
+                parent.classList.toggle("open");
+            });
+        });
+    });
+</script>
 
 <body class="page">
     <!-- Shared navbar on every page -->
-    <%- include("partials/navbar") %>
+    <%- include("navbar") %>
 
     <!-- Page-specific content gets injected here -->
     <main class="page-container">

@@ -71,6 +71,10 @@ app.use("/events", eventRoutes);
 const eventOccurrenceRoutes = require("./routes/eventOccurrences");
 app.use("/eventOccurrences", eventOccurrenceRoutes);
 
+// Registrations
+const registrationsRoutes = require("./routes/registrations");
+app.use("/registrations", registrationsRoutes);
+
 // Surveys
 const surveyRoutes = require("./routes/surveys");
 app.use("/surveys", surveyRoutes);
@@ -79,24 +83,18 @@ app.use("/surveys", surveyRoutes);
 const milestoneRoutes = require("./routes/milestones");
 app.use("/milestones", milestoneRoutes);
 
-// --- NEW ADDITIONS START HERE ---
-
-// Registrations
-const registrationRoutes = require("./routes/registrations");
-app.use("/registrations", registrationRoutes);
-
 // Dashboard
 // Warning: This requires a file at ./routes/dashboard.js to exist!
 const dashboardRoutes = require("./routes/dashboard");
 app.use("/dashboard", dashboardRoutes);
 
+/* ============================================================
+   OTHER REQUIRED ROUTES
+============================================================ */
 
-// --- NEW ADDITIONS END HERE ---
-
-
-// Teapot
-app.get('/teapot', (req, res) => {
-  res.status(418).send("I'm a little teapot, short and stout.");
+// Teapot (IS 404 requirement)
+app.get("/teapot", (req, res) => {
+    res.status(418).send("I'm a little teapot, short and stout.");
 });
 
 /* ============================================================

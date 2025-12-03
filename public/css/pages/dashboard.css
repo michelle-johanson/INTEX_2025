@@ -2,15 +2,26 @@
    DASHBOARD LAYOUT
 ===================================== */
 
-.dashboard-wrapper {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+.dashboard-frame {
+    width: 100%;
+    height: 75vh;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
-.dashboard-card {
-    background: white;
-    padding: 2rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
+.dashboard-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.page-title {
+    font-family: var(--font-heading);
+    margin-bottom: .5rem;
+}
+
+.page-subtitle {
+    margin-bottom: 2rem;
+    color: var(--charcoal);
 }

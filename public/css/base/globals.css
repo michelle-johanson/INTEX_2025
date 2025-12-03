@@ -1,0 +1,23 @@
+/* Global typography & layout rules */
+
+h1 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    margin-bottom: var(--space-5);
+}
+
+h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: var(--space-4);
+}
+
+a {
+    color: var(--rose);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    text-decoration: underline;
+}

@@ -1,59 +1,53 @@
-<div class="page-container">
+<div class="container mt-4">
+    <h1>Edit Event Occurrence</h1>
 
-    <h1 class="page-title">Edit Event Occurrence</h1>
+    <form action="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit" method="POST" class="mt-3">
 
-    <form action="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit" method="POST" class="form">
-
-        <label for="EventID">Event Template</label>
-        <select id="EventID" name="EventID" required>
-            <% events.forEach(e => { %>
-                <option value="<%= e.event_id %>" 
-                    <%= e.event_id === occurrence.event_id ? "selected" : "" %>>
-                    <%= e.name %>
+        <!-- EVENT SELECTION -->
+        <label class="form-label">Event</label>
+        <select name="EventID" class="form-select" required>
+            <% events.forEach(e=> { %>
+                <option value="<%= e.event_id %>" <%=e.event_id===occurrence.event_id ? "selected" : "" %>>
+                    <%= e.name %> — <%= e.event_type %>
                 </option>
-            <% }) %>
+                <% }) %>
         </select>
 
-        <label for="EventDateTimeStart">Start Date &amp; Time</label>
-        <input id="EventDateTimeStart" 
-               type="datetime-local" 
-               name="EventDateTimeStart"
-               value="<%= occurrence.starts_at ? new Date(new Date(occurrence.starts_at).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" 
-               required />
+        <!-- START DATETIME -->
+        <label for="EventDateTimeStart" class="form-label mt-3">Start Date & Time</label>
+        <input id="EventDateTimeStart" type="datetime-local" name="EventDateTimeStart" class="form-control" value="<%= occurrence.starts_at 
+                    ? new Date(new Date(occurrence.starts_at).getTime() - (new Date().getTimezoneOffset() * 60000))
+                        .toISOString().slice(0, 16)
+                    : '' %>" required />
 
-        <label for="EventDateTimeEnd">End Date &amp; Time</label>
-        <input id="EventDateTimeEnd" 
-               type="datetime-local" 
-               name="EventDateTimeEnd"
-               value="<%= occurrence.ends_at ? new Date(new Date(occurrence.ends_at).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" 
-               required />
+        <!-- END DATETIME -->
+        <label for="EventDateTimeEnd" class="form-label mt-3">End Date & Time</label>
+        <input id="EventDateTimeEnd" type="datetime-local" name="EventDateTimeEnd" class="form-control" value="<%= occurrence.ends_at 
+                    ? new Date(new Date(occurrence.ends_at).getTime() - (new Date().getTimezoneOffset() * 60000))
+                        .toISOString().slice(0, 16)
+                    : '' %>" required />
 
-        <label for="EventLocation">Location</label>
-        <input id="EventLocation" 
-               type="text" 
-               name="EventLocation" 
-               value="<%= occurrence.location %>" 
-               required />
+        <!-- LOCATION -->
+        <label for="EventLocation" class="form-label mt-3">Location</label>
+        <input id="EventLocation" type="text" name="EventLocation" class="form-control"
+            value="<%= occurrence.location %>" required />
 
-        <label for="EventCapacity">Capacity</label>
-        <input id="EventCapacity" 
-               type="number" 
-               name="EventCapacity" 
-               value="<%= occurrence.capacity %>" 
-               min="1"
-               required />
+        <!-- CAPACITY -->
+        <label for="EventCapacity" class="form-label mt-3">Capacity</label>
+        <input id="EventCapacity" type="number" min="1" name="EventCapacity" class="form-control"
+            value="<%= occurrence.capacity %>" required />
 
-        <label for="EventRegistrationDeadline">Registration Deadline</label>
-        <input id="EventRegistrationDeadline" 
-               type="date" 
-               name="EventRegistrationDeadline"
-               value="<%= occurrence.registration_deadline ? new Date(occurrence.registration_deadline).toISOString().split('T')[0] : '' %>" 
-               required />
+        <!-- REGISTRATION DEADLINE -->
+        <label for="EventRegistrationDeadline" class="form-label mt-3">Registration Deadline</label>
+        <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline" class="form-control" value="<%= occurrence.registration_deadline 
+                    ? new Date(occurrence.registration_deadline).toISOString().split('T')[0] 
+                    : '' %>" required />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
-            <button class="btn-submit">Save Changes</button>
-            <a href="/eventOccurrences" style="text-decoration: none; color: #666;">Cancel</a>
+        <!-- BUTTONS -->
+        <div class="d-flex gap-3 mt-4">
+            <button class="btn btn-primary">Save Changes</button>
+            <a href="/eventOccurrences" class="btn btn-secondary">Cancel</a>
         </div>
-    </form>
 
+    </form>
 </div>

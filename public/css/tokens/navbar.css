@@ -1,0 +1,50 @@
+:root {
+    /* Navbar Dimensions */
+    --navbar-height: 90px;
+    --navbar-padding-x: 3rem;
+    /* space left/right */
+    --navbar-max-width: 1200px;
+
+    /* Top-Level Nav Items */
+    --nav-item-gap: 2.2rem;
+    /* spacing between items */
+    --nav-item-padding-x: 1rem;
+    /* horizontal padding only */
+
+    --nav-link-font-weight: 600;
+    --nav-link-font-size: 0.95rem;
+    --nav-link-letterspacing: 0.04em;
+
+    --nav-link-color: var(--charcoal);
+    --nav-link-hover-color: var(--rose);
+    --nav-item-hover-bg: rgba(0, 0, 0, 0.04);
+
+    /* Dropdown Menu */
+    --dropdown-width-min: 190px;
+    --dropdown-radius: var(--radius);
+    --dropdown-shadow: var(--shadow);
+    --dropdown-border-color: #e4e4e4;
+    --dropdown-padding-y: 0.4rem;
+
+    /* Dropdown Items */
+    --dropdown-item-font-weight: 600;
+    /* NEW TOKEN */
+    --dropdown-item-font-size: 0.95rem;
+    --dropdown-item-line-height: 1.2;
+
+    --dropdown-hover-bg: var(--cream);
+    --dropdown-hover-text: var(--rose);
+
+    /* Future mobile breakpoint (for hamburger menu) */
+    --breakpoint-mobile: 768px;
+
+    /* Mobile Rules */
+    --navbar-height-mobile: 70px;
+    --navbar-padding-x-mobile: 1.25rem;
+    --mobile-menu-bg: white;
+    --mobile-menu-shadow: var(--shadow);
+    --mobile-dropdown-bg: #fafafa;
+
+    --hamburger-size: 28px;
+    --hamburger-thickness: 3px;
+}

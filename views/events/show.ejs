@@ -1,38 +1,64 @@
-<div class="page-container">
+<div class="container mt-4">
 
-    <h1 class="page-title">Event Template Details</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1><%= event.name %></h1>
 
-    <div class="detail-card">
-        <div class="detail-row">
-            <span class="detail-label">Name</span>
-            <span class="detail-value"><%= event.name %></span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Type</span>
-            <span class="detail-value"><%= event.type %></span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Recurrence</span>
-            <span class="detail-value"><%= event.recurrence_pattern %></span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Default Capacity</span>
-            <span class="detail-value"><%= event.default_capacity %></span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Description</span>
-            <span class="detail-value"><%= event.description %></span>
-        </div>
-
-        <% if (session && session.access_level === "manager") { %>
-            <div class="detail-actions">
-                <a href="/events/<%= event.event_id %>/edit">Edit</a>
-            </div>
+        <% if (session && session.access_level === "admin") { %>
+            <a href="/events/<%= event.event_id %>/edit" class="btn btn-warning">Edit</a>
         <% } %>
     </div>
+
+    <p class="text-muted">
+        Type: <%= event.event_type %>
+    </p>
+
+    <% if (event.description) { %>
+        <p><%= event.description %></p>
+    <% } %>
+
+    <% if (session && session.access_level === "admin") { %>
+        <form 
+            action="/events/<%= event.event_id %>/delete" 
+            method="POST" 
+            onsubmit="return confirm('Delete this event type?');"
+        >
+            <button class="btn btn-danger btn-sm mt-2">Delete Event Type</button>
+        </form>
+    <% } %>
+
+    <hr>
+
+    <h3 class="mt-4">Upcoming Occurrences</h3>
+
+    <% if (occurrences.length === 0) { %>
+        <p class="text-muted">No upcoming occurrences.</p>
+    <% } else { %>
+
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Capacity</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% occurrences.forEach(o => { %>
+                    <tr>
+                        <td><%= new Date(o.start_datetime).toLocaleString() %></td>
+                        <td><%= o.location %></td>
+                        <td><%= o.capacity %></td>
+                        <td>
+                            <a href="/eventOccurrences/<%= o.occurrence_id %>"
+                                class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+    <% } %>
 
 </div>

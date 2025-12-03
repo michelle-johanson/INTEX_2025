@@ -1,60 +1,51 @@
-<div class="page-container">
+<div class="container mt-4">
 
-    <h1 class="page-title">Event Occurrence Details</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1><%= occurrence.event_name %></h1>
 
-    <div class="detail-card">
+        <% if (session && session.access_level === "admin") { %>
+            <a class="btn btn-warning"
+                href="/eventOccurrences/<%= occurrence.occurrence_id %>/edit">
+                Edit
+            </a>
+        <% } %>
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Event</span>
-            <span class="detail-value">
-                <%= occurrence.event_name ? occurrence.event_name : 'Event ID #' + occurrence.event_id %>
-            </span>
-        </div>
+    <p class="text-muted">
+        <strong>Type:</strong> <%= occurrence.event_type %>
+    </p>
 
-        <div class="detail-row">
-            <span class="detail-label">Start</span>
-            <span class="detail-value">
-                <%= new Date(occurrence.starts_at).toLocaleString() %>
-            </span>
-        </div>
+    <div class="card mt-3 p-3">
+        <p><strong>Date:</strong> 
+            <%= new Date(occurrence.start_datetime).toLocaleString() %>
+        </p>
 
-        <div class="detail-row">
-            <span class="detail-label">End</span>
-            <span class="detail-value">
-                <%= new Date(occurrence.ends_at).toLocaleString() %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Location</span>
-            <span class="detail-value"><%= occurrence.location %></span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Capacity</span>
-            <span class="detail-value"><%= occurrence.capacity %></span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Registration Deadline</span>
-            <span class="detail-value">
-                <%= occurrence.registration_deadline ? new Date(occurrence.registration_deadline).toLocaleDateString() : 'None' %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Description</span>
-            <span class="detail-value">
-                <%= occurrence.event_description || 'No description available.' %>
-            </span>
-        </div>
-
-        <% if (session && session.access_level === "manager") { %>
-            <div class="detail-actions">
-                <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit">Edit</a>
-            </div>
+        <% if (occurrence.end_datetime) { %>
+            <p><strong>Ends:</strong> 
+                <%= new Date(occurrence.end_datetime).toLocaleString() %>
+            </p>
         <% } %>
 
+        <p><strong>Location:</strong> <%= occurrence.location %></p>
+
+        <% if (occurrence.capacity) { %>
+            <p><strong>Capacity:</strong> <%= occurrence.capacity %></p>
+        <% } %>
+
+        <% if (occurrence.registration_deadline) { %>
+            <p><strong>Registration Deadline:</strong>
+                <%= new Date(occurrence.registration_deadline).toLocaleDateString() %>
+            </p>
+        <% } %>
     </div>
+
+    <% if (session && session.access_level === "admin") { %>
+        <form action="/eventOccurrences/<%= occurrence.occurrence_id %>/delete"
+              method="POST"
+              onsubmit="return confirm('Delete this event occurrence?');"
+              class="mt-3">
+            <button class="btn btn-danger">Delete Occurrence</button>
+        </form>
+    <% } %>
 
 </div>

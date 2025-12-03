@@ -1,38 +1,44 @@
-<div class="page-container">
+<div class="container mt-4">
+    <h1>Schedule New Event Occurrence</h1>
 
-    <h1 class="page-title">Schedule Event Occurrence</h1>
+    <form action="/eventOccurrences/new" method="POST" class="mt-3">
 
-    <form action="/eventOccurrences/new" method="POST" class="form">
-
-        <label for="EventID">Event Template</label>
-        <select id="EventID" name="EventID" required>
-            <option value="">Select an event…</option>
-            <% events.forEach(e => { %>
+        <!-- EVENT SELECTION -->
+        <label for="EventID" class="form-label">Event</label>
+        <select id="EventID" name="EventID" class="form-select" required>
+            <option value="" disabled selected>Select an event…</option>
+            <% events.forEach(e=> { %>
                 <option value="<%= e.event_id %>">
-                    <%= e.name %>
+                    <%= e.name %> — <%= e.event_type %>
                 </option>
-            <% }) %>
+                <% }) %>
         </select>
 
-        <label for="EventDateTimeStart">Start Date &amp; Time</label>
-        <input id="EventDateTimeStart" type="datetime-local" name="EventDateTimeStart" required />
+        <!-- START DATETIME -->
+        <label class="form-label mt-3">Start Date & Time</label>
+        <input type="datetime-local" name="StartsAt" class="form-control" required>
 
-        <label for="EventDateTimeEnd">End Date &amp; Time</label>
-        <input id="EventDateTimeEnd" type="datetime-local" name="EventDateTimeEnd" required />
+        <!-- END DATETIME -->
+        <label class="form-label mt-3">End Date & Time</label>
+        <input type="datetime-local" name="EndsAt" class="form-control">
 
-        <label for="EventLocation">Location</label>
-        <input id="EventLocation" type="text" name="EventLocation" required />
+        <!-- LOCATION -->
+        <label class="form-label mt-3">Location</label>
+        <input type="text" name="Location" class="form-control" required>
 
-        <label for="EventCapacity">Capacity</label>
-        <input id="EventCapacity" type="number" name="EventCapacity" min="1" required />
+        <!-- CAPACITY -->
+        <label class="form-label mt-3">Capacity</label>
+        <input type="number" min="1" name="Capacity" class="form-control">
 
-        <label for="EventRegistrationDeadline">Registration Deadline</label>
-        <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline" required />
+        <!-- REGISTRATION DEADLINE -->
+        <label class="form-label mt-3">Registration Deadline</label>
+        <input type="date" name="RegDeadline" class="form-control">
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
-            <button class="btn-submit">Create Occurrence</button>
-            <a href="/eventOccurrences" style="text-decoration: none; color: #666;">Cancel</a>
+        <!-- BUTTONS -->
+        <div class="d-flex gap-3 mt-4">
+            <button class="btn btn-primary">Create Occurrence</button>
+            <a href="/eventOccurrences" class="btn btn-secondary">Cancel</a>
         </div>
-    </form>
 
+    </form>
 </div>

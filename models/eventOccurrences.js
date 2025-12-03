@@ -1,46 +1,81 @@
-// models/eventOccurrences.js
 const knex = require("../db");
 
 module.exports = {
-    // Get all scheduled occurrences AND their parent event name
-    getAll: () => {
+    getAll() {
         return knex("event_occurrences")
-            .join("events", "event_occurrences.event_id", "=", "events.event_id")
+            .join("events", "event_occurrences.event_id", "events.event_id")
             .select(
-                "event_occurrences.*", // Get all date/time/location info
-                "events.name as event_name", // Get the name from parent table
+                "event_occurrences.*",
+                "events.name as event_name",
                 "events.type as event_type"
             )
             .orderBy("event_occurrences.starts_at", "asc");
     },
 
-    // Get specific occurrence (Joined with Event info)
-    getById: (id) => {
+    getUpcoming() {
         return knex("event_occurrences")
-            .join("events", "event_occurrences.event_id", "=", "events.event_id")
+            .join("events", "event_occurrences.event_id", "events.event_id")
             .select(
                 "event_occurrences.*",
                 "events.name as event_name",
-                "events.description as event_description"
+                "events.type as event_type"
             )
-            .where({ "event_occurrences.event_occurrence_id": id })
+            .where("event_occurrences.starts_at", ">", knex.fn.now())
+            .orderBy("event_occurrences.starts_at", "asc");
+    },
+
+    getById(id) {
+        return knex("event_occurrences")
+            .join("events", "event_occurrences.event_id", "events.event_id")
+            .select(
+                "event_occurrences.*",
+                "events.name as event_name",
+                "events.description as event_description",
+                "events.type as event_type"
+            )
+            .where({ event_occurrence_id: id })
             .first();
     },
 
-    // Create new occurrence
-    create: (data) => {
-        return knex("event_occurrences").insert(data).returning("event_occurrence_id");
+    getByEventId(eventId) {
+        return knex("event_occurrences")
+            .join("events", "event_occurrences.event_id", "events.event_id")
+            .select(
+                "event_occurrences.*",
+                "events.name as event_name",
+                "events.type as event_type"
+            )
+            .where("event_occurrences.event_id", eventId)
+            .orderBy("event_occurrences.starts_at", "asc");
     },
 
-    // Update occurrence
-    update: (id, data) => {
+    create(data) {
+        return knex("event_occurrences")
+            .insert({
+                event_id: data.event_id,
+                starts_at: data.starts_at,
+                ends_at: data.ends_at,
+                location: data.location,
+                capacity: data.capacity,
+                registration_deadline: data.registration_deadline
+            })
+            .returning("event_occurrence_id");
+    },
+
+    update(id, data) {
         return knex("event_occurrences")
             .where({ event_occurrence_id: id })
-            .update(data);
+            .update({
+                event_id: data.event_id,
+                starts_at: data.starts_at,
+                ends_at: data.ends_at,
+                location: data.location,
+                capacity: data.capacity,
+                registration_deadline: data.registration_deadline
+            });
     },
 
-    // Delete occurrence
-    delete: (id) => {
+    delete(id) {
         return knex("event_occurrences")
             .where({ event_occurrence_id: id })
             .del();

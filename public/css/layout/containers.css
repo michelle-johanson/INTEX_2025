@@ -1,0 +1,29 @@
+/* Page Containers / Cards */
+
+.page-card,
+.page-card-wide {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    margin: var(--space-6) auto;
+    box-shadow: var(--shadow);
+}
+
+.page-card {
+    max-width: 480px;
+    /* ~25% stable width */
+}
+
+.page-card-wide {
+    max-width: 900px;
+}
+
+/* Generic card (replaces cards.css) */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: var(--space-5);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
