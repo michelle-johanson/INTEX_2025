@@ -1,0 +1,40 @@
+<div class="page-container">
+    <h1 class="page-title">Survey Management</h1>
+    <p class="mb-4">Select an event below to view its survey results.</p>
+
+    <a href="/surveys/new" class="btn btn-primary btn-small mb-4">
+        + Add Survey Response
+    </a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date & Time</th>
+                <th>Location</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% occurrences.forEach(o => { %>
+                <tr>
+                    <td>
+                        <strong><%= o.event_name %></strong>
+                    </td>
+                    
+                    <td>
+                        <%= new Date(o.starts_at).toLocaleString() %>
+                    </td>
+                    
+                    <td><%= o.location %></td>
+                    
+                    <td class="table-actions">
+                        <a href="/surveys/occurrence/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
+                            View Results
+                        </a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

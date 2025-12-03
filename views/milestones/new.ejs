@@ -7,21 +7,33 @@
         <label for="ParticipantID">Participant</label>
         <select id="ParticipantID" name="ParticipantID" required>
             <option value="">Select a participant…</option>
-            <% participants.forEach(p=> { %>
-                <option value="<%= p.ParticipantID %>">
-                    <%= p.FirstName %>
-                        <%= p.LastName %> (ID #<%= p.ParticipantID %>)
+            
+            <% participants.forEach(p => { %>
+                <option value="<%= p.participant_id %>" 
+                    <%= (typeof selectedId !== 'undefined' && String(p.participant_id) === String(selectedId)) ? 'selected' : '' %>>
+                    
+                    <%= p.first_name %> <%= p.last_name %> (ID #<%= p.participant_id %>)
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
         <label for="MilestoneTitle">Milestone Title</label>
-        <input id="MilestoneTitle" type="text" name="MilestoneTitle" required />
+        <input id="MilestoneTitle" 
+               type="text" 
+               name="MilestoneTitle" 
+               placeholder="e.g. Completed Python Workshop"
+               required />
 
         <label for="MilestoneDate">Milestone Date</label>
-        <input id="MilestoneDate" type="date" name="MilestoneDate" required />
+        <input id="MilestoneDate" 
+               type="date" 
+               name="MilestoneDate" 
+               required />
 
-        <button class="btn-submit">Create Milestone</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Create Milestone</button>
+            <a href="/milestones" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
     </form>
 
 </div>

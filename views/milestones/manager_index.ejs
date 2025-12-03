@@ -1,0 +1,38 @@
+<div class="page-container">
+    <h1 class="page-title">Manage Milestones</h1>
+    <p class="mb-4">Select a participant below to view or edit their milestone history.</p>
+
+    <a href="/milestones/new" class="btn btn-primary btn-small mb-4">
+        + Add Milestone
+    </a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Location</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% participants.forEach(p => { %>
+                <tr>
+                    <td>
+                        <strong><%= p.first_name %> <%= p.last_name %></strong>
+                    </td>
+                    <td><%= p.email %></td>
+                    <td><%= p.role %></td>
+                    <td><%= p.city %></td>
+                    
+                    <td class="table-actions">
+                        <a href="/milestones/participant/<%= p.participant_id %>" class="btn btn-secondary btn-small">
+                            View Milestones
+                        </a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

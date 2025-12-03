@@ -1,14 +1,17 @@
 <nav class="er-navbar">
 <div class="er-navbar-inner">
 
-    <!-- LEFT: Logo + Menu -->
     <div class="er-navbar-left">
         <a href="/" class="er-navbar-logo">
             <img src="/img/logo-no-bg.png" alt="Ella Rises Logo">
         </a>
 
         <ul class="er-navbar-menu">
-            <% const menus = [
+            <% 
+            // 1. Define Manager Status safely (Case Insensitive)
+            const isManager = session && session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin");
+
+            const menus = [
                 { label: "EVENTS", items: [
                     { text: "Events", href: "/events" },
                     { text: "Event Occurrences", href: "/eventOccurrences" }
@@ -20,9 +23,11 @@
                 ]},
                 { label: "SURVEY", items: [
                     { text: "Surveys", href: "/surveys" },
-                    { text: "Dashboard", href: "/dashboard" }
+                    // 2. Add 'restricted: true' flag to Dashboard
+                    { text: "Dashboard", href: "/dashboard", restricted: true } 
                 ]}
-            ]; %>
+            ]; 
+            %>
 
             <% menus.forEach(menu => { %>
                 <li class="nav-item dropdown">
@@ -31,23 +36,25 @@
                     </a>
 
                     <ul class="dropdown-menu">
-                        <% menu.items.forEach(i=> { %>
+                        <% menu.items.forEach(i => { %>
+                            
+                            <% // 3. The Logic Check: If item is restricted and user is NOT manager, skip it. %>
+                            <% if (i.restricted && !isManager) return; %>
+
                             <li>
                                 <a class="dropdown-item" href="<%= i.href %>">
                                     <%= i.text %>
                                 </a>
                             </li>
-                            <% }) %>
+                        <% }) %>
                     </ul>
                 </li>
             <% }) %>
 
-            <!-- DONATE BUTTON -->
             <a class="er-navbar-donate" href="/donations/new">DONATE</a>
         </ul>
     </div>
 
-    <!-- RIGHT: Account -->
     <div class="er-navbar-right">
         <% if (!session || !session.isLoggedIn) { %>
             <a href="/auth/login" class="er-navbar-login">LOGIN</a>
@@ -58,13 +65,14 @@
                 </a>
             
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <% if (session.access_level==="manager" ) { %>
+                    <% if (session.access_level === "manager") { %>
                         <li><a class="dropdown-item" href="/users">Manage Users</a></li>
                         <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
                         <li><hr class="dropdown-divider"></li>
                     <% } %>
                     
-                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>                </ul>
+                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                </ul>
             </div>
 
         <% } %>

@@ -1,0 +1,36 @@
+<div class="page-container">
+    <h1 class="page-title">Manage Registrations</h1>
+    <p class="mb-4">Select an event below to view who is registered.</p>
+
+    <a href="/registrations/new" class="btn btn-primary btn-small mb-4">
+        + Add Registration
+    </a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date & Time</th>
+                <th>Location</th>
+                <th>Capacity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% occurrences.forEach(o => { %>
+                <tr>
+                    <td><strong><%= o.event_name %></strong></td>
+                    <td><%= new Date(o.starts_at).toLocaleString() %></td>
+                    <td><%= o.location %></td>
+                    <td><%= o.capacity %></td>
+                    
+                    <td class="table-actions">
+                        <a href="/registrations/event/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
+                            View Registrants
+                        </a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

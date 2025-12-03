@@ -8,18 +8,74 @@ const Milestones = require("../models/milestones");
 const Participants = require("../models/participants");
 
 /* ============================================================
-   LIST MILESTONES (LOGIN REQUIRED)
+   MAIN INDEX ROUTE (SPLIT VIEW LOGIC)
+   - If Manager: Shows Directory of People (manager_index.ejs)
+   - If User: Shows their OWN milestones (index.ejs)
+============================================================ */
+/* ============================================================
+   MAIN INDEX ROUTE
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const milestones = await Milestones.getAll();
+        // DEBUGGING: Check your terminal to see what this prints!
+        console.log("Current User Role:", req.session.access_level);
+
+        // NORMALIZE THE CHECK: 
+        // Convert to lowercase to handle "Manager", "manager", "ADMIN", etc.
+        const role = (req.session.access_level || "").toLowerCase();
+
+        // SCENARIO 1: MANAGER LOGGED IN
+        if (role === "manager" || role === "admin") {
+            const participants = await Participants.getAll();
+            
+            // Render the Directory View
+            return res.render("milestones/manager_index", {
+                title: "Manage Milestones",
+                participants
+            });
+        }
+
+        // SCENARIO 2: PARTICIPANT LOGGED IN
+        const myMilestones = await Milestones.getByParticipant(req.session.userID);
+        
         res.render("milestones/index", {
-            title: "Milestones",
-            milestones
+            title: "My Milestones",
+            milestones: myMilestones,
+            participantName: "My" 
         });
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Database Error");
+    }
+});
+
+/* ============================================================
+   MANAGER DRILL-DOWN (View specific person's list)
+   URL: /milestones/participant/5
+============================================================ */
+router.get("/participant/:id", requireAdmin, async (req, res) => {
+    try {
+        const participantId = req.params.id;
+        
+        // Fetch milestones for this specific person
+        const milestones = await Milestones.getByParticipant(participantId);
+        
+        // Fetch participant details just for the name in the header
+        const participant = await Participants.getById(participantId);
+
+        if (!participant) return res.status(404).send("Participant not found");
+
+        // We REUSE 'index.ejs' but populate it with this person's data
+        res.render("milestones/index", {
+            title: `${participant.first_name}'s Milestones`,
+            milestones: milestones,
+            participantName: `${participant.first_name}'s`
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading participant milestones");
     }
 });
 
@@ -31,12 +87,16 @@ router.get("/", requireLogin, async (req, res) => {
 // Show form
 router.get("/new", requireAdmin, async (req, res) => {
     try {
-        // Need participants for the dropdown menu
         const participants = await Participants.getAll();
         
+        // Check if we passed a specific participant ID in the query (optional UX improvement)
+        // Example link: /milestones/new?participant_id=5
+        const selectedId = req.query.participant_id;
+
         res.render("milestones/new", {
             title: "Add Milestone",
-            participants
+            participants,
+            selectedId // Pass this to auto-select the dropdown
         });
     } catch (err) {
         console.error(err);
@@ -54,7 +114,9 @@ router.post("/new", requireAdmin, async (req, res) => {
         };
 
         await Milestones.create(newMilestone);
-        res.redirect("/milestones");
+        
+        // Redirect back to that specific user's list
+        res.redirect(`/milestones/participant/${newMilestone.participant_id}`);
 
     } catch (err) {
         console.error(err);
@@ -65,13 +127,12 @@ router.post("/new", requireAdmin, async (req, res) => {
 
 /* ============================================================
    EDIT MILESTONE (ADMIN ONLY)
-   Note: Route changed to include PID and MNO
+   URL: /:pid/:mno/edit
 ============================================================ */
 
 // Show edit form
 router.get("/:pid/:mno/edit", requireAdmin, async (req, res) => {
     try {
-        // We need both IDs to find the specific milestone
         const milestone = await Milestones.getById(req.params.pid, req.params.mno);
         const participants = await Participants.getAll();
 
@@ -92,14 +153,14 @@ router.get("/:pid/:mno/edit", requireAdmin, async (req, res) => {
 router.post("/:pid/:mno/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
-            // We usually don't let them change the Participant ID on an edit 
-            // because that breaks the Primary Key, so we only update title/date.
             title: req.body.MilestoneTitle,
             achieved_date: req.body.MilestoneDate
         };
 
         await Milestones.update(req.params.pid, req.params.mno, updates);
-        res.redirect("/milestones");
+        
+        // Redirect back to that specific user's list
+        res.redirect(`/milestones/participant/${req.params.pid}`);
 
     } catch (err) {
         console.error(err);
@@ -110,12 +171,14 @@ router.post("/:pid/:mno/edit", requireAdmin, async (req, res) => {
 
 /* ============================================================
    DELETE MILESTONE (ADMIN ONLY)
-   Note: Route changed to include PID and MNO
+   URL: /:pid/:mno/delete
 ============================================================ */
 router.post("/:pid/:mno/delete", requireAdmin, async (req, res) => {
     try {
         await Milestones.delete(req.params.pid, req.params.mno);
-        res.redirect("/milestones");
+        
+        // Redirect back to that specific user's list
+        res.redirect(`/milestones/participant/${req.params.pid}`);
     } catch (err) {
         console.error(err);
         res.status(500).send("Error deleting milestone");
@@ -124,20 +187,31 @@ router.post("/:pid/:mno/delete", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   SHOW MILESTONE (LOGIN REQUIRED)
-   Note: Route changed to include PID and MNO
+   SHOW SINGLE MILESTONE (LOGIN REQUIRED)
+   URL: /:pid/:mno
 ============================================================ */
 router.get("/:pid/:mno", requireLogin, async (req, res) => {
     try {
-        // The getById model now performs the join, so we don't need a separate participant query
         const milestone = await Milestones.getById(req.params.pid, req.params.mno);
 
         if (!milestone) return res.status(404).send("Milestone not found");
 
+        // --- SECURITY FIX ---
+        // Get role safely and convert to lowercase
+        const role = (req.session.access_level || "").toLowerCase();
+
+        // Allow if role is manager/admin OR if the user owns the milestone
+        const isAuthorized = (role === 'manager' || role === 'admin') || 
+                             (req.session.userID === milestone.participant_id);
+
+        if (!isAuthorized) {
+             return res.status(403).send("Unauthorized Access");
+        }
+        // --------------------
+
         res.render("milestones/show", {
             title: "Milestone Details",
             milestone
-            // 'participant' data is already inside the 'milestone' object due to the join
         });
     } catch (err) {
         console.error(err);
