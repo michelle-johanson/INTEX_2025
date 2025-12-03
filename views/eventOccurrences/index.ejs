@@ -1,70 +1,40 @@
-<div class="table-card">
-    <table class="er-table">
+<div class="container mt-4">
+    <h1>Upcoming Events</h1>
+
+    <% if (session && session.access_level === "admin") { %>
+        <a href="/eventOccurrences/new" class="btn btn-primary mt-3 mb-3">
+            + Schedule New Occurrence
+        </a>
+    <% } %>
+
+    <table class="table table-hover mt-3">
         <thead>
             <tr>
                 <th>Event</th>
-                <th>Start</th>
-                <th>End</th>
+                <th>Date</th>
+                <th>Type</th>
                 <th>Location</th>
                 <th>Capacity</th>
-                <th>Reg Deadline</th>
-                <th>View</th>
+                <th></th>
             </tr>
         </thead>
 
         <tbody>
-            <% occurrences.forEach(o=> { %>
+            <% occurrences.forEach(o => { %>
                 <tr>
-                    <td><strong>
-                            <%= o.event_name %>
-                        </strong></td>
-
+                    <td><%= o.event_name %></td>
+                    <td><%= new Date(o.start_datetime).toLocaleString() %></td>
+                    <td><%= o.event_type %></td>
+                    <td><%= o.location %></td>
+                    <td><%= o.capacity %></td>
                     <td>
-                        <%= new Date(o.starts_at).toLocaleString() %>
-                    </td>
-
-                    <td>
-                        <%= new Date(o.ends_at).toLocaleString() %>
-                    </td>
-
-                    <td>
-                        <%= o.location %>
-                    </td>
-
-                    <td>
-                        <%= o.capacity %>
-                    </td>
-
-                    <td>
-                        <%= o.registration_deadline ? new Date(o.registration_deadline).toLocaleDateString() : 'None' %>
-                    </td>
-
-                    <td class="table-actions">
-                        <!-- View -->
-                        <a href="/eventOccurrences/<%= o.event_occurrence_id %>" class="view-link">
+                        <a href="/eventOccurrences/<%= o.occurrence_id %>" 
+                           class="btn btn-sm btn-outline-primary">
                             View
                         </a>
-
-                        <!-- Manager-only Actions -->
-                        <% if (session && session.access_level==="manager" ) { %>
-                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>/edit">Edit</a>
-
-                            <form action="/eventOccurrences/<%= o.event_occurrence_id %>/delete" method="POST"
-                                style="display:inline;">
-                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
-                                    Delete
-                                </button>
-                            </form>
-                            <% } %>
                     </td>
                 </tr>
-                <% }) %>
+            <% }) %>
         </tbody>
     </table>
 </div>
-
-<% if (session && session.access_level==="manager" ) { %>
-    <a href="/eventOccurrences/new" class="btn btn-primary mt-3">
-        + Schedule New Occurrence
-    </a>
-    <% } %>

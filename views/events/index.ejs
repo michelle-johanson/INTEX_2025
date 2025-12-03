@@ -1,51 +1,31 @@
-<div class="page-container">
+<div class="container mt-4">
+    <h1 class="mb-3">Event Types</h1>
 
-    <h1 class="page-title">Event Templates</h1>
-
-    <% if (session && session.access_level === "manager") { %>
-        <a href="/events/new" class="btn btn-primary btn-small mb-4">
-            + Add Event Template
-        </a>
+    <% if (session && session.access_level === "admin") { %>
+        <a href="/events/new" class="btn btn-primary mb-3">+ Create New Event Type</a>
     <% } %>
 
-    <table>
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Type</th>
-                <th>Recurrence</th>
-                <th>Default Capacity</th>
                 <th></th>
             </tr>
         </thead>
+
         <tbody>
             <% events.forEach(e => { %>
                 <tr>
                     <td><%= e.name %></td>
-                    <td><%= e.type %></td>
-                    
-                    <td><%= e.recurrence_pattern %></td>
-                    
-                    <td><%= e.default_capacity %></td>
-
-                    <td class="table-actions">
-                        <a href="/events/<%= e.event_id %>">View</a>
-
-                        <% if (session && session.access_level === "manager") { %>
-                            <a href="/events/<%= e.event_id %>/edit">Edit</a>
-                            
-                            <form action="/events/<%= e.event_id %>/delete" 
-                                  method="POST" 
-                                  style="display:inline;">
-                                <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
-                                    Delete
-                                </button>
-                            </form>
-                        <% } %>
+                    <td><%= e.event_type %></td>
+                    <td>
+                        <a href="/events/<%= e.event_id %>" class="btn btn-sm btn-outline-primary">
+                            View
+                        </a>
                     </td>
                 </tr>
             <% }) %>
         </tbody>
     </table>
-
 </div>
