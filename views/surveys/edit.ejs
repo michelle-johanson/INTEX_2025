@@ -2,39 +2,55 @@
 
     <h1 class="page-title">Edit Survey</h1>
 
-    <form action="/surveys/<%= survey.EventOccurrenceID %>/<%= survey.ParticipantID %>/edit" method="POST" class="form">
+    <form action="/surveys/<%= survey.event_occurrence_id %>/<%= survey.participant_id %>/edit" method="POST" class="form">
 
-        <!-- Participant + Occurrence stay fixed -->
-
-        <label>Participant</label>
-        <input type="text" disabled value="<%= participants.find(p => p.ParticipantID === survey.ParticipantID)?.FirstName %>
-                      <%= participants.find(p => p.ParticipantID === survey.ParticipantID)?.LastName %>">
-
-        <label>Event Occurrence</label>
-        <input type="text" disabled
-            value="<%= occurrences.find(o => o.EventOccurrenceID === survey.EventOccurrenceID)?.EventDateTimeStart %>">
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <strong>Event:</strong> <%= survey.event_name %> (<%= new Date(survey.starts_at).toLocaleDateString() %>)<br>
+            <strong>Participant:</strong> <%= survey.first_name %> <%= survey.last_name %>
+        </div>
 
         <label>Satisfaction Score</label>
-        <input type="number" name="SurveySatisfactionScore" min="1" max="5"
-            value="<%= survey.SurveySatisfactionScore %>" />
+        <input type="number" 
+               name="SurveySatisfactionScore" 
+               min="1" max="5" 
+               value="<%= survey.satisfaction_score %>" 
+               required />
 
         <label>Usefulness Score</label>
-        <input type="number" name="SurveyUsefulnessScore" min="1" max="5" value="<%= survey.SurveyUsefulnessScore %>" />
+        <input type="number" 
+               name="SurveyUsefulnessScore" 
+               min="1" max="5" 
+               value="<%= survey.usefulness_score %>" 
+               required />
 
         <label>Recommendation Score</label>
-        <input type="number" name="SurveyRecommendationScore" min="1" max="5"
-            value="<%= survey.SurveyRecommendationScore %>" />
+        <input type="number" 
+               name="SurveyRecommendationScore" 
+               min="1" max="5" 
+               value="<%= survey.recommendation_score %>" 
+               required />
 
         <label>Overall Score</label>
-        <input type="number" name="SurveyOverallScore" min="1" max="5" value="<%= survey.SurveyOverallScore %>" />
+        <input type="number" 
+               name="SurveyOverallScore" 
+               min="1" max="5" 
+               value="<%= survey.overall_score %>" 
+               required />
 
         <label>Comments</label>
-        <textarea name="SurveyComments" rows="3"><%= survey.SurveyComments %></textarea>
+        <textarea name="SurveyComments" rows="3"><%= survey.comments %></textarea>
 
         <label>Submission Date</label>
-        <input type="date" name="SurveySubmissionDate" value="<%= survey.SurveySubmissionDate %>" />
+        <input type="date" 
+               name="SurveySubmissionDate" 
+               value="<%= survey.submission_date ? new Date(survey.submission_date).toISOString().split('T')[0] : '' %>" 
+               required />
 
-        <button class="btn-submit">Save Changes</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Save Changes</button>
+            
+            <a href="/surveys/occurrence/<%= survey.event_occurrence_id %>" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
 
     </form>
 

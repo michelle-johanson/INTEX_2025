@@ -87,8 +87,9 @@ app.use("/registrations", registrationRoutes);
 
 // Dashboard
 // Warning: This requires a file at ./routes/dashboard.js to exist!
-// const dashboardRoutes = require("./routes/dashboard");
-// app.use("/dashboard", dashboardRoutes);
+const dashboardRoutes = require("./routes/dashboard");
+app.use("/dashboard", dashboardRoutes);
+
 
 // --- NEW ADDITIONS END HERE ---
 

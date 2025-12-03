@@ -4,25 +4,26 @@
 
     <form action="/surveys/new" method="POST" class="form">
 
-        <label>Participant</label>
+        <label>Participant (Required)</label>
         <select name="ParticipantID" required>
             <option value="">Select a participant…</option>
-            <% participants.forEach(p=> { %>
-                <option value="<%= p.ParticipantID %>">
-                    <%= p.FirstName %>
-                        <%= p.LastName %>
+            
+            <% participants.forEach(p => { %>
+                <option value="<%= p.participant_id %>">
+                    <%= p.first_name %> <%= p.last_name %>
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
-        <label>Event Occurrence</label>
+        <label>Event Occurrence (Required)</label>
         <select name="EventOccurrenceID" required>
-            <% occurrences.forEach(o=> { %>
-                <option value="<%= o.EventOccurrenceID %>">
-                    <%= events.find(e=> e.EventID === o.EventID)?.EventName %>
-                        — <%= o.EventDateTimeStart %>
+            <option value="">Select an event…</option>
+            
+            <% occurrences.forEach(o => { %>
+                <option value="<%= o.event_occurrence_id %>">
+                    <%= o.event_name %> — <%= new Date(o.starts_at).toLocaleString() %>
                 </option>
-                <% }) %>
+            <% }) %>
         </select>
 
         <label>Satisfaction Score</label>
@@ -41,9 +42,12 @@
         <textarea name="SurveyComments" rows="3"></textarea>
 
         <label>Submission Date</label>
-        <input type="date" name="SurveySubmissionDate" required />
+        <input type="date" name="SurveySubmissionDate" value="<%= new Date().toISOString().split('T')[0] %>" required />
 
-        <button class="btn-submit">Submit Survey</button>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Submit Survey</button>
+            <a href="/surveys" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
 
     </form>
 
