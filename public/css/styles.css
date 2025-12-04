@@ -3,11 +3,11 @@
 @import "./tokens/typography.css";
 @import "./tokens/spacing.css";
 @import "./tokens/effects.css";
-@import "./tokens/navbar.css";
 
 /* BASE */
 @import "./base/reset.css";
 @import "./base/globals.css";
+@import "./base/utilities.css";
 
 /* LAYOUT */
 @import "./layout/containers.css";

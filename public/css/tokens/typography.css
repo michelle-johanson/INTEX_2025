@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Montserrat:wght@400;500;600&family=Pacifico&display=swap');
+
 :root {
-    --font-heading: 'DM Serif Display', serif;
-    --font-body: 'Montserrat', sans-serif;
-    --font-script: 'TT Milk Script', cursive;
+    --font-heading: 'DM Serif Display', Georgia, serif;
+    --font-body: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+    /* Keep the custom script name if you have it locally; Pacifico is the hosted fallback */
+    --font-script: 'TT Milk Script', 'Pacifico', cursive;
 }
