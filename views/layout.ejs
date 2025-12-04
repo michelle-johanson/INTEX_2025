@@ -1,3 +1,5 @@
+<!-- LAYOUT.EJS -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,15 +11,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-
-    <!-- Import Remix Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-
-    <!-- Import Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Import Heroicons Mini -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <!-- Import Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- Import Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -43,6 +38,37 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const teapots = document.querySelectorAll("[data-teapot-trigger]");
+            if (!teapots.length) {
+                console.log("❌ No teapot element found");
+                return;
+            }
+
+            console.log("✅ Teapot script loaded, listener attached to", teapots.length, "element(s)");
+
+            teapots.forEach((teapot) => {
+                teapot.addEventListener("click", (event) => {
+                    event.preventDefault();
+
+                    console.log("🫖 Teapot clicked — sending fetch to /teapot...");
+
+                    fetch('/teapot')
+                        .then(response => {
+                            console.log(`Status Code received: ${response.status}`);
+                            console.log(`Status Text: ${response.statusText}`);
+
+                            if (response.status === 418) {
+                                console.log("✨ Easter egg found — I'm a teapot!");
+                            }
+                        })
+                        .catch(error => console.error('❌ Error fetching /teapot:', error));
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>
