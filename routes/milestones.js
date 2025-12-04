@@ -46,8 +46,8 @@ router.get("/", requireLogin, async (req, res) => {
 });
 
 /* ============================================================
-   LEVEL 2: DRILL-DOWN (View people who earned a specific Milestone Type)
-   URL: /milestones/type/Python%20Coding%20Certificate
+   LEVEL 2: DRILL-DOWN (View people who earned a specific Milestone Type)
+   URL: /milestones/type/Python%20Coding%20Certificate
 ============================================================ */
 router.get("/type/:title", requireAdmin, async (req, res) => {
     try {
@@ -66,6 +66,64 @@ router.get("/type/:title", requireAdmin, async (req, res) => {
         console.error(err);
         res.status(500).send("Error loading participants by milestone type");
     }
+});
+
+/* ============================================================
+   EDIT MILESTONE TYPE (ADMIN ONLY) - NEW ROUTE
+   URL: /milestones/type/:title/edit
+============================================================ */
+
+// Show edit form for a Milestone Type (Title)
+router.get("/type/:title/edit", requireAdmin, async (req, res) => {
+    try {
+        const oldTitle = req.params.title;
+
+        res.render("milestones/type_edit", {
+            title: `Rename Milestone Type`,
+            oldTitle: oldTitle,
+            session: req.session
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading edit form");
+    }
+});
+
+// Submit edit for a Milestone Type (Updates all records)
+router.post("/type/:title/edit", requireAdmin, async (req, res) => {
+    try {
+        const oldTitle = req.params.title;
+        const newTitle = req.body.MilestoneTitle;
+
+        // NEW MODEL FUNCTION NEEDED: updateByTitle
+        await Milestones.updateByTitle(oldTitle, newTitle);
+
+        // Redirect to the new list view using the new title
+        res.redirect(`/milestones/type/${encodeURIComponent(newTitle)}`);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating milestone type");
+    }
+});
+
+/* ============================================================
+   DELETE MILESTONE TYPE (ADMIN ONLY) - NEW ROUTE
+   URL: /milestones/type/:title/delete
+============================================================ */
+router.post("/type/:title/delete", requireAdmin, async (req, res) => {
+    try {
+        const titleToDelete = req.params.title;
+
+        // NEW MODEL FUNCTION NEEDED: deleteByTitle
+        await Milestones.deleteByTitle(titleToDelete);
+
+        // Redirect back to the main list of milestone types (Level 1)
+        res.redirect(`/milestones`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting milestone type");
+    }
 });
 
 
@@ -90,7 +148,7 @@ router.get("/participant/:id", requireAdmin, async (req, res) => {
             title: `${participant.first_name}'s Milestones`,
             milestones: milestones,
             participantName: `${participant.first_name}'s`,
-            participant: participant // Pass the participant object for the 'Add' button fix
+            participant: participant 
         });
 
     } catch (err) {
@@ -114,7 +172,7 @@ router.get("/new", requireAdmin, async (req, res) => {
         res.render("milestones/new", {
             title: "Add Milestone",
             participants,
-            selectedId // Pass this to auto-select the dropdown
+            selectedId 
         });
     } catch (err) {
         console.error(err);

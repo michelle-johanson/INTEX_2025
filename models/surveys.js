@@ -111,5 +111,12 @@ module.exports = {
                 participant_id: participantId
             })
             .del();
+    },
+    
+    // --- CASCADING DELETE FUNCTION (FIX) ---
+    deleteByOccurrenceId: (occurrenceId) => {
+        return knex("survey_responses")
+            .where({ event_occurrence_id: occurrenceId })
+            .del();
     }
 };

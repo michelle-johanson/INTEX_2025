@@ -1,12 +1,16 @@
 <div class="page-container">
+
     <h1 class="page-title">Event Types</h1>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+    <% 
+        // Role check is now necessary here to display the 'Create New' button
+        const user = session.user || session; 
+        const rawRole = user.role || user.access_level || "";
+        const isManager = rawRole.toLowerCase() === "manager" || rawRole.toLowerCase() === "admin"; 
+    %>
 
-    <!-- #TO-DO: create class for flex container with justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; -->
-    <div class="d-flex mb-3">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
         
-        <!-- Action Button -->
         <% if (isManager) { %>
             <a href="/events/new" class="btn btn-primary btn-small">
                 + Create New Event Type
@@ -15,20 +19,17 @@
             <div></div>
         <% } %>
 
-        <!-- Search Bar -->
-        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
-        <form action="/events" method="GET" class="d-flex">
-            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
+        <form action="/events" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
             <input type="text" 
                    name="search" 
                    placeholder="Search event name or type..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
             >
             <button type="submit" class="btn btn-secondary btn-small">Search</button>
             
             <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
-                <a href="/events">Clear</a>
+                <a href="/events" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
             <% } %>
         </form>
     </div>
@@ -41,7 +42,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Type</th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -49,8 +50,6 @@
                 <% events.forEach(e => { %>
                     <tr>
                         <td><%= e.name %></td>
-                        
-                        <!-- UPDATED: Matches DB column 'type' -->
                         <td><%= e.type %></td>
                         
                         <td class="table-actions">
