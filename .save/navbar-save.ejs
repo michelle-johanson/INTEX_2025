@@ -24,15 +24,22 @@
                     href: "/events"
                 },
                 {
-                    label: "PROFILE",
-                    href: "/participants"
+                    label: "REGISTER",
+                    items: [
+                        { text: "Registrations", href: "/registrations" },
+                        { text: "Participants", href: "/participants" },
+                        { text: "Milestones", href: "/milestones" }
+                    ]
                 }
             ];
 
             if (isLoggedIn) {
                 menus.push({
                     label: "SURVEY",
-                    href: "/surveys"
+                    items: [
+                        { text: "Surveys", href: "/surveys" },
+                        { text: "Dashboard", href: "/dashboard" }
+                    ]
                 });
             }
         %>
@@ -86,9 +93,7 @@
                 </li>
                 <li class="nav-item dropdown-items-container mobile-admin-dropdown">
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
                         <li><a class="dropdown-item" href="/maintenance_index">Manage Users</a></li>
-                        <li><a class="dropdown-item" href="/milestones">Manage Milestones</a></li>
                         <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
                     </ul>
                 </li>
@@ -118,9 +123,7 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <!-- IF ADMIN, Show Admin Tools Dropdown -->
                     <% if (isManager) { %>
-                        <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
-                        <li><a class="dropdown-item" href="/users/maintenance_index">Manage Users</a></li>
-                        <li><a class="dropdown-item" href="/milestones">Manage Milestones</a></li>
+                        <li><a class="dropdown-item" href="/maintenance_index">Manage Users</a></li>
                         <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
                         <li>
                             <hr class="dropdown-divider">

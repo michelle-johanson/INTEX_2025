@@ -1,0 +1,598 @@
+/* =============================================================================
+   CSS VARIABLES
+============================================================================= */
+
+:root {
+    /* Navbar Dimensions */
+    --navbar-height: 90px;
+    --navbar-padding-x: var(--space-8);
+    --navbar-max-width: 1400px;
+
+    /* Top-Level Nav Items */
+    --nav-item-gap: 2.2rem;
+    --nav-item-padding-x: var(--space-4);
+
+    --nav-link-font-weight: 600;
+    --nav-link-font-size: 0.95rem;
+    --nav-link-letterspacing: 0.04em;
+
+    --nav-link-color: var(--charcoal, #333);
+    --nav-link-hover-color: var(--rose, #e63946);
+    --nav-item-hover-bg: rgba(0, 0, 0, 0.04);
+
+    /* Dropdown Menu */
+    --dropdown-width-min: 190px;
+    --dropdown-radius: var(--space-2);
+    --dropdown-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --dropdown-border-color: #e4e4e4;
+
+    /* Dropdown Items */
+    --dropdown-item-font-weight: 600;
+    --dropdown-item-font-size: 0.95rem;
+    --dropdown-item-line-height: 1.2;
+
+    --dropdown-hover-bg: #fef3f1;
+    --dropdown-hover-text: var(--rose, #e63946);
+
+    /* Mobile */
+    --navbar-height-mobile: 70px;
+    --navbar-padding-x-mobile: var(--space-5);
+    --mobile-menu-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --mobile-dropdown-bg: #fafafa;
+
+    --hamburger-size: 28px;
+    --hamburger-thickness: 3px;
+}
+
+/* =============================================================================
+   RESET BOOTSTRAP INTERFERENCE
+============================================================================= */
+
+.er-navbar *,
+.er-navbar *::before,
+.er-navbar *::after {
+    box-shadow: none !important;
+    text-decoration: none !important;
+}
+
+/* =============================================================================
+   DESKTOP NAVBAR
+============================================================================= */
+
+.er-navbar {
+    width: 100%;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 5000;
+}
+
+.er-navbar-inner {
+    max-width: var(--navbar-max-width);
+    margin: 0 auto;
+    padding: 0 var(--navbar-padding-x);
+    height: var(--navbar-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* LEFT SECTION (logo + menu) */
+.er-navbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    flex: 1;
+}
+
+.er-navbar-logo {
+    flex-shrink: 0;
+}
+
+.er-navbar-logo img {
+    height: 62px;
+    width: auto;
+    min-height: 50px;
+}
+
+/* NAV MENU (Desktop) */
+.er-navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: var(--nav-item-gap);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.er-navbar-menu .nav-item {
+    height: var(--navbar-height);
+    display: flex;
+    align-items: center;
+}
+
+.er-navbar-menu .nav-item>a.er-nav-link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 var(--nav-item-padding-x);
+}
+
+/* Link style */
+.er-nav-link {
+    font-weight: var(--nav-link-font-weight);
+    font-size: var(--nav-link-font-size);
+    letter-spacing: var(--nav-link-letterspacing);
+    color: var(--nav-link-color);
+    text-transform: uppercase;
+    transition: color 0.25s ease;
+    font-family: inherit;
+}
+
+.er-nav-link:hover {
+    color: var(--nav-link-hover-color);
+}
+
+.er-navbar-menu .nav-item:hover {
+    background: var(--nav-item-hover-bg);
+}
+
+/* =============================================================================
+   DROPDOWNS (DESKTOP)
+============================================================================= */
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    padding: var(--space-2) 0;
+    border-radius: var(--dropdown-radius);
+    box-shadow: var(--dropdown-shadow);
+    border: 1px solid var(--dropdown-border-color);
+    min-width: var(--dropdown-width-min);
+    overflow: hidden;
+    z-index: 9999;
+    list-style: none;
+    margin: 0;
+    max-height: 0;
+    transition: max-height 0.2s ease;
+}
+
+/* Desktop hover behavior - dropdown menu is in sibling container */
+@media (min-width: 769px) {
+    /* Prevent navigation when clicking dropdown toggles on desktop */
+    .dropdown-toggle[href="#"] {
+        cursor: pointer;
+    }
+    
+    /* Account dropdown - menu is inside parent, show on hover */
+    .er-account-dropdown:hover .dropdown-menu {
+        display: block !important;
+        max-height: 500px;
+        overflow: visible;
+    }
+    
+    /* Account dropdown - also show when hovering over menu */
+    .er-account-dropdown .dropdown-menu:hover {
+        display: block !important;
+        max-height: 500px;
+        overflow: visible;
+    }
+}
+
+.dropdown-item {
+    display: block;
+    padding: var(--space-3) var(--space-5);
+    font-weight: var(--dropdown-item-font-weight);
+    font-size: var(--dropdown-item-font-size);
+    line-height: var(--dropdown-item-line-height);
+    color: #333 !important;
+    transition: background 0.25s ease, color 0.25s ease;
+    width: 100%;
+    text-align: left;
+    opacity: 1 !important;
+}
+
+.dropdown-item:hover {
+    background: var(--dropdown-hover-bg);
+    color: var(--dropdown-hover-text);
+}
+
+.dropdown-divider {
+    height: 0;
+    margin: var(--space-2) 0;
+    overflow: hidden;
+    border-top: 1px solid var(--dropdown-border-color);
+}
+
+/* =============================================================================
+   DONATE BUTTON (Desktop only)
+============================================================================= */
+
+.er-navbar-donate {
+    padding: var(--space-2) var(--space-4);
+    border: 2px solid var(--nav-link-hover-color);
+    border-radius: var(--space-2);
+    color: var(--nav-link-hover-color);
+    font-weight: 600;
+    transition: border-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+}
+
+/* Desktop donate button hover - background turns rose, text white */
+@media (min-width: 769px) {
+    .er-navbar-donate {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .er-navbar-donate:hover {
+        background-color: var(--nav-link-hover-color);
+        color: white;
+        border-color: var(--nav-link-hover-color);
+    }
+}
+
+/* =============================================================================
+   RIGHT SECTION (Desktop)
+============================================================================= */
+
+.er-navbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    margin-left: var(--space-6);
+    flex-shrink: 0;
+}
+
+.er-account-dropdown {
+    position: relative;
+    height: var(--navbar-height);
+    display: flex;
+    align-items: center;
+}
+
+.er-account-dropdown > a {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--nav-item-padding-x);
+}
+
+.er-account-dropdown:hover {
+    background: var(--nav-item-hover-bg);
+}
+
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+/* Hide hamburger on desktop */
+.er-navbar-hamburger {
+    display: none;
+}
+
+/* Hide mobile-only items on desktop - CRITICAL */
+@media (min-width: 769px) {
+
+    .mobile-login-item,
+    .mobile-admin-dropdown,
+    .mobile-logout-item {
+        display: none !important;
+    }
+
+    /* On desktop, dropdown containers should be positioned absolutely */
+    .dropdown-items-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: auto;
+        z-index: 9999;
+        display: none !important;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        pointer-events: none;
+    }
+    
+    /* Show dropdown container on hover over the dropdown parent */
+    .nav-item.dropdown:hover + .dropdown-items-container,
+    .nav-item.dropdown + .dropdown-items-container.force-open {
+        display: block !important;
+        pointer-events: auto;
+    }
+    
+    /* Keep dropdown visible when hovering over the container/menu */
+    .dropdown-items-container:hover {
+        display: block !important;
+        pointer-events: auto;
+    }
+    
+    /* Position the dropdown menu correctly inside the container */
+    .dropdown-items-container .dropdown-menu {
+        position: static;
+        display: block;
+        margin: 0;
+        pointer-events: auto;
+        max-height: 500px;
+    }
+    
+    /* Close other dropdowns when one is hovered - ensure only one is open */
+    .nav-item.dropdown:hover ~ .nav-item.dropdown + .dropdown-items-container {
+        display: none !important;
+    }
+}
+
+/* =============================================================================
+   MOBILE NAVIGATION
+============================================================================= */
+
+@media (max-width: 768px) {
+
+    .er-navbar-inner {
+        height: var(--navbar-height-mobile);
+        padding: 0 var(--navbar-padding-x-mobile);
+    }
+
+    .er-navbar-left {
+        flex: unset;
+        gap: var(--space-4);
+    }
+
+    .er-navbar-logo img {
+        height: 50px;
+    }
+
+    /* ---------------- Hamburger ---------------- */
+    .er-navbar-hamburger {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: var(--hamburger-size);
+        height: var(--hamburger-size);
+        position: relative;
+        z-index: 6000;
+        cursor: pointer;
+    }
+
+    .er-navbar-hamburger span {
+        height: var(--hamburger-thickness);
+        width: 100%;
+        background: #333;
+        border-radius: 3px;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .er-navbar-hamburger.active span:nth-child(1) {
+        transform: translateY(11px) rotate(45deg);
+    }
+
+    .er-navbar-hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .er-navbar-hamburger.active span:nth-child(3) {
+        transform: translateY(-11px) rotate(-45deg);
+    }
+
+    /* ---------------- Mobile menu panel ---------------- */
+    .er-navbar-menu {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: var(--navbar-height-mobile);
+        left: 0;
+        width: 100%;
+        background: white;
+        box-shadow: var(--mobile-menu-shadow);
+        padding: var(--space-4) 0;
+        z-index: 4000;
+        max-height: calc(100vh - var(--navbar-height-mobile));
+        overflow-y: auto;
+    }
+
+    .er-navbar-menu.open {
+        display: flex !important;
+        animation: menuSlideDown 0.25s ease-out;
+    }
+
+    @keyframes menuSlideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .er-navbar-menu .nav-item {
+        width: 100%;
+        align-items: flex-start;
+        height: auto;
+        line-height: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .er-navbar-menu .nav-item>a.er-nav-link {
+        width: 100%;
+        padding: var(--space-4) var(--space-5);
+        height: auto;
+        min-height: auto;
+        line-height: 1.2;
+        justify-content: flex-start;
+        margin: 0;
+    }
+
+    /* Show mobile-only items ONLY in mobile */
+    .mobile-login-item,
+    .mobile-admin-dropdown,
+    .mobile-logout-item {
+        display: flex !important;
+    }
+
+    /* ---------------- Accordion Dropdowns (Click to open, stays open) ---------------- */
+
+    /* Hide dropdown container by default */
+    .dropdown-items-container {
+        display: none !important;
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease;
+    }
+
+    /* Show dropdown container when parent has open class (click) OR is hovered */
+    .dropdown.open + .dropdown-items-container,
+    .mobile-admin-dropdown.open + .dropdown-items-container {
+        display: block !important;
+        max-height: 500px;
+    }
+    
+    /* Also support hover for better UX - with delay to prevent disappearing */
+    .dropdown:hover + .dropdown-items-container,
+    .mobile-admin-dropdown:hover + .dropdown-items-container {
+        display: block !important;
+        max-height: 500px;
+    }
+    
+    /* Keep dropdown open when hovering over the dropdown container/menu */
+    .dropdown-items-container:hover {
+        display: block !important;
+        max-height: 500px;
+    }
+    
+    /* Keep dropdown open when hovering over dropdown menu items */
+    .dropdown-menu:hover {
+        display: block !important;
+    }
+
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        position: static !important;
+        display: block !important;
+        width: 100%;
+        background: var(--mobile-dropdown-bg);
+        padding: 0;
+        margin: 0;
+        border-left: 4px solid var(--nav-link-hover-color);
+        border-radius: 0;
+        box-shadow: none;
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
+        list-style: none;
+        max-height: none !important;
+    }
+
+    /* Dropdown items - consistent padding, no gaps */
+    .dropdown-menu .dropdown-item {
+        padding: var(--space-3) var(--space-5);
+        margin: 0 !important;
+        display: block;
+        width: 100%;
+        color: #333 !important;
+        opacity: 1 !important;
+    }
+
+    .dropdown-item {
+        padding: var(--space-3) var(--space-5);
+        margin: 0 !important;
+        color: #333 !important;
+        opacity: 1 !important;
+    }
+    
+    /* Ensure dropdown menu list items have no spacing */
+    .dropdown-menu li {
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1;
+    }
+    
+    /* Remove any gaps in the menu list itself */
+    .er-navbar-menu {
+        gap: 0 !important;
+    }
+
+    /* Donate button mobile - styled like other nav items */
+    .er-navbar-donate-wrapper {
+        width: 100%;
+    }
+
+    .er-navbar-donate {
+        display: block;
+        width: 100%;
+        padding: var(--space-4) var(--space-5);
+        text-align: left;
+        border: none;
+        border-radius: 0;
+        background: none;
+        font-weight: var(--nav-link-font-weight);
+        font-size: var(--nav-link-font-size);
+        letter-spacing: var(--nav-link-letterspacing);
+        color: var(--nav-link-color);
+        text-transform: uppercase;
+        transition: background 0.25s ease, color 0.25s ease;
+        height: auto;
+        justify-content: flex-start;
+    }
+
+    .er-navbar-donate:hover {
+        background: var(--nav-item-hover-bg);
+        color: var(--nav-link-hover-color);
+    }
+
+    /* Hide desktop right section */
+    .er-navbar-right {
+        display: none;
+    }
+}
+
+/* More responsive breakpoint for logo shrinking */
+@media (max-width: 1100px) and (min-width: 769px) {
+    .er-navbar-inner {
+        padding: 0 var(--space-5);
+    }
+
+    .er-navbar-left {
+        gap: var(--space-5);
+    }
+
+    .er-navbar-menu {
+        gap: var(--space-4);
+    }
+
+    .er-navbar-right {
+        margin-left: var(--space-4);
+    }
+}
+
+@media (max-width: 950px) and (min-width: 769px) {
+    :root {
+        --nav-item-gap: var(--space-4);
+        --nav-item-padding-x: var(--space-3);
+        --nav-link-font-size: 0.88rem;
+    }
+
+    .er-navbar-logo img {
+        height: 55px;
+    }
+}
