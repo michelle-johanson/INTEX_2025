@@ -1,48 +1,28 @@
 <div class="page-container">
 
-    <h1 class="page-title">Schedule New Occurrence</h1>
+    <h1 class="page-title">Create New Event Type</h1>
 
-    <form action="/eventOccurrences/new" method="POST" class="form">
+    <form action="/events/new" method="POST" class="form">
 
-        <label for="EventID">Event Template</label>
-        <select id="EventID" name="EventID" required>
-            <option value="">Select an event...</option>
-            <% events.forEach(e => { %>
-                <!-- AUTO-SELECT LOGIC: -->
-                <!-- Checks if 'query.event_id' (from URL) matches this event -->
-                <option value="<%= e.event_id %>" 
-                    <%= (typeof query !== 'undefined' && query.event_id == e.event_id) ? 'selected' : '' %>>
-                    <%= e.name %>
-                </option>
-            <% }) %>
-        </select>
+        <label for="EventName">Event Name (Required)</label>
+        <input id="EventName" type="text" name="EventName" required />
 
-        <label for="EventDateTimeStart">Start Date &amp; Time</label>
-        <input id="EventDateTimeStart" type="datetime-local" name="EventDateTimeStart" required />
+        <label for="EventType">Event Type (e.g., Workshop, Mentoring)</label>
+        <input id="EventType" type="text" name="EventType" required />
 
-        <label for="EventDateTimeEnd">End Date &amp; Time</label>
-        <input id="EventDateTimeEnd" type="datetime-local" name="EventDateTimeEnd" required />
+        <label for="EventRecurrencePattern">Recurrence Pattern (e.g., Weekly, Monthly)</label>
+        <input id="EventRecurrencePattern" type="text" name="EventRecurrencePattern" />
 
-        <label for="EventLocation">Location</label>
-        <input id="EventLocation" type="text" name="EventLocation" required />
+        <label for="EventDescription">Description</label>
+        <textarea id="EventDescription" name="EventDescription" rows="3"></textarea>
+        
+        <label for="EventDefaultCapacity">Default Capacity</label>
+        <input id="EventDefaultCapacity" type="number" name="EventDefaultCapacity" min="1" required />
 
-        <label for="EventCapacity">Capacity</label>
-        <input id="EventCapacity" type="number" name="EventCapacity" min="1" required />
-
-        <label for="EventRegistrationDeadline">Registration Deadline</label>
-        <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline" required />
-
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
-            <button class="btn-submit">Create Occurrence</button>
-            
-            <!-- SMART CANCEL BUTTON -->
-            <!-- If we came from a specific event page, go back there. Otherwise go to main list. -->
-            <% if (typeof query !== 'undefined' && query.event_id) { %>
-                <a href="/events/<%= query.event_id %>" style="text-decoration: none; color: #666;">Cancel</a>
-            <% } else { %>
-                <a href="/eventOccurrences" style="text-decoration: none; color: #666;">Cancel</a>
-            <% } %>
-        </div>
-    </form>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit">Create Event Type</button>
+            <a href="/events" style="text-decoration: none; color: #666;">Cancel</a>
+        </div>
+    </form>
 
 </div>

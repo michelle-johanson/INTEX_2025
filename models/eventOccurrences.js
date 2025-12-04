@@ -1,5 +1,29 @@
 const knex = require("../db");
 
+// --- UTILITY FUNCTION FOR CASCADE DELETE ---
+// This function handles the atomic deletion of all downstream dependencies 
+// for a single event occurrence ID.
+async function cascadeDeleteOccurrence(occurrenceId, trx) {
+    // Tables dependent on event_occurrence_id
+    const dependentTables = [
+        'registrations', 
+        'survey_responses'
+    ];
+
+    // 1. Delete records from all dependent tables
+    for (const table of dependentTables) {
+        await trx(table)
+            .where({ event_occurrence_id: occurrenceId })
+            .del();
+    }
+    
+    // 2. Delete the main occurrence record
+    await trx('event_occurrences')
+        .where({ event_occurrence_id: occurrenceId })
+        .del();
+}
+// ------------------------------------------
+
 module.exports = {
     // Standard getAll for the main list (Level 2)
     getAll(searchTerm = null) {
@@ -47,8 +71,6 @@ module.exports = {
             .first();
     },
 
-    // --- UPDATED: Now supports Search Term ---
-    // This is used when viewing a specific Event Type (e.g. searching "Provo" inside "STEAM Night")
     getByEventId(eventId, searchTerm = null) {
         const query = knex("event_occurrences")
             .join("events", "event_occurrences.event_id", "events.event_id")
@@ -59,7 +81,6 @@ module.exports = {
             )
             .where("event_occurrences.event_id", eventId);
 
-        // Search logic specific to this list
         if (searchTerm) {
             query.andWhere(builder => {
                 builder.where("event_occurrences.location", "ilike", `%${searchTerm}%`);
@@ -96,9 +117,27 @@ module.exports = {
             });
     },
 
-    delete(id) {
-        return knex("event_occurrences")
-            .where({ event_occurrence_id: id })
-            .del();
+    // 1. New function called by routes/events.js to delete all occurrences of a parent event
+    deleteByEventId: async (eventId) => {
+        // Find all occurrence IDs linked to this event
+        const occurrenceIds = await knex('event_occurrences')
+            .where({ event_id: eventId })
+            .select('event_occurrence_id');
+
+        // Start a single transaction to manage all cascades for all children
+        return knex.transaction(async (trx) => {
+            for (const row of occurrenceIds) {
+                // Use the utility function to delete registrations/surveys and the occurrence
+                await cascadeDeleteOccurrence(row.event_occurrence_id, trx);
+            }
+        });
+    },
+
+    // 2. Standard delete function (UPDATED to use cascade logic)
+    delete: async (id) => {
+        // Start a transaction to manage the atomic cascade for this single ID
+        return knex.transaction(async (trx) => {
+            await cascadeDeleteOccurrence(id, trx);
+        });
     }
 };

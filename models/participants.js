@@ -34,7 +34,6 @@ module.exports = {
             .select("participants.*")
             .sum("donations.amount as total_donations")
             .leftJoin("donations", "participants.participant_id", "donations.participant_id")
-            // NOTE: We don't filter by role here, as the participant might be viewing their own details.
             .where({ "participants.participant_id": id })
             .groupBy("participants.participant_id")
             .first();
@@ -42,7 +41,6 @@ module.exports = {
 
     // Create new participant
     create: (data) => {
-        // NOTE: The role should be set to 'participant' by default in the route/DB logic.
         return knex("participants").insert(data).returning("participant_id");
     },
 
@@ -53,10 +51,32 @@ module.exports = {
             .update(data);
     },
 
-    // Delete participant
-    delete: (id) => {
-        return knex("participants")
-            .where({ participant_id: id })
-            .del();
+    // Delete participant (FIXED WITH CASCADING TRANSACTION)
+    delete: async (id) => {
+        // Tables that rely on participant_id via foreign key
+        const dependentTables = [
+            'donations',
+            'registrations', 
+            'survey_responses',
+            'milestones',
+        ];
+
+        // Start a transaction to ensure all deletions are atomic (all succeed or all fail)
+        return knex.transaction(async (trx) => {
+            
+            // 1. Delete records from all dependent tables first
+            for (const table of dependentTables) {
+                await trx(table)
+                    .where({ participant_id: id })
+                    .del();
+            }
+
+            // 2. Delete the main participant record last
+            const result = await trx('participants')
+                .where({ participant_id: id })
+                .del();
+
+            return result;
+        });
     }
 };
