@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 
 const Users = require("../models/users");
-const Participants = require("../models/participants"); // Assuming Participants model handles creation
+const Participants = require("../models/participants"); 
 const { render } = require("ejs");
 
 /* ============================================================
@@ -74,17 +74,26 @@ router.get("/signup", (req, res) => {
 });
 
 /* ============================================================
-   SIGNUP SUBMIT (POST)
+   SIGNUP SUBMIT (POST) - UPDATED FOR NEW FIELDS
 ============================================================ */
 router.post("/signup", async (req, res) => {
-    const { email, first_name, last_name, password, confirm_password } = req.body;
+    // 1. Destructure all fields from req.body
+    const { 
+        email, first_name, last_name, dob, phone, city, state, zip, 
+        school_or_employer, field_of_interest, password, confirm_password 
+    } = req.body;
+    
     const errors = {};
 
-    // 1. Password Validation
+    // Basic required field check (in addition to NOT NULL constraints)
+    if (!first_name) errors.first_name = "First name is required.";
+    if (!last_name) errors.last_name = "Last name is required.";
+    
+    // 2. Password Validation
     if (password.length < 6) errors.password = "Password must be at least 6 characters long.";
     if (password !== confirm_password) errors.confirm_password = "Passwords do not match.";
 
-    // 2. Email Existence Check (Assuming Participants model can check email existence)
+    // 3. Email Existence Check
     try {
         const existingUser = await Participants.findByEmail(email); 
         if (existingUser) {
@@ -95,19 +104,28 @@ router.post("/signup", async (req, res) => {
         errors.general = "A server error occurred during validation.";
     }
 
-    // 3. Handle Validation Failure
+    // 4. Handle Validation Failure
     if (Object.keys(errors).length > 0) {
         req.session.errors = errors;
         req.session.formData = req.body;
         return res.redirect("/auth/signup");
     }
 
-    // 4. Create New Participant (Success)
+    // 5. Create New Participant (Success)
     try {
         const newParticipant = {
             email: email,
             first_name: first_name,
             last_name: last_name,
+            // Include all new fields
+            dob: dob || null, 
+            phone: phone || null,
+            city: city || null,
+            state: state || null,
+            zip: zip || null,
+            school_or_employer: school_or_employer || null,
+            field_of_interest: field_of_interest || null,
+            
             password: password, // WARNING: Saved as plain text
             role: 'participant' // Hardcoded default role
         };
@@ -125,7 +143,7 @@ router.post("/signup", async (req, res) => {
         req.session.lastname = user.last_name;
         req.session.access_level = user.role;
 
-        // FIX: Redirect to the root path (/) which is handled by routes/home.js
+        // Redirect to the root path (/) 
         return res.redirect("/"); 
         
     } catch (err) {
