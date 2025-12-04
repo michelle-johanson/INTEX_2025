@@ -96,3 +96,29 @@ tbody tr:last-child td {
     top: 0;
     z-index: 5;
 }
+
+/* ============================================================
+   SEARCH INPUT + BAR
+============================================================ */
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.search-input {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--card-border);
+    background: white;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    width: 250px;
+    transition: var(--transition);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--pink);
+    box-shadow: 0 0 0 2px rgba(249, 175, 177, 0.3);
+}

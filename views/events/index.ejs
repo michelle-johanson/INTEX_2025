@@ -1,16 +1,17 @@
-<section class="page-container events-page-section">
-    <div class="container-inner">
-        <h1 class="page-title">Event Types</h1>
+<section class="page-container">
 
-        <% 
-            // Combined role check logic (main branch) with Michelle layout
-            const user = session.user || session; 
-            const rawRole = user.role || user.access_level || "";
-            const isManager = rawRole.toLowerCase() === "manager" || rawRole.toLowerCase() === "admin"; 
-        %>
+    <%
+        // Normalize session user role
+        const user = session.user || session;
+        const rawRole = user.access_level || user.role || "";
+        const isManager = rawRole.toLowerCase() === "manager" || rawRole.toLowerCase() === "admin";
+    %>
 
-        <!-- Flex container for button + search -->
-        <div class="d-flex mb-3" style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <!-- HEADER AREA -->
+    <div class="container-header">
+        <h1>Event Types</h1>
+
+        <div class="page-actions">
 
             <!-- Create Button -->
             <% if (isManager) { %>
@@ -18,57 +19,64 @@
                     + Create New Event Type
                 </a>
             <% } else { %>
-                <div></div>
+                <span></span>
             <% } %>
 
-            <!-- Search Bar -->
-            <form action="/events" method="GET" class="d-flex" style="gap: 0.5rem; align-items: center;">
-                <input 
-                    type="text" 
-                    name="search" 
-                    placeholder="Search event name or type..."
-                    value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                    style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
-                >
-                <button type="submit" class="btn btn-secondary btn-small">Search</button>
-                
-                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                    <a href="/events" style="font-size: 0.9rem;">Clear</a>
-                <% } %>
+                <!-- Search Bar -->
+                <form action="/events" method="GET" class="search-bar">
+                    <input type="text" name="search" placeholder="Search event name or type..."
+                        class="search-input" value="<%= searchTerm || '' %>">
+
+                    <button type="submit" class="btn btn-secondary btn-small">
+                        Search
+                    </button>
+
+                    <% if (searchTerm) { %>
+                        <a href="/events" class="btn btn-outline btn-small">Clear</a>
+                    <% } %>
             </form>
+
         </div>
+    </div>
 
-        <!-- Event Types Table -->
-        <% if (events.length === 0) { %>
+    <!-- TABLE AREA -->
+    <div class="container-inner">
+
+        <% if (events.length===0) { %>
             <p>No event types found.</p>
-        <% } else { %>
-            <div class="table-container">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th></th>
-                        </tr>
-                    </thead>
+            <% } else { %>
 
-                    <tbody>
-                        <% events.forEach(e => { %>
+                <div class="table-container">
+                    <table>
+                        <thead>
                             <tr>
-                                <td><%= e.name %></td>
-                                <td><%= e.type %></td>
-
-                                <td class="table-actions">
-                                    <a href="/events/<%= e.event_id %>" class="btn btn-table-details btn-small">
-                                        View
-                                    </a>
-                                </td>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th></th>
                             </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        <% } %>
+                        </thead>
+
+                        <tbody>
+                            <% events.forEach(e=> { %>
+                                <tr>
+                                    <td>
+                                        <%= e.name %>
+                                    </td>
+                                    <td>
+                                        <%= e.type %>
+                                    </td>
+                                    <td class="table-actions">
+                                        <a href="/events/<%= e.event_id %>" class="btn btn-table-details btn-small">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <% } %>
 
     </div>
 </section>

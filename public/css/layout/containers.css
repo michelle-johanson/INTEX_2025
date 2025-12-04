@@ -69,3 +69,42 @@ body {
 .page-content {
     flex: 1;
 }
+
+/* ============================================================
+   PAGE CONTAINER HEADER (nested inside .page-container)
+============================================================ */
+
+.container-header {
+    width: 100%;
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
+    background: transparent;
+    /* no full-width color */
+}
+
+.container-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--charcoal);
+    text-align: center;
+    margin-bottom: var(--space-5);
+}
+
+/* Action Row */
+.container-header .page-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Search bar spacing inside header */
+.container-header .search-bar {
+    margin-left: auto;
+    display: flex;
+    gap: var(--space-3);
+}
