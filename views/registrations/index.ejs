@@ -38,9 +38,11 @@
                             <% if (isManager) { %>
                                 <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/edit">Edit</a>
 
+                                <!-- #TO-DO: create class for inline form display -->
                                 <form action="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/delete" 
-                                      method="POST" style="display:inline;">
-                                    <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                      method="POST">
+                                    <!-- #TO-DO: create class for btn-danger with padding:0.2rem 0.6rem; -->
+                                    <button class="btn btn-danger btn-small">
                                         Delete
                                     </button>
                                 </form>
@@ -53,7 +55,7 @@
     <% } %>
 
     <% if (isManager) { %>
-        <div style="margin-top: 2rem;">
+        <div class="mt-4">
             <a href="/registrations" class="btn btn-secondary">← Back to Event Directory</a>
         </div>
     <% } %>

@@ -1,0 +1,42 @@
+/* =====================================
+   FOOTER SOCIAL ICONS
+===================================== */
+
+.footer-social {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Circular icons */
+.circle-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: #000000;
+    /* or var(--charcoal) */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-size: 1.6rem;
+    transition: var(--transition);
+}
+
+/* Hover state (Ella Rises pink) */
+.circle-icon:hover {
+    background: var(--rose);
+}
+
+.footer-copy {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin: 0;
+}

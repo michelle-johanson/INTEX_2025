@@ -29,9 +29,10 @@
         <label for="DonationAmount">Donation Amount (USD)</label>
         <input id="DonationAmount" type="number" name="DonationAmount" min="1" step="0.01" required />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
+        <div class="d-flex mt-2">
             <button class="btn-submit">Submit Donation</button>
-            <a href="/donations" style="text-decoration: none; color: #666;">Cancel</a>
+            <a href="/donations">Cancel</a>
         </div>
     </form>
 

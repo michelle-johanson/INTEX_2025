@@ -8,17 +8,20 @@
         <a href="/surveys" class="btn btn-secondary btn-small mb-3">&larr; Back to Event Types</a>
     <% } %>
 
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
-        <form action="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
+    <!-- #TO-DO: create class for flex container with justify-content: flex-end; -->
+    <div class="d-flex mb-3">
+        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
+        <form action="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" method="GET" class="d-flex">
+            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
             <input type="text" 
                    name="search" 
                    placeholder="<%= mode === 'types' ? 'Search event types...' : 'Search location...' %>" 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
-                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
+                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
             >
             <button type="submit" class="btn btn-secondary btn-small">Search</button>
             <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <a href="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
+                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
+                <a href="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>">Clear</a>
             <% } %>
         </form>
     </div>

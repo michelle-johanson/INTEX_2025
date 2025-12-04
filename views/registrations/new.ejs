@@ -1,51 +1,58 @@
 <div class="page-container">
-
+<div class="page-card-wide">
     <h1 class="page-title">New Registration</h1>
 
     <form action="/registrations/new" method="POST" class="form">
 
         <label for="EventOccurrenceID">Event Occurrence</label>
-        <select id="EventOccurrenceID" name="EventOccurrenceID" required>
-            <option value="">Select an event...</option>
-            <% occurrences.forEach(o => { %>
-                <option value="<%= o.event_occurrence_id %>" 
-                    <%= (typeof query !== 'undefined' && query.event_occurrence_id == o.event_occurrence_id) ? 'selected' : '' %>>
-                    <%= o.event_name %> - <%= new Date(o.starts_at).toLocaleString() %>
-                </option>
-            <% }) %>
-        </select>
+        <div class="select-wrapper">
+            <select id="EventOccurrenceID" name="EventOccurrenceID" required>
+                <option value="">Select an event...</option>
+                <% occurrences.forEach(o=> { %>
+                    <option value="<%= o.event_occurrence_id %>" <%=(typeof query !=='undefined' &&
+                        query.event_occurrence_id==o.event_occurrence_id) ? 'selected' : '' %>>
+                        <%= o.event_name %> - <%= new Date(o.starts_at).toLocaleString() %>
+                    </option>
+                    <% }) %>
+            </select>
+        </div>
 
         <label for="ParticipantID">Participant</label>
-        <select id="ParticipantID" name="ParticipantID" required>
-            <option value="">Select a participant...</option>
-            <% participants.forEach(p => { %>
-                <option value="<%= p.participant_id %>">
-                    <%= p.first_name %> <%= p.last_name %> (<%= p.email %>)
-                </option>
-            <% }) %>
-        </select>
+        <div class="select-wrapper">
+            <select id="ParticipantID" name="ParticipantID" required>
+                <option value="">Select a participant...</option>
+                <% participants.forEach(p=> { %>
+                    <option value="<%= p.participant_id %>">
+                        <%= p.first_name %>
+                            <%= p.last_name %> (<%= p.email %>)
+                    </option>
+                    <% }) %>
+            </select>
+        </div>
 
         <label for="RegistrationStatus">Status</label>
-        <select id="RegistrationStatus" name="RegistrationStatus">
-            <option value="Registered">Registered</option>
-            <option value="Waitlist">Waitlist</option>
-            <option value="Cancelled">Cancelled</option>
-        </select>
+        <div class="select-wrapper">
+            <select id="RegistrationStatus" name="RegistrationStatus">
+                <option value="Registered">Registered</option>
+                <option value="Waitlist">Waitlist</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
 
-        <div style="margin: 1rem 0;">
-            <label style="display:inline-flex; align-items:center; gap: 0.5rem;">
-                <input type="checkbox" name="RegistrationAttendedFlag" style="width:auto; margin:0;" />
-                Attended Event?
-            </label>
+        <div class="checkbox-row">
+            <input type="checkbox" id="RegistrationAttendedFlag" name="RegistrationAttendedFlag">
+            <label for="RegistrationAttendedFlag">Attended Event?</label>
         </div>
 
         <label for="RegistrationCreatedAt">Registration Date</label>
-        <input type="date" name="RegistrationCreatedAt" value="<%= new Date().toISOString().split('T')[0] %>" />
+        <input type="date" name="RegistrationCreatedAt" value="<%= new Date().toISOString().split('T')[0] %>"
+            required />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+        <div class="form-actions">
             <button class="btn-submit">Create Registration</button>
-            <a href="/registrations" style="text-decoration: none; color: #666;">Cancel</a>
+            <a href="/registrations">Cancel</a>
         </div>
-    </form>
 
+    </form>
+</div>
 </div>
