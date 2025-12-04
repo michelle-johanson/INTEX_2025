@@ -250,9 +250,8 @@
             document.querySelectorAll(".dropdown-items-container").forEach(container => {
                 container.style.display = "none";
             });
-            document.querySelectorAll(".er-account-dropdown .dropdown-menu").forEach(menu => {
-                menu.style.display = "none";
-            });
+            // Don't set display: none on account dropdown - let CSS handle it
+            // The account dropdown menu already has display: none in CSS by default
         }
         
         // Position on load and resize

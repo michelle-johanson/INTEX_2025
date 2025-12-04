@@ -179,14 +179,16 @@
     
     /* Account dropdown - menu is inside parent, show on hover */
     .er-account-dropdown:hover .dropdown-menu {
-        display: block;
+        display: block !important;
         max-height: 500px;
+        overflow: visible;
     }
     
     /* Account dropdown - also show when hovering over menu */
     .er-account-dropdown .dropdown-menu:hover {
-        display: block;
+        display: block !important;
         max-height: 500px;
+        overflow: visible;
     }
 }
 
