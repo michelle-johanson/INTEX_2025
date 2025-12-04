@@ -1,70 +1,123 @@
 <div class="container mt-4">
 
-    <% 
-        // 1. Get the role (check 'role' or 'access_level')
-        const rawRole = session && session.access_level || (session && session.user && session.user.role) || "";
-        // 2. Normalize and check for Admin/Manager
-        const isAdmin = rawRole.toLowerCase() === "admin" || rawRole.toLowerCase() === "manager"; 
-    %>
+    <% 
+        // 1. Get the role (check 'role' or 'access_level')
+        const rawRole = session && session.access_level || (session && session.user && session.user.role) || "";
+        // 2. Normalize and check for Admin/Manager
+        const isAdmin = rawRole.toLowerCase() === "admin" || rawRole.toLowerCase() === "manager"; 
+        
+        // 3. Check if the user is a logged-in participant (i.e., not an admin)
+        const isParticipant = session && session.isLoggedIn && !isAdmin;
+        
+        // 4. Check registration status for dynamic button display
+        const isRegistered = registrationStatus === 'registered' || registrationStatus === 'waitlist'; 
+    %>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        
-        <h1><%= occurrence.event_name %></h1>
-        
-        <% if (isAdmin) { %>
-            <div class="d-flex gap-2">
-                
-                <a class="btn btn-info"
-                    href="/registrations/event/<%= occurrence.event_occurrence_id %>">
-                    View Registrants
-                </a>
-                
-                <a class="btn btn-warning"
-                    href="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit">
-                    Edit
-                </a>
-                
-                <form action="/eventOccurrences/<%= occurrence.event_occurrence_id %>/delete"
-                      method="POST"
-                      onsubmit="return confirm('Are you sure you want to permanently delete this event occurrence and all linked Registrations/Surveys?');"
-                      style="display: inline;">
-                    <button class="btn btn-danger">Delete</button>
-                </form>
-                
-            </div>
-        <% } %>
-    </div>
-    
-    <p class="text-muted">
-        <strong>Type:</strong> <%= occurrence.event_type %>
-    </p>
+    <!-- FLASH MESSAGE DISPLAY -->
+    <% if (typeof flashMessage !== 'undefined' && flashMessage) { %>
+        <% 
+            let alertClass = 'alert-info';
+            if (flashMessage.type === 'success') alertClass = 'alert-success';
+            if (flashMessage.type === 'warning') alertClass = 'alert-warning';
+            if (flashMessage.type === 'error') alertClass = 'alert-danger';
+        %>
+        <div class="alert <%= alertClass %> mb-3">
+            <%= flashMessage.text %>
+        </div>
+    <% } %>
 
-    <div class="card mt-3 p-3">
-        <p><strong>Date:</strong> 
-            <%= new Date(occurrence.starts_at).toLocaleString() %>
-        </p>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        
+        <h1><%= occurrence.event_name %></h1>
+        
+        <% if (isAdmin) { %>
+            <!-- ADMIN ACTIONS: Edit, Registrants, Delete -->
+            <div class="d-flex gap-2">
+                
+                <a class="btn btn-info"
+                    href="/registrations/event/<%= occurrence.event_occurrence_id %>">
+                    View Registrants
+                </a>
+                
+                <a class="btn btn-warning"
+                    href="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit">
+                    Edit
+                </a>
+                
+                <form action="/eventOccurrences/<%= occurrence.event_occurrence_id %>/delete"
+                      method="POST"
+                      onsubmit="return confirm('Are you sure you want to permanently delete this event occurrence and all linked Registrations/Surveys?');"
+                      style="display: inline;">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+                
+            </div>
+        <% } else if (isParticipant) { %>
+            <!-- PARTICIPANT DYNAMIC ACTIONS -->
+            <div class="d-flex gap-2">
+                <% if (isRegistered) { %>
+                    <!-- BUTTON 1: UNREGISTER (Visible if registered) -->
+                    <form action="/registrations/unregister/<%= occurrence.event_occurrence_id %>"
+                          method="POST"
+                          onsubmit="return confirm('Are you sure you want to unregister from this event?');"
+                          style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-large">
+                            Unregister
+                        </button>
+                    </form>
+                <% } else { %>
+                    <!-- BUTTON 2: REGISTER NOW (Visible if not registered) -->
+                    <form action="/registrations/register/<%= occurrence.event_occurrence_id %>"
+                          method="POST"
+                          onsubmit="return confirm('Confirm registration for this event?');"
+                          style="display: inline;">
+                        <button type="submit" class="btn btn-primary btn-large">
+                            Register Now
+                        </button>
+                    </form>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+    
+    <!-- DETAILS SECTION -->
+    <p class="text-muted">
+        <strong>Type:</strong> <%= occurrence.event_type %>
+    </p>
 
-        <% if (occurrence.ends_at) { %>
-            <p><strong>Ends:</strong> 
-                <%= new Date(occurrence.ends_at).toLocaleString() %>
-            </p>
-        <% } %>
+    <div class="card mt-3 p-3">
+        <!-- Registration Status Indicator (Visible to everyone) -->
+        <% if (isRegistered) { %>
+            <div class="alert alert-success mb-3 p-2 text-center" style="font-weight: bold;">
+                You are currently <%= registrationStatus.toUpperCase() %> for this event.
+            </div>
+        <% } %>
+        
+        <p><strong>Date:</strong> 
+            <%= new Date(occurrence.starts_at).toLocaleString() %>
+        </p>
 
-        <p><strong>Location:</strong> <%= occurrence.location %></p>
+        <% if (occurrence.ends_at) { %>
+            <p><strong>Ends:</strong> 
+                <%= new Date(occurrence.ends_at).toLocaleString() %>
+            </p>
+        <% } %>
 
-        <% if (occurrence.capacity) { %>
-            <p><strong>Capacity:</strong> <%= occurrence.capacity %></p>
-        <% } %>
+        <p><strong>Location:</strong> <%= occurrence.location %></p>
 
-        <% if (occurrence.registration_deadline) { %>
-            <p><strong>Registration Deadline:</strong>
-                <%= new Date(occurrence.registration_deadline).toLocaleDateString() %>
-            </p>
-        <% } %>
-    </div>
+        <% if (occurrence.capacity) { %>
+            <p><strong>Capacity:</strong> <%= occurrence.capacity %></p>
+        <% } %>
 
-    <div style="margin-top: 2rem;">
-                <a href="/events/<%= occurrence.event_id %>" class="btn btn-secondary">&larr; Back to Event Occurrences List</a>
-    </div>
+        <% if (occurrence.registration_deadline) { %>
+            <p><strong>Registration Deadline:</strong>
+                <%= new Date(occurrence.registration_deadline).toLocaleDateString() %>
+            </p>
+        <% } %>
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <a href="/events/<%= occurrence.event_id %>" class="btn btn-secondary">&larr; Back to Event Occurrences List</a>
+    </div>
 
 </div>
