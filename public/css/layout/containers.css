@@ -1,5 +1,40 @@
-/* Page Containers / Cards */
+/* =====================================
+   GLOBAL PAGE CONTAINER SYSTEM
+===================================== */
 
+.page-container {
+    width: 100%;
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* NEW: Inner max-width container */
+.container-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    box-sizing: border-box;
+}
+
+/* SECTION COLORS */
+.hero-container {
+    background: var(--light-pink);
+    text-align: center;
+}
+
+.impact-container {
+    background: var(--cream);
+}
+
+.donate-container {
+    background: var(--pink);
+    text-align: center;
+}
+
+/* Existing Cards */
 .page-card,
 .page-card-wide {
     background: var(--card-bg);
@@ -12,36 +47,25 @@
 
 .page-card {
     max-width: 480px;
-    /* ~25% stable width */
 }
 
 .page-card-wide {
     max-width: 900px;
 }
 
-/* Generic card (replaces cards.css) */
-.card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    padding: var(--space-5);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-/* Make the entire body fill the screen */
+/* Layout flex for footer */
 html,
 body {
     height: 100%;
     margin: 0;
 }
 
-/* Flex column layout to push footer down */
 .page-wrapper {
     min-height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-/* Allow main content to expand */
 .page-content {
     flex: 1;
 }

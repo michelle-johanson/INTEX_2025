@@ -1,65 +1,74 @@
-<div class="page-container">
+<section class="page-container events-page-section">
+    <div class="container-inner">
+        <h1 class="page-title">Event Types</h1>
 
-    <h1 class="page-title">Event Types</h1>
+        <% 
+            // Combined role check logic (main branch) with Michelle layout
+            const user = session.user || session; 
+            const rawRole = user.role || user.access_level || "";
+            const isManager = rawRole.toLowerCase() === "manager" || rawRole.toLowerCase() === "admin"; 
+        %>
 
-    <% 
-        // Role check is now necessary here to display the 'Create New' button
-        const user = session.user || session; 
-        const rawRole = user.role || user.access_level || "";
-        const isManager = rawRole.toLowerCase() === "manager" || rawRole.toLowerCase() === "admin"; 
-    %>
+        <!-- Flex container for button + search -->
+        <div class="d-flex mb-3" style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        
-        <% if (isManager) { %>
-            <a href="/events/new" class="btn btn-primary btn-small">
-                + Create New Event Type
-            </a>
+            <!-- Create Button -->
+            <% if (isManager) { %>
+                <a href="/events/new" class="btn btn-primary btn-small">
+                    + Create New Event Type
+                </a>
+            <% } else { %>
+                <div></div>
+            <% } %>
+
+            <!-- Search Bar -->
+            <form action="/events" method="GET" class="d-flex" style="gap: 0.5rem; align-items: center;">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search event name or type..."
+                    value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                    style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
+                >
+                <button type="submit" class="btn btn-secondary btn-small">Search</button>
+                
+                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                    <a href="/events" style="font-size: 0.9rem;">Clear</a>
+                <% } %>
+            </form>
+        </div>
+
+        <!-- Event Types Table -->
+        <% if (events.length === 0) { %>
+            <p>No event types found.</p>
         <% } else { %>
-            <div></div>
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% events.forEach(e => { %>
+                            <tr>
+                                <td><%= e.name %></td>
+                                <td><%= e.type %></td>
+
+                                <td class="table-actions">
+                                    <a href="/events/<%= e.event_id %>" class="btn btn-table-details btn-small">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
         <% } %>
 
-        <form action="/events" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
-            <input type="text" 
-                   name="search" 
-                   placeholder="Search event name or type..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
-                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
-            >
-            <button type="submit" class="btn btn-secondary btn-small">Search</button>
-            
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <a href="/events" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
-            <% } %>
-        </form>
     </div>
-
-    <% if (events.length === 0) { %>
-        <p>No event types found.</p>
-    <% } else { %>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% events.forEach(e => { %>
-                    <tr>
-                        <td><%= e.name %></td>
-                        <td><%= e.type %></td>
-                        
-                        <td class="table-actions">
-                            <a href="/events/<%= e.event_id %>" class="btn btn-secondary btn-small">
-                                View
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
-</div>
+</section>
