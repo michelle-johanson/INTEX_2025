@@ -84,10 +84,16 @@ const milestoneRoutes = require("./routes/milestones");
 app.use("/milestones", milestoneRoutes);
 
 // Dashboard
-// Warning: This requires a file at ./routes/dashboard.js to exist!
 const dashboardRoutes = require("./routes/dashboard");
 app.use("/dashboard", dashboardRoutes);
 
+// Manage Users
+const usersRoutes = require('./routes/users'); 
+app.use('/users', usersRoutes);
+
+// Manage Staff
+const staffRouter = require('./routes/staff');
+app.use('/staff', staffRouter);
 /* ============================================================
    OTHER REQUIRED ROUTES
 ============================================================ */
