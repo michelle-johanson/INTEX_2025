@@ -1,66 +1,71 @@
-<div class="page-container">
-    <h1 class="page-title">Event Types</h1>
+<section class="page-container events-page-section">
+    <!-- #TO-DO: add styling for events-page-section spacing if needed -->
+    <div class="container-inner">
+        <h1 class="page-title">Event Types</h1>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+        <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
 
-    <!-- #TO-DO: create class for flex container with justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; -->
-    <div class="d-flex mb-3">
-        
-        <!-- Action Button -->
-        <% if (isManager) { %>
-            <a href="/events/new" class="btn btn-primary btn-small">
-                + Create New Event Type
-            </a>
-        <% } else { %>
-            <div></div>
-        <% } %>
-
-        <!-- Search Bar -->
-        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
-        <form action="/events" method="GET" class="d-flex">
-            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
-            <input type="text" 
-                   name="search" 
-                   placeholder="Search event name or type..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-            >
-            <button type="submit" class="btn btn-secondary btn-small">Search</button>
+        <!-- #TO-DO: create class for flex container with justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; -->
+        <div class="d-flex mb-3">
             
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
-                <a href="/events">Clear</a>
+            <!-- Action Button -->
+            <% if (isManager) { %>
+                <a href="/events/new" class="btn btn-primary btn-small">
+                    + Create New Event Type
+                </a>
+            <% } else { %>
+                <div></div>
             <% } %>
-        </form>
+
+            <!-- Search Bar -->
+            <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
+            <form action="/events" method="GET" class="d-flex">
+                <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
+                <input type="text" 
+                       name="search" 
+                       placeholder="Search event name or type..." 
+                       value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                >
+                <button type="submit" class="btn btn-secondary btn-small">Search</button>
+                
+                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                    <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
+                    <a href="/events">Clear</a>
+                <% } %>
+            </form>
+        </div>
+
+        <% if (events.length === 0) { %>
+            <p>No event types found.</p>
+        <% } else { %>
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% events.forEach(e => { %>
+                            <tr>
+                                <td><%= e.name %></td>
+                                
+                                <!-- UPDATED: Matches DB column 'type' -->
+                                <td><%= e.type %></td>
+                                
+                                <td class="table-actions">
+                                    <a href="/events/<%= e.event_id %>" class="btn btn-table-details btn-small">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
     </div>
-
-    <% if (events.length === 0) { %>
-        <p>No event types found.</p>
-    <% } else { %>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% events.forEach(e => { %>
-                    <tr>
-                        <td><%= e.name %></td>
-                        
-                        <!-- UPDATED: Matches DB column 'type' -->
-                        <td><%= e.type %></td>
-                        
-                        <td class="table-actions">
-                            <a href="/events/<%= e.event_id %>" class="btn btn-secondary btn-small">
-                                View
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
-</div>
+</section>
