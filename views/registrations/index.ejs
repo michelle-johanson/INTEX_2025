@@ -1,63 +1,73 @@
 <div class="page-container">
 
-    <h1 class="page-title"><%= contextName || 'Event' %> Registrations</h1>
+    <h1 class="page-title"><%= contextName || 'Event' %> Registrations</h1>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
 
-    <% if (isManager) { %>
-        <% const currentOccurrenceId = registrations.length > 0 ? registrations[0].event_occurrence_id : ''; %>
-        <a href="/registrations/new?event_occurrence_id=<%= currentOccurrenceId %>" class="btn btn-primary btn-small mb-4">
-            + Add Registration
-        </a>
-    <% } %>
+    <% if (isManager) { %>
+        <% 
+            // CRITICAL FIX: Use parentOccurrenceId if available for the new button link
+            // If the user came from the event detail page, we link 'Add' to that occurrence ID.
+            const currentOccurrenceId = (typeof parentOccurrenceId !== 'undefined' && parentOccurrenceId) ? parentOccurrenceId : (registrations.length > 0 ? registrations[0].event_occurrence_id : ''); 
+        %>
+        <a href="/registrations/new?event_occurrence_id=<%= currentOccurrenceId %>" class="btn btn-primary btn-small mb-4">
+            + Add Registration
+        </a>
+    <% } %>
 
-    <% if (registrations.length === 0) { %>
-        <p>No registrations found.</p>
-    <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>Event</th>
-                    <th>Date</th>
-                    <th>Participant</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <% registrations.forEach(r => { %>
-                    <tr>
-                        <td><%= r.event_name %></td>
-                        <td><%= new Date(r.starts_at).toLocaleDateString() %></td>
-                        <td><%= r.first_name %> <%= r.last_name %></td>
-                        <td><%= r.status %></td>
+    <% if (registrations.length === 0) { %>
+        <p>No registrations found.</p>
+    <% } else { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Participant</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% registrations.forEach(r => { %>
+                    <tr>
+                        <td><%= r.event_name %></td>
+                        <td><%= new Date(r.starts_at).toLocaleDateString() %></td>
+                        <td><%= r.first_name %> <%= r.last_name %></td>
+                        <td><%= r.status %></td>
 
-                        <td class="table-actions">
-                            <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>">View</a>
+                        <td class="table-actions">
+                            <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>">View</a>
 
-                            <% if (isManager) { %>
-                                <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/edit">Edit</a>
+                            <% if (isManager) { %>
+                                <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/edit">Edit</a>
 
-                                <!-- #TO-DO: create class for inline form display -->
-                                <form action="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/delete" 
-                                      method="POST">
-                                    <!-- #TO-DO: create class for btn-danger with padding:0.2rem 0.6rem; -->
-                                    <button class="btn btn-danger btn-small">
-                                        Delete
-                                    </button>
-                                </form>
-                            <% } %>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
+                                                                <form action="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/delete" 
+                                      method="POST">
+                                                                        <button class="btn btn-danger btn-small">
+                                        Delete
+                                    </button>
+                                </form>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
 
-    <% if (isManager) { %>
-        <div class="mt-4">
-            <a href="/registrations" class="btn btn-secondary">← Back to Event Directory</a>
-        </div>
-    <% } %>
+    <% if (isManager) { %>
+        <div class="mt-4">
+                        <% if (typeof parentOccurrenceId !== 'undefined' && parentOccurrenceId) { %>
+                <a href="/eventOccurrences/<%= parentOccurrenceId %>" class="btn btn-secondary">
+                    &larr; Back to Event Occurrence Details
+                </a>
+            <% } else { %>
+                <a href="/registrations" class="btn btn-secondary">
+                    &larr; Back to Registrations Index
+                </a>
+            <% } %>
+        </div>
+    <% } %>
 
 </div>

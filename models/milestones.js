@@ -39,6 +39,23 @@ module.exports = {
     },
     // ------------------------------------------------------------------------------------------
 
+    // --- NEW FUNCTION: Update Title Across All Participants ---
+    updateByTitle: (oldTitle, newTitle) => {
+        // Updates the title field for ALL milestone records matching the old title
+        return knex('milestones')
+            .where({ title: oldTitle })
+            .update({ title: newTitle });
+    },
+
+    // --- NEW FUNCTION: Delete Milestone Type Across All Participants ---
+    deleteByTitle: (titleToDelete) => {
+        // Deletes ALL milestone records that match the given title
+        return knex('milestones')
+            .where({ title: titleToDelete })
+            .del();
+    },
+    // ------------------------------------------------------------------------------------------
+
     // Get all milestones for a SPECIFIC participant
     getByParticipant: (participantId) => {
         return knex("milestones")
