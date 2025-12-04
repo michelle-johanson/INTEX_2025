@@ -19,5 +19,6 @@
 @import "./components/navbar.css";
 
 /* PAGE-SPECIFIC STYLES (create as needed) */
+@import "./pages/auth.css";
 /* @import "./pages/dashboard.css"; */
 /* @import "./pages/events.css"; */

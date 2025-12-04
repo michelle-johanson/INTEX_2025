@@ -35,7 +35,7 @@
 .impact-card {
     background: white;
     padding: 2rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
 }
 
