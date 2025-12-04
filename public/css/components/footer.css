@@ -1,42 +1,71 @@
-/* =====================================
-   FOOTER SOCIAL ICONS
-===================================== */
+:root {
+    --footer-bg: var(--cream);
+    --footer-icons-bg: black;
+    --footer-icons-hover-bg: var(--rose);
+    --footer-icons-outline: white;
+    --footer-icons-hover-outline: white;
+    --footer-text: var(--charcoal);
+}
 
-.footer-social {
+/* FOOTER CONTAINER */
+.er-footer {
+    margin-top: 2rem;
+    background: var(--footer-bg);
     text-align: center;
-    padding: 3rem 0;
+    padding-bottom: 2rem;
+    color: var(--footer-text);
+    position: static;
+    width: 100%;
 }
 
-.social-icons {
+/* Banner Section */
+.er-footer-banner {
+    background: black;
+    padding: 2rem 0;
+}
+
+.er-footer-banner img {
+    width: 100%;
+    height: 60px;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+}
+
+/* ICON ROW */
+.er-footer-icons {
+    margin-top: 1.5rem;
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
+    gap: 1rem;
 }
 
-/* Circular icons */
-.circle-icon {
-    width: 3.5rem;
-    height: 3.5rem;
-    background: #000000;
-    /* or var(--charcoal) */
+/* ICON CIRCLES */
+.er-icon-circle {
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
+    /* border: 2px solid var(--footer-icons-outline); */
+    background: var(--footer-icons-bg);
     display: flex;
-    justify-content: center;
     align-items: center;
-    color: #ffffff;
-    font-size: 1.6rem;
+    justify-content: center;
+    color: var(--footer-icons-outline);
+    text-decoration: none;
+    font-size: 1.3rem;
     transition: var(--transition);
 }
 
-/* Hover state (Ella Rises pink) */
-.circle-icon:hover {
-    background: var(--rose);
+.er-icon-circle:hover {
+    background: var(--footer-icons-hover-bg);
+    /* border-color: var(--footer-icons-hover-outline); */
+    color: var(--footer-icons-hover-outline);
 }
 
-.footer-copy {
-    font-size: 0.95rem;
-    color: var(--text-dark);
-    margin: 0;
+/* COPYRIGHT */
+.er-footer-copy {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--footer-text);
 }
