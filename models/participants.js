@@ -28,6 +28,14 @@ module.exports = {
             .orderBy("participants.last_name", "asc");
     },
 
+    // --- NEW METHOD: Find user by email for login/signup validation ---
+    findByEmail: (email) => {
+        return knex("participants")
+            .where({ email: email })
+            .first();
+    },
+    // ------------------------------------------------------------------
+
     // Get specific participant
     getById: (id) => {
         return knex("participants")
@@ -40,8 +48,9 @@ module.exports = {
     },
 
     // Create new participant
+    // NOTE: Returning '*' ensures the new participant_id is available for session login.
     create: (data) => {
-        return knex("participants").insert(data).returning("participant_id");
+        return knex("participants").insert(data).returning("*");
     },
 
     // Update participant
@@ -61,7 +70,7 @@ module.exports = {
             'milestones',
         ];
 
-        // Start a transaction to ensure all deletions are atomic (all succeed or all fail)
+        // Start a transaction to ensure all deletions are atomic
         return knex.transaction(async (trx) => {
             
             // 1. Delete records from all dependent tables first

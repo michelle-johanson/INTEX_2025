@@ -1,0 +1,60 @@
+<div class="container mt-5" style="max-width: 500px;">
+
+<h1 class="page-title text-center mb-4">Create Participant Account</h1>
+<p class="text-center text-muted">Sign up to view your milestones, surveys, and event registrations.</p>
+
+<!-- Display General Errors (like email already exists) -->
+<% if (typeof errors !== 'undefined' && errors.general) { %>
+    <div class="alert alert-danger mb-3">
+        <%= errors.general %>
+    </div>
+<% } %>
+
+<form action="/auth/signup" method="POST" class="form">
+
+    <!-- EMAIL -->
+    <label for="email" class="form-label">Email (Used for Login)</label>
+    <input type="email" id="email" name="email" 
+           class="form-control <%= errors.email ? 'is-invalid' : '' %>" 
+           value="<%= formData.email || '' %>"
+           required>
+    <% if (errors.email) { %><div class="invalid-feedback"><%= errors.email %></div><% } %>
+
+    <!-- FIRST NAME -->
+    <label for="first_name" class="form-label mt-3">First Name</label>
+    <input type="text" id="first_name" name="first_name" 
+           class="form-control" 
+           value="<%= formData.first_name || '' %>"
+           required>
+
+    <!-- LAST NAME -->
+    <label for="last_name" class="form-label mt-3">Last Name</label>
+    <input type="text" id="last_name" name="last_name" 
+           class="form-control" 
+           value="<%= formData.last_name || '' %>"
+           required>
+
+    <!-- PASSWORD -->
+    <label for="password" class="form-label mt-3">Password</label>
+    <input type="password" id="password" name="password" 
+           class="form-control <%= errors.password ? 'is-invalid' : '' %>" 
+           required>
+    <% if (errors.password) { %><div class="invalid-feedback"><%= errors.password %></div><% } %>
+
+    <!-- CONFIRM PASSWORD -->
+    <label for="confirm_password" class="form-label mt-3">Confirm Password</label>
+    <input type="password" id="confirm_password" name="confirm_password" 
+           class="form-control <%= errors.confirm_password ? 'is-invalid' : '' %>" 
+           required>
+    <% if (errors.confirm_password) { %><div class="invalid-feedback"><%= errors.confirm_password %></div><% } %>
+
+    <button type="submit" class="btn btn-primary w-100 mt-4">Sign Up</button>
+    
+    <div class="text-center mt-3">
+        <a href="/auth/login" class="text-muted" style="font-size: 0.9rem;">&larr; Back to Login</a>
+    </div>
+
+</form>
+
+
+</div>
