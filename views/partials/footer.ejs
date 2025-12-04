@@ -13,7 +13,7 @@
             <i class="bi bi-facebook"></i>
         </a>
 
-        <div id="teapot-trigger" class="er-icon-circle" title="I'm a teapot!" style="cursor: pointer;">
+        <div class="er-icon-circle teapot-trigger" data-teapot-trigger title="I'm a teapot!" style="cursor: pointer;" aria-label="Teapot Easter Egg">
             <img src="/img/teapot.svg" alt="Teapot Icon" class="teapot-icon">
         </div>
 
@@ -25,32 +25,3 @@
     </p>
 
 </footer>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const teapot = document.getElementById("teapot-trigger");
-
-        if (!teapot) {
-            console.log("❌ Teapot element not found when DOM loaded");
-            return;
-        }
-
-        console.log("✅ Teapot script loaded & listener attached");
-
-        teapot.addEventListener("click", () => { // Removed 'event' parameter
-
-            console.log("🫖 Teapot clicked — fetching /teapot...");
-
-            fetch('/teapot')
-                .then(response => {
-                    console.log(`Status Code received: ${response.status}`);
-                    console.log(`Status Text: ${response.statusText}`);
-
-                    if (response.status === 418) {
-                        console.log("✨ Easter egg found!");
-                    }
-                })
-                .catch(error => console.error('❌ Error fetching the teapot:', error));
-        });
-    });
-</script>

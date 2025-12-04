@@ -40,29 +40,31 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const teapot = document.getElementById("teapot-trigger");
-            if (!teapot) {
+            const teapots = document.querySelectorAll("[data-teapot-trigger]");
+            if (!teapots.length) {
                 console.log("❌ No teapot element found");
                 return;
             }
 
-            console.log("✅ Teapot script loaded, listener attached");
+            console.log("✅ Teapot script loaded, listener attached to", teapots.length, "element(s)");
 
-            teapot.addEventListener("click", (event) => {
-                event.preventDefault();
+            teapots.forEach((teapot) => {
+                teapot.addEventListener("click", (event) => {
+                    event.preventDefault();
 
-                console.log("🫖 Teapot clicked — sending fetch to /teapot...");
+                    console.log("🫖 Teapot clicked — sending fetch to /teapot...");
 
-                fetch('/teapot')
-                    .then(response => {
-                        console.log(`Status Code received: ${response.status}`);
-                        console.log(`Status Text: ${response.statusText}`);
+                    fetch('/teapot')
+                        .then(response => {
+                            console.log(`Status Code received: ${response.status}`);
+                            console.log(`Status Text: ${response.statusText}`);
 
-                        if (response.status === 418) {
-                            console.log("✨ Easter egg found — I'm a teapot!");
-                        }
-                    })
-                    .catch(error => console.error('❌ Error fetching /teapot:', error));
+                            if (response.status === 418) {
+                                console.log("✨ Easter egg found — I'm a teapot!");
+                            }
+                        })
+                        .catch(error => console.error('❌ Error fetching /teapot:', error));
+                });
             });
         });
     </script>
