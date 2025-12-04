@@ -1,4 +1,9 @@
-<!-- HERO (FULL-WIDTH) -->
+<% if (message) { %>
+    <div class="alert alert-danger text-center" style="margin: 1rem 0; font-size: 1.1rem; font-weight: bold;">
+        <%= message %>
+    </div>
+<% } %>
+
 <section class="hero-full">
     <div class="container-inner">
         <h1 class="hero-title">Empowering the Rising Generation</h1>
@@ -16,7 +21,6 @@
 </section>
 
 
-<!-- IMPACT (FULL-WIDTH) -->
 <section class="impact-full">
     <div class="container-inner">
         <h2 class="section-title">Our Impact</h2>
@@ -42,14 +46,18 @@
             </div>
         </div>
 
-        <% if (session && session.isLoggedIn) { %>
+        <% 
+            const userRole = (session && session.access_level || "").toLowerCase(); 
+            const isAdmin = userRole === "admin";
+        %>
+        
+        <% if (isAdmin) { %>
             <a href="/dashboard" class="btn btn-secondary btn-large mt-3">View Dashboard</a>
         <% } %>
     </div>
 </section>
 
 
-<!-- DONATE BANNER (FULL-WIDTH) -->
 <section class="donate-full">
     <div class="container-inner">
         <h2>Your Support Changes Lives</h2>
@@ -87,21 +95,20 @@
 </footer>
 
 
-
 <script>
 document.getElementById('teapot-trigger').addEventListener('click', () => {
-  // 1. Make a request to your new backend route
-  fetch('/teapot')
-    .then(response => {
-      // 2. Log it to the console so you can see it working via code as well
-      console.log(`Status Code received: ${response.status}`);
-      console.log(`Status Text: ${response.statusText}`);
-      
-      // Optional: Alert the user or play a sound
-      if (response.status === 418) {
-        console.log("Easter egg found!");
-      }
-    })
-    .catch(error => console.error('Error fetching the teapot:', error));
+    // 1. Make a request to your new backend route
+    fetch('/teapot')
+        .then(response => {
+            // 2. Log it to the console so you can see it working via code as well
+            console.log(`Status Code received: ${response.status}`);
+            console.log(`Status Text: ${response.statusText}`);
+            
+            // Optional: Alert the user or play a sound
+            if (response.status === 418) {
+                console.log("Easter egg found!");
+            }
+        })
+        .catch(error => console.error('Error fetching the teapot:', error));
 });
 </script>
