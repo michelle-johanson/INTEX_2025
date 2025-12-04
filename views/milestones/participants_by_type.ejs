@@ -4,9 +4,28 @@
     <p class="text-muted">Below is a list of all participants who have achieved this specific milestone.</p>
     
     <% 
+        // Robust Role Check
         const role = session && session.access_level ? session.access_level.toLowerCase() : '';
         const isAdmin = role === "admin" || role === "manager"; 
     %>
+
+    <% if (isAdmin) { %>
+        <div style="display: flex; gap: 10px; margin-bottom: 1.5rem;">
+            
+            <a href="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>/edit" class="btn btn-warning btn-small">
+                Edit Milestone Title
+            </a>
+
+            <form action="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>/delete" 
+                  method="POST" 
+                  style="display:inline;"
+                  onsubmit="return confirm('WARNING: This will permanently delete the milestone titled \'<%= milestoneTitle %>\' from ALL participant records. Are you absolutely sure?');">
+                <button type="submit" class="btn btn-danger btn-small">
+                    Delete Milestone Type
+                </button>
+            </form>
+        </div>
+    <% } %>
 
     <% if (participants.length === 0) { %>
         <p>No participants have achieved the milestone "<%= milestoneTitle %>" yet.</p>
@@ -34,8 +53,7 @@
                             <a href="/participants/<%= p.participant_id %>" class="btn btn-secondary btn-small">
                                 View Profile
                             </a>
-                            
-                            </td>
+                        </td>
                     </tr>
                 <% }) %>
             </tbody>
