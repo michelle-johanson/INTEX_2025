@@ -1,4 +1,3 @@
-// models/milestones.js
 const knex = require("../db");
 
 module.exports = {
@@ -13,8 +12,33 @@ module.exports = {
             )
             .orderBy("milestones.achieved_date", "desc");
     },
+    
+    // --- NEW FUNCTION: Get list of unique milestone types (Level 1 View) ---
+    getUniqueTitles: () => {
+        // Uses SELECT DISTINCT to get a list of all unique milestone titles
+        return knex("milestones")
+            .distinct('title')
+            .pluck('title')
+            .orderBy('title', 'asc');
+    },
 
-    // --- NEW FUNCTION ---
+    // --- NEW FUNCTION: Get participants who achieved a specific milestone title (Level 2 View) ---
+    getParticipantsByTitle: (milestoneTitle) => {
+        // Selects participant details based on the milestone title
+        return knex("participants")
+            .join('milestones', 'participants.participant_id', '=', 'milestones.participant_id')
+            .select(
+                'participants.participant_id', 
+                'participants.first_name', 
+                'participants.last_name',
+                'participants.email',
+                'milestones.achieved_date'
+            )
+            .where('milestones.title', milestoneTitle)
+            .orderBy('milestones.achieved_date', 'desc');
+    },
+    // ------------------------------------------------------------------------------------------
+
     // Get all milestones for a SPECIFIC participant
     getByParticipant: (participantId) => {
         return knex("milestones")

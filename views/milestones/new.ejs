@@ -3,19 +3,23 @@
     <h1 class="page-title">Add Milestone</h1>
 
     <form action="/milestones/new" method="POST" class="form">
+        
+        <% 
+            // We assume 'participants' is passed but will only use the selected ID's info if it exists.
+            // Find the full participant object for display purposes
+            const selectedParticipant = participants.find(p => String(p.participant_id) === String(selectedId)) || {};
+        %>
 
-        <label for="ParticipantID">Participant</label>
-        <select id="ParticipantID" name="ParticipantID" required>
-            <option value="">Select a participant…</option>
-            
-            <% participants.forEach(p => { %>
-                <option value="<%= p.participant_id %>" 
-                    <%= (typeof selectedId !== 'undefined' && String(p.participant_id) === String(selectedId)) ? 'selected' : '' %>>
-                    
-                    <%= p.first_name %> <%= p.last_name %> (ID #<%= p.participant_id %>)
-                </option>
-            <% }) %>
-        </select>
+        <% if (selectedId && selectedParticipant.first_name) { %>
+            <div style="background: #e9ecef; padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem;">
+                <span style="font-weight: bold;">Adding Milestone for:</span> 
+                <%= selectedParticipant.first_name %> <%= selectedParticipant.last_name %>
+                (ID #<%= selectedId %>)
+            </div>
+        <% } %>
+
+        <input type="hidden" name="ParticipantID" value="<%= selectedId %>" required>
+
 
         <label for="MilestoneTitle">Milestone Title</label>
         <input id="MilestoneTitle" 
@@ -30,10 +34,16 @@
                name="MilestoneDate" 
                required />
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
+        <div class="d-flex mt-2" style="gap: 1rem; align-items: center;">
             <button class="btn-submit">Create Milestone</button>
-            <a href="/milestones">Cancel</a>
+            
+            <% if (selectedId) { %>
+                <a href="/milestones/participant/<%= selectedId %>" style="text-decoration: none; color: #666;">
+                    Cancel
+                </a>
+            <% } else { %>
+                <a href="/milestones" style="text-decoration: none; color: #666;">Cancel (Back to Directory)</a>
+            <% } %>
         </div>
     </form>
 
