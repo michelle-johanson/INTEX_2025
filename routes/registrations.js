@@ -17,7 +17,6 @@ router.get("/", requireLogin, async (req, res) => {
         const role = (req.session.access_level || "").toLowerCase();
 
         // SCENARIO 1: MANAGER LOGGED IN
-        // Show a Directory of EVENTS (Occurrences)
         if (role === "manager" || role === "admin") {
             const occurrences = await EventOccurrences.getAll();
             
@@ -28,7 +27,6 @@ router.get("/", requireLogin, async (req, res) => {
         }
 
         // SCENARIO 2: PARTICIPANT LOGGED IN
-        // Show only their OWN registrations
         const myRegistrations = await Registrations.getByParticipant(req.session.userID);
         
         res.render("registrations/index", {
@@ -41,6 +39,90 @@ router.get("/", requireLogin, async (req, res) => {
         console.error(err);
         res.status(500).send("Database Error");
     }
+});
+
+
+/* ============================================================
+   NEW ROUTE: PARTICIPANT SELF-REGISTRATION (Logged-in users)
+   POST /registrations/register/:id (where :id is event_occurrence_id)
+============================================================ */
+router.post("/register/:id", requireLogin, async (req, res) => {
+    const occurrenceId = req.params.id;
+    const participantId = req.session.userID;
+    
+    // We need the event details for the success message and redirect
+    const occurrence = await EventOccurrences.getById(occurrenceId);
+    const redirectUrl = `/eventOccurrences/${occurrenceId}`;
+
+    if (!occurrence) {
+        req.session.flashMessage = { type: 'error', text: 'Error: Event not found.' };
+        return res.redirect(redirectUrl);
+    }
+    
+    try {
+        // 1. Check for existing registration (Duplication Feedback)
+        const existingReg = await Registrations.getByIds(occurrenceId, participantId);
+        if (existingReg) {
+            req.session.flashMessage = { type: 'warning', text: `You are already registered for ${occurrence.event_name}.` };
+            return res.redirect(redirectUrl); 
+        }
+
+        // 2. Create the registration record
+        const newRegistration = {
+            event_occurrence_id: Number(occurrenceId),
+            participant_id: Number(participantId),
+            status: 'registered', 
+            attended: false,
+            created_at: new Date()
+        };
+
+        await Registrations.create(newRegistration);
+        
+        // 3. Success Feedback & Redirect Fix
+        req.session.flashMessage = { type: 'success', text: `Successfully registered for ${occurrence.event_name}!` };
+        return res.redirect(redirectUrl); 
+
+    } catch (err) {
+        console.error("ERROR IN SELF-REGISTRATION:", err);
+        req.session.flashMessage = { type: 'error', text: `Registration failed due to a server error.` };
+        return res.redirect(redirectUrl);
+    }
+});
+
+/* ============================================================
+   NEW ROUTE: PARTICIPANT UNREGISTER (Logged-in users)
+   POST /registrations/unregister/:id
+============================================================ */
+router.post("/unregister/:id", requireLogin, async (req, res) => {
+    const occurrenceId = req.params.id;
+    const participantId = req.session.userID;
+    
+    // Get event name for feedback and setup redirect URL
+    const occurrence = await EventOccurrences.getById(occurrenceId);
+    const redirectUrl = `/eventOccurrences/${occurrenceId}`;
+
+    if (!occurrence) {
+        req.session.flashMessage = { type: 'error', text: 'Error: Event not found.' };
+        return res.redirect(redirectUrl);
+    }
+
+    try {
+        // We use the delete function that takes two IDs
+        const result = await Registrations.delete(occurrenceId, participantId); 
+
+        if (result > 0) {
+            req.session.flashMessage = { type: 'success', text: `Successfully unregistered from ${occurrence.event_name}.` };
+        } else {
+            req.session.flashMessage = { type: 'warning', text: `You were not registered for ${occurrence.event_name}.` };
+        }
+        
+        return res.redirect(redirectUrl);
+
+    } catch (err) {
+        console.error("ERROR IN UNREGISTER:", err);
+        req.session.flashMessage = { type: 'error', text: `Unregister failed due to a server error.` };
+        return res.redirect(redirectUrl);
+    }
 });
 
 
@@ -62,9 +144,9 @@ router.get("/event/:id", requireAdmin, async (req, res) => {
             title: `Registrations for ${occurrence.event_name}`,
             registrations: eventRegistrations,
             contextName: occurrence.event_name,
-            // CRITICAL FIX: Pass parent IDs to enable the back button
-            parentOccurrenceId: occurrenceId, 
-            parentEventId: occurrence.event_id 
+            // CRITICAL FIX: Pass parent IDs to enable the back button
+            parentOccurrenceId: occurrenceId, 
+            parentEventId: occurrence.event_id 
         });
 
     } catch (err) {
