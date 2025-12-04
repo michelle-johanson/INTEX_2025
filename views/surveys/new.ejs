@@ -20,23 +20,28 @@
             <option value="">Select an event…</option>
             
             <% occurrences.forEach(o => { %>
-                <option value="<%= o.event_occurrence_id %>">
+                <% const isSelected = (typeof selectedEvent !== 'undefined' && String(selectedEvent) === String(o.event_occurrence_id)); %>
+                
+                <option value="<%= o.event_occurrence_id %>" <%= isSelected ? 'selected' : '' %>>
                     <%= o.event_name %> — <%= new Date(o.starts_at).toLocaleString() %>
                 </option>
             <% }) %>
         </select>
 
-        <label>Satisfaction Score</label>
+        <label>Satisfaction Score **(1-5)**</label>
         <input type="number" name="SurveySatisfactionScore" min="1" max="5" required />
 
-        <label>Usefulness Score</label>
+        <label>Usefulness Score **(1-5)**</label>
         <input type="number" name="SurveyUsefulnessScore" min="1" max="5" required />
 
-        <label>Recommendation Score</label>
+        <!-- NEW FIELD: Instructor Score -->
+        <label>Instructor Score **(1-5)**</label>
+        <input type="number" name="SurveyInstructorScore" min="1" max="5" required />
+
+        <label>Recommendation Score **(1-5)**</label>
         <input type="number" name="SurveyRecommendationScore" min="1" max="5" required />
 
-        <label>Overall Score</label>
-        <input type="number" name="SurveyOverallScore" min="1" max="5" required />
+        <!-- REMOVED: Overall Score input, as it is now calculated -->
 
         <label>Comments</label>
         <textarea name="SurveyComments" rows="3"></textarea>

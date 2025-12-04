@@ -1,0 +1,25 @@
+<div class="page-container">
+    <h1 class="page-title">Edit <%= manager.first_name %> Account</h1>
+    <p class="text-muted">Fields can be updated. Leave the password blank to keep it unchanged.</p>
+    <p style="font-weight: bold;">Current Role: Admin</p>
+
+    <form action="/staff/<%= manager.user_id %>/edit" method="POST" class="form">
+        
+        <label for="first_name">First Name (Required)</label>
+        <input type="text" id="first_name" name="first_name" value="<%= manager.first_name %>" required>
+
+        <label for="last_name">Last Name (Required)</label>
+        <input type="text" id="last_name" name="last_name" value="<%= manager.last_name %>" required>
+
+        <label for="email">Email (Required)</label>
+        <input type="email" id="email" name="email" value="<%= manager.email %>" required>
+        
+        <label for="password">Change Password (Leave blank if unchanged)</label>
+        <input type="password" id="password" name="password" placeholder="New Password">
+
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="/staff" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

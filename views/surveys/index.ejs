@@ -2,54 +2,73 @@
 
     <h1 class="page-title"><%= contextName || 'Post-Event' %> Surveys</h1>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+    <% 
+        // 1. ROBUST MANAGER CHECK
+        const roleRaw = session.access_level || session.role || (session.user && (session.user.access_level || session.user.role)) || "";
+        const isManager = roleRaw.toLowerCase() === "manager" || roleRaw.toLowerCase() === "admin";
+    %>
 
-    <% if (isManager) { %>
-        <% const currentOccurrenceId = surveys.length > 0 ? surveys[0].event_occurrence_id : ''; %>
-        <a href="/surveys/new?event_occurrence_id=<%= currentOccurrenceId %>" class="btn btn-primary btn-small mb-4">
-            + Add Survey
-        </a>
-    <% } %>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        
+        <% 
+            // The occurrence variable is ONLY passed when viewing Level 3 results (/occurrence/:id)
+            const targetId = (typeof occurrence !== 'undefined' && occurrence) ? occurrence.event_occurrence_id : ''; 
+        %>
+
+        <% if (isManager && targetId) { %> 
+            <a href="/surveys/new?event_occurrence_id=<%= targetId %>" class="btn btn-primary btn-small">
+                + Add Survey Response
+            </a>
+        <% } else { %>
+            <div></div> <% } %>
+        <form action="" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" name="search" placeholder="Search name or comments..." 
+                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;">
+            <button type="submit" class="btn btn-secondary btn-small">Search</button>
+            
+            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                <a href="?" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
+            <% } %>
+        </form>
+    </div>
 
     <% if (surveys.length === 0) { %>
-        <p>No surveys found.</p>
+        <div style="background: #f8f9fa; padding: 2rem; text-align: center; border-radius: 8px;">
+            <p class="text-muted" style="margin: 0;">No surveys found.</p>
+        </div>
     <% } else { %>
-        <table>
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th>Event</th>
                     <th>Date</th>
                     <th>Participant</th>
                     <th>Overall Score</th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-
             <tbody>
                 <% surveys.forEach(s => { %>
                     <tr>
                         <td><%= s.event_name %></td>
-                        
                         <td><%= new Date(s.starts_at).toLocaleDateString() %></td>
-                        
                         <td><%= s.first_name %> <%= s.last_name %></td>
                         
-                        <td><%= s.overall_score %> / 5</td>
+                        <td>
+                            <span style="color: #f0ad4e; font-weight: bold;">
+                                <%= "★".repeat(s.overall_score) %>
+                            </span>
+                            <span style="color: #ddd;">
+                                <%= "★".repeat(5 - s.overall_score) %>
+                            </span>
+                            <span style="font-size: 0.85rem; color: #777; margin-left: 5px;">
+                                (<%= s.overall_score %>)
+                            </span>
+                        </td>
 
                         <td class="table-actions">
-                            <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>">View</a>
-
-                            <% if (isManager) { %>
-                                <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/edit">Edit</a>
-                                
-                                <form action="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>/delete"
-                                      method="POST" 
-                                      style="display:inline;">
-                                    <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
-                                        Delete
-                                    </button>
-                                </form>
-                            <% } %>
+                            <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>" class="btn btn-secondary btn-small">View</a>
                         </td>
                     </tr>
                 <% }) %>
@@ -57,9 +76,11 @@
         </table>
     <% } %>
 
-    <% if (isManager) { %>
+    <% if (isManager && typeof occurrence !== 'undefined') { %>
         <div style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
-            <a href="/surveys" class="btn btn-secondary">← Back to Event Directory</a>
+            <a href="/surveys/type/<%= occurrence.event_id %>" class="btn btn-secondary">
+                &larr; Back to <%= occurrence.event_name %> Occurrences
+            </a>
         </div>
     <% } %>
 

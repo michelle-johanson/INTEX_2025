@@ -36,10 +36,10 @@ module.exports = {
             .orderBy("survey_responses.submission_date", "desc");
     },
 
-    // --- NEW FUNCTION 2 ---
-    // Get surveys for a specific EVENT OCCURRENCE (What the manager drills down into)
-    getByOccurrence: (occurrenceId) => {
-        return knex("survey_responses")
+    // --- UPDATED FUNCTION 2 ---
+    // Get surveys for a specific OCCURRENCE (with Search)
+    getByOccurrence: (occurrenceId, searchTerm = null) => {
+        const query = knex("survey_responses")
             .join("participants", "survey_responses.participant_id", "=", "participants.participant_id")
             .join("event_occurrences", "survey_responses.event_occurrence_id", "=", "event_occurrences.event_occurrence_id")
             .join("events", "event_occurrences.event_id", "=", "events.event_id")
@@ -50,8 +50,21 @@ module.exports = {
                 "events.name as event_name", 
                 "event_occurrences.starts_at"
             )
-            .where({ "survey_responses.event_occurrence_id": occurrenceId })
-            .orderBy("survey_responses.submission_date", "desc");
+            .where({ "survey_responses.event_occurrence_id": occurrenceId });
+
+        // --- SEARCH FILTER ---
+        if (searchTerm) {
+            query.where(builder => {
+                builder.where("participants.first_name", "ilike", `%${searchTerm}%`)
+                       .orWhere("participants.last_name", "ilike", `%${searchTerm}%`)
+                       // Search full name "First Last"
+                       .orWhereRaw("CONCAT(participants.first_name, ' ', participants.last_name) ILIKE ?", [`%${searchTerm}%`])
+                       // Search comments
+                       .orWhere("survey_responses.comments", "ilike", `%${searchTerm}%`);
+            });
+        }
+
+        return query.orderBy("survey_responses.submission_date", "desc");
     },
     // ----------------------
 
