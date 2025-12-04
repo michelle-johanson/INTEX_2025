@@ -32,15 +32,16 @@
         <label for="EventRegistrationDeadline">Registration Deadline</label>
         <input id="EventRegistrationDeadline" type="date" name="EventRegistrationDeadline" required />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
+        <div class="d-flex mt-2">
             <button class="btn-submit">Create Occurrence</button>
             
             <!-- SMART CANCEL BUTTON -->
             <!-- If we came from a specific event page, go back there. Otherwise go to main list. -->
             <% if (typeof query !== 'undefined' && query.event_id) { %>
-                <a href="/events/<%= query.event_id %>" style="text-decoration: none; color: #666;">Cancel</a>
+                <a href="/events/<%= query.event_id %>">Cancel</a>
             <% } else { %>
-                <a href="/eventOccurrences" style="text-decoration: none; color: #666;">Cancel</a>
+                <a href="/eventOccurrences">Cancel</a>
             <% } %>
         </div>
     </form>

@@ -1,23 +1,27 @@
-<div class="page-container" style="max-width: 800px; margin: 0 auto;">
+<!-- #TO-DO: create class for max-width: 800px; margin: 0 auto; -->
+<div class="page-container">
     <h1 class="page-title">User Maintenance Dashboard</h1>
     <p class="text-muted">Select a category below to manage user access and program participants.</p>
 
-    <div style="display: flex; gap: 2rem; margin-top: 3rem; flex-wrap: wrap;">
-
-        <div class="card" style="flex: 1 1 300px; border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h3 style="margin-top: 0;">🧑‍🎓 Program Participants</h3>
+    <!-- #TO-DO: create class for flex container with gap: 2rem; margin-top: 3rem; flex-wrap: wrap; -->
+    <div class="d-flex mt-4">
+        <!-- #TO-DO: create class for flex: 1 1 300px; -->
+        <div class="card">
+            <h3>🧑‍🎓 Program Participants</h3>
             <p>View, edit, add, and delete student/participant accounts, including their demographic data and milestones.</p>
             
-            <a href="/participants" class="btn btn-primary btn-block" style="display: block; width: 100%; text-align: center; margin-top: 1rem;">
+            <a href="/participants" class="btn btn-primary btn-block w-100 text-center mt-2">
                 Go to Participants
             </a>
         </div>
 
-        <div class="card" style="flex: 1 1 300px; border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h3 style="margin-top: 0;">🧑‍💼 Admin Staff</h3>
+        <!-- #TO-DO: create class for flex: 1 1 300px; -->
+        <div class="card">
+            <h3>🧑‍💼 Admin Staff</h3>
             <p>Manage accounts with elevated access (Admins) for security and staffing control.</p>
             
-            <a href="/staff" class="btn btn-warning btn-block" style="display: block; width: 100%; text-align: center; margin-top: 1rem; background-color: #f0ad4e; border-color: #eea236;">
+            <!-- #TO-DO: create class for btn-warning with background-color: #f0ad4e; border-color: #eea236; -->
+            <a href="/staff" class="btn btn-warning btn-block w-100 text-center mt-2">
                 Go to Admin Accounts
             </a>
         </div>

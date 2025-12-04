@@ -6,7 +6,8 @@
           method="POST" 
           class="form">
 
-        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+        <!-- #TO-DO: create class for info box with background: #f8f9fa; padding: 1rem; border-radius: 4px; -->
+        <div class="mb-2">
             <strong>Event:</strong> <%= registration.event_name %><br>
             <strong>Participant:</strong> <%= registration.first_name %> <%= registration.last_name %>
         </div>
@@ -18,11 +19,13 @@
             <option value="Cancelled" <%= registration.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
         </select>
 
-        <div style="margin: 1rem 0;">
-            <label style="display:inline-flex; align-items:center; gap: 0.5rem;">
+        <!-- #TO-DO: create class for checkbox container with margin: 1rem 0; -->
+        <div class="my-2">
+            <!-- #TO-DO: create class for inline-flex label with align-items: center; gap: 0.5rem; -->
+            <label>
+                <!-- #TO-DO: create class for checkbox with width:auto; margin:0; -->
                 <input type="checkbox" 
                        name="RegistrationAttendedFlag" 
-                       style="width:auto; margin:0;" 
                        <%= registration.attended ? 'checked' : '' %> />
                 Attended Event?
             </label>
@@ -33,9 +36,10 @@
                name="RegistrationCheckInTime" 
                value="<%= registration.check_in_time ? new Date(new Date(registration.check_in_time).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
+        <div class="d-flex mt-2">
             <button class="btn-submit">Save Changes</button>
-            <a href="/registrations/event/<%= registration.event_occurrence_id %>" style="text-decoration: none; color: #666;">Cancel</a>
+            <a href="/registrations/event/<%= registration.event_occurrence_id %>">Cancel</a>
         </div>
     </form>
 
