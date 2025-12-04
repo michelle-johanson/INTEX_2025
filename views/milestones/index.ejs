@@ -2,10 +2,19 @@
 
     <h1 class="page-title"><%= participantName || 'My' %> Milestones</h1>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+    <% 
+        // 1. Robust Role Check
+        const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin");
+        
+        // 2. Determine Participant ID from the ROUTE's context variables.
+        // We assume the route passes a 'participant' object (if coming from /participant/:id)
+        // If not, we use the first item in the milestone list (old way).
+        const contextParticipant = (typeof participant !== 'undefined') ? participant : null;
+        
+        const currentParticipantId = contextParticipant ? contextParticipant.participant_id : (milestones.length > 0 ? milestones[0].participant_id : '');
+    %>
 
-    <% if (isManager) { %>
-        <% const currentParticipantId = milestones.length > 0 ? milestones[0].participant_id : ''; %>
+    <% if (isManager && currentParticipantId) { %>
         <a href="/milestones/new?participant_id=<%= currentParticipantId %>" class="btn btn-primary btn-small mb-4">
             + Add Milestone
         </a>
