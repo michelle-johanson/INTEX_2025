@@ -1,44 +1,84 @@
 <div class="container mt-4">
     <h1>Schedule New Event Occurrence</h1>
 
+    <% if (typeof errors !== 'undefined' && Object.keys(errors).length > 0) { %>
+        <div class="alert alert-danger">
+            <p><strong>Please correct the following issues:</strong></p>
+            <ul style="padding-left: 20px; margin-bottom: 0;">
+                <% for (const key in errors) { %>
+                    <li><%= errors[key] %></li>
+                <% } %>
+            </ul>
+        </div>
+    <% } %>
+
     <form action="/eventOccurrences/new" method="POST" class="mt-3">
 
         <label for="EventID" class="form-label">Event Template (Required)</label>
-        <select id="EventID" name="EventID" class="form-select" required>
-            <option value="" disabled <%= !selectedEventId ? 'selected' : '' %>>Select an event…</option>
+        <select id="EventID" name="EventID" 
+                class="form-select <%= errors.EventID ? 'is-invalid' : '' %>" 
+                required>
+            <option value="" disabled <%= !selectedEventId && !formData.EventID ? 'selected' : '' %>>Select an event…</option>
             
+            <% 
+                // Determine which ID to use for selection: URL parameter OR previous submission
+                const currentSelection = formData.EventID || selectedEventId;
+            %>
+
             <% events.forEach(e=> { %>
                 <% 
-                    // CRITICAL FIX: Check if the event_id matches the ID passed from the URL query
-                    const isSelected = (typeof selectedEventId !== 'undefined' && 
-                                        String(selectedEventId) === String(e.event_id)); 
+                    // Check if the event_id matches the ID passed from the URL query or formData
+                    const isSelected = (String(currentSelection) === String(e.event_id)); 
                 %>
                 <option value="<%= e.event_id %>" <%= isSelected ? 'selected' : '' %>>
                     <%= e.name %> — <%= e.event_type %>
                 </option>
                 <% }) %>
         </select>
+        <% if (errors.EventID) { %><div class="invalid-feedback"><%= errors.EventID %></div><% } %>
+
 
         <label class="form-label mt-3">Start Date & Time</label>
-        <input type="datetime-local" name="EventDateTimeStart" class="form-control" required>
+        <input type="datetime-local" name="EventDateTimeStart" 
+               class="form-control <%= errors.StartsAt ? 'is-invalid' : '' %>" 
+               value="<%= formData.EventDateTimeStart || '' %>"
+               required>
+        <% if (errors.StartsAt) { %><div class="invalid-feedback"><%= errors.StartsAt %></div><% } %>
+
 
         <label class="form-label mt-3">End Date & Time</label>
-        <input type="datetime-local" name="EventDateTimeEnd" class="form-control">
+        <input type="datetime-local" name="EventDateTimeEnd" 
+               class="form-control"
+               value="<%= formData.EventDateTimeEnd || '' %>">
 
         <label class="form-label mt-3">Location</label>
-        <input type="text" name="EventLocation" class="form-control" required>
+        <input type="text" name="EventLocation" 
+               class="form-control" 
+               value="<%= formData.EventLocation || '' %>"
+               required>
 
         <label class="form-label mt-3">Capacity</label>
-        <input type="number" min="1" name="EventCapacity" class="form-control">
+        <input type="number" min="1" name="EventCapacity" 
+               class="form-control <%= errors.EventCapacity ? 'is-invalid' : '' %>"
+               value="<%= formData.EventCapacity || '' %>">
+        <% if (errors.EventCapacity) { %><div class="invalid-feedback"><%= errors.EventCapacity %></div><% } %>
+
 
         <label class="form-label mt-3">Registration Deadline</label>
-        <input type="date" name="EventRegistrationDeadline" class="form-control">
+        <input type="date" name="EventRegistrationDeadline" 
+               class="form-control"
+               value="<%= formData.EventRegistrationDeadline || '' %>">
 
         <div class="d-flex gap-3 mt-4">
             <button type="submit" class="btn btn-primary">Create Occurrence</button>
             
-            <% if (typeof selectedEventId !== 'undefined' && selectedEventId) { %>
-                <a href="/events/<%= selectedEventId %>" class="btn btn-secondary">Cancel</a>
+            <% 
+                // Determine the correct ID for the cancel link
+                const cancelId = selectedEventId || formData.EventID;
+            %>
+
+            <% if (cancelId) { %>
+                <a href="/events/<%= cancelId %>" class="btn btn-secondary">Cancel</a>
             <% } else { %>
                 <a href="/eventOccurrences" class="btn btn-secondary">Cancel</a>
             <% } %>

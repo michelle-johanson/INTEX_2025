@@ -2,7 +2,7 @@ const knex = require("../db");
 
 // --- UTILITY FUNCTION FOR CASCADE DELETE ---
 // This function handles the atomic deletion of all downstream dependencies 
-// for a single event occurrence ID.
+// for a single event occurrence ID. It uses the transaction object (trx) for atomicity.
 async function cascadeDeleteOccurrence(occurrenceId, trx) {
     // Tables dependent on event_occurrence_id
     const dependentTables = [
@@ -12,7 +12,8 @@ async function cascadeDeleteOccurrence(occurrenceId, trx) {
 
     // 1. Delete records from all dependent tables
     for (const table of dependentTables) {
-        await trx(table)
+        // Use trx() to ensure the query is part of the transaction
+        await trx(table) 
             .where({ event_occurrence_id: occurrenceId })
             .del();
     }
