@@ -36,7 +36,7 @@ router.get("/", requireLogin, async (req, res) => {
 
 
 /* ============================================================
-   NEW OCCURRENCE FORM (ADMIN)
+   NEW OCCURRENCE FORM (ADMIN) - UPDATED FOR PRE-SELECTION
    GET /eventOccurrences/new
 ============================================================ */
 
@@ -44,12 +44,15 @@ router.get("/new", requireAdmin, async (req, res) => {
     try {
         const events = await Events.getAll();
 
+        // FIX: Capture the event_id from the query (e.g., ?event_id=5)
+        const selectedEventId = req.query.event_id;
+
         res.render("eventOccurrences/new", {
             title: "Schedule New Occurrence",
             events,
-            // UPDATED: Pass query params (like ?event_id=5) to the view
             query: req.query, 
-            session: req.session
+            session: req.session,
+            selectedEventId: selectedEventId // <--- PASS THIS TO THE VIEW
         });
 
     } catch (err) {
@@ -174,14 +177,13 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
 
 router.post("/:id/delete", requireAdmin, async (req, res) => {
     try {
-        // Step 1: Manually delete all downstream dependencies (Registrations and Surveys)
-        // NOTE: These model functions must be implemented in the respective models
-        await Registrations.deleteByOccurrenceId(req.params.id); 
-        await SurveyResponses.deleteByOccurrenceId(req.params.id); 
-        
-        // Step 2: Delete the main occurrence record
+        // Step 1: Manually delete all downstream dependencies (Registrations and Surveys)
+        await Registrations.deleteByOccurrenceId(req.params.id); 
+        await SurveyResponses.deleteByOccurrenceId(req.params.id); 
+        
+        // Step 2: Delete the main occurrence record
         await EventOccurrences.delete(req.params.id);
-        
+        
         res.redirect("/eventOccurrences");
 
     } catch (err) {
