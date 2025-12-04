@@ -30,7 +30,9 @@
             <%- body %>
         </main>
 
-        <%- include('partials/footer') %>
+        <% if (typeof hideFooter === 'undefined' || !hideFooter) { %>
+            <%- include('partials/footer') %>
+        <% } %>
 
     </div>
 

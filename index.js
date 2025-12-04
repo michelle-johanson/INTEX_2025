@@ -41,6 +41,8 @@ app.use((req, res, next) => {
         lastname: s.lastname || null,
         access_level: s.access_level || null
     };
+    // default page-level flags
+    res.locals.hideFooter = false;
     next();
 });
 

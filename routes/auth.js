@@ -17,7 +17,8 @@ router.get("/login", (req, res) => {
     
     res.render("auth/login", {
         title: "Login",
-        error: error || null
+        error: error || null,
+        hideFooter: true
     });
 });
 
