@@ -1,0 +1,71 @@
+:root {
+    --footer-bg: var(--cream);
+    --footer-icons-bg: black;
+    --footer-icons-hover-bg: var(--rose);
+    --footer-icons-outline: white;
+    --footer-icons-hover-outline: white;
+    --footer-text: var(--charcoal);
+}
+
+/* FOOTER CONTAINER */
+.er-footer {
+    margin-top: 2rem;
+    background: var(--footer-bg);
+    text-align: center;
+    padding-bottom: 2rem;
+    color: var(--footer-text);
+    position: static;
+    width: 100%;
+}
+
+/* Banner Section */
+.er-footer-banner {
+    background: black;
+    padding: 2rem 0;
+}
+
+.er-footer-banner img {
+    width: 100%;
+    height: 60px;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+}
+
+/* ICON ROW */
+.er-footer-icons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* ICON CIRCLES */
+.er-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    /* border: 2px solid var(--footer-icons-outline); */
+    background: var(--footer-icons-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--footer-icons-outline);
+    text-decoration: none;
+    font-size: 1.3rem;
+    transition: var(--transition);
+}
+
+.er-icon-circle:hover {
+    background: var(--footer-icons-hover-bg);
+    /* border-color: var(--footer-icons-hover-outline); */
+    color: var(--footer-icons-hover-outline);
+}
+
+/* COPYRIGHT */
+.er-footer-copy {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--footer-text);
+}

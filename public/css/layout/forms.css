@@ -1,45 +1,267 @@
-/* STANDARD FORMS */
-
-form {
-    max-width: 600px;
-}
-
-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: var(--space-2);
-}
+/* =====================================
+   FORM FIELDS
+===================================== */
 
 input,
 select,
 textarea {
     width: 100%;
-    padding: 0.7rem 1rem;
+    padding: 0.8rem 1rem;
     border-radius: var(--radius);
     border: 1px solid var(--form-border);
+    background: var(--form-bg);
+    color: var(--form-text);
     margin-bottom: var(--space-4);
-    background: white;
     transition: var(--transition);
+    font-family: var(--font-body);
+    font-size: 1rem;
 }
+
+/* =====================================
+   FOCUS (yellow)
+===================================== */
 
 input:focus,
 select:focus,
 textarea:focus {
-    border-color: var(--form-border);
+    background: var(--form-focus-bg);
+    border-color: var(--form-focus-border);
     outline: none;
     box-shadow: 0 0 0 3px var(--form-focus-shadow);
 }
 
+/* =====================================
+   SELECT PLACEHOLDER FIX
+===================================== */
+
+select[required] option[value=""] {
+    color: #999;
+}
+
+/* Make sure empty required selects show as invalid */
+select[required]:invalid {
+    color: #999;
+}
+
+/* =====================================
+   VALID STATE (green)
+===================================== */
+
+/* Only show valid state if user has interacted - EXCLUDE CHECKBOXES */
+input:not(:placeholder-shown):valid:not(:focus):user-valid:not([type="checkbox"]),
+textarea:not(:placeholder-shown):valid:not(:focus):user-valid {
+    background-color: var(--form-valid-bg);
+    border-color: var(--form-valid-border);
+    color: var(--form-valid-text);
+}
+
+/* Valid select with actual value chosen - only after user interaction */
+select:user-valid:valid:not([value=""]):not(:focus):not(:invalid) {
+    background-color: var(--form-valid-bg);
+    border-color: var(--form-valid-border);
+    color: var(--form-valid-text);
+    /* Keep the arrow by using separate background properties */
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%231f6b2e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px;
+}
+
+/* =====================================
+   ERROR STATE (red)
+===================================== */
+
+/* Only show error state if user has interacted */
+input:not(:placeholder-shown):invalid:not(:focus):user-invalid,
+textarea:not(:placeholder-shown):invalid:not(:focus):user-invalid {
+    background-color: var(--form-error-bg);
+    border-color: var(--form-error-border);
+    color: var(--form-error-text);
+}
+
+/* Error for required select that's been touched but empty */
+select:required:invalid:not(:focus):user-invalid {
+    background-color: var(--form-error-bg);
+    border-color: var(--form-error-border);
+    color: var(--form-error-text);
+    /* Keep the arrow by using separate background properties */
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%238a1f1f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px;
+}
+
+/* =====================================
+   CHECKBOXES - STRIPPED DOWN
+===================================== */
+
+/* Completely override any inherited styles for checkbox */
+input[type="checkbox"] {
+    /* Basic structure */
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    border-radius: 4px !important;
+    appearance: none !important;
+    cursor: pointer !important;
+    margin-right: 0.5rem !important;
+    margin-bottom: 0 !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+
+    /* No transitions */
+    transition: none !important;
+
+    /* Default state: white background, blue border - ALWAYS */
+    background: var(--form-bg) !important;
+    border: 2px solid var(--form-border) !important;
+
+    /* Force no validation colors */
+    background-color: var(--form-bg) !important;
+    border-color: var(--form-border) !important;
+}
+
+/* REMOVE ALL FOCUS/BLUR EFFECTS */
+input[type="checkbox"]:focus,
+input[type="checkbox"]:focus-visible,
+input[type="checkbox"]:focus-within,
+input[type="checkbox"]:valid,
+input[type="checkbox"]:invalid,
+input[type="checkbox"]:user-valid,
+input[type="checkbox"]:user-invalid {
+    outline: none !important;
+    box-shadow: none !important;
+    background: var(--form-bg) !important;
+    background-color: var(--form-bg) !important;
+    border: 2px solid var(--form-border) !important;
+    border-color: var(--form-border) !important;
+}
+
+/* Checked state only */
+input[type="checkbox"]:checked {
+    background: var(--checkmark-bg-color, var(--blue)) !important;
+    background-color: var(--checkmark-bg-color, var(--blue)) !important;
+    border: 2px solid var(--checkmark-bg-color, var(--blue)) !important;
+    border-color: var(--checkmark-bg-color, var(--blue)) !important;
+}
+
+/* Checked with any other state */
+input[type="checkbox"]:checked:focus,
+input[type="checkbox"]:checked:focus-visible,
+input[type="checkbox"]:checked:valid,
+input[type="checkbox"]:checked:invalid,
+input[type="checkbox"]:checked:user-valid,
+input[type="checkbox"]:checked:user-invalid {
+    outline: none !important;
+    box-shadow: none !important;
+    background: var(--checkmark-bg-color, var(--blue)) !important;
+    background-color: var(--checkmark-bg-color, var(--blue)) !important;
+    border: 2px solid var(--checkmark-bg-color, var(--blue)) !important;
+    border-color: var(--checkmark-bg-color, var(--blue)) !important;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 6px;
+    height: 11px;
+    border: solid var(--checkmark-color, white);
+    border-width: 0 2.5px 2.5px 0;
+}
+
+/* =====================================
+   SELECT ARROW & DROPDOWN MENU
+===================================== */
+
+select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.5rem;
+}
+
+/* Default state */
+select {
+    background-color: var(--form-bg);
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%233A3F3B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px;
+}
+
+/* Override for each state - must repeat all background properties */
+select:focus {
+    background-color: var(--form-focus-bg);
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%233A3F3B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px;
+}
+
+select:user-valid:valid:not(:focus) {
+    background-color: var(--form-valid-bg);
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%231f6b2e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px;
+}
+
+select:user-invalid:invalid:not(:focus) {
+    background-color: var(--form-error-bg);
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%238a1f1f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px;
+}
+
+/* Dropdown menu styling */
+select option {
+    background: var(--form-bg);
+    color: var(--text-dark);
+    padding: 0.5rem;
+}
+
+select option:hover {
+    background: var(--form-focus-bg);
+}
+
+select option:checked {
+    background: var(--form-valid-bg);
+    color: var(--form-valid-text);
+}
+
+/* =====================================
+   AUTOFILL
+===================================== */
+
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    background-color: var(--form-valid-bg) !important;
+    box-shadow: 0 0 0 1000px var(--form-valid-bg) inset !important;
+    -webkit-text-fill-color: var(--form-valid-text) !important;
+}
+
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill:focus {
+    background-color: var(--form-focus-bg) !important;
+    box-shadow: 0 0 0 1000px var(--form-focus-bg) inset !important;
+    -webkit-text-fill-color: var(--form-text) !important;
+}
+
+/* =====================================
+   LAYOUT HELPERS
+===================================== */
+
 .form-control {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
 }
 
-/* Horizontal label+input option */
 .form-row {
     display: flex;
-    align-items: center;
     gap: var(--space-4);
 }
 
@@ -48,24 +270,13 @@ textarea:focus {
     white-space: nowrap;
 }
 
-/* ALERTS (merged from alerts.css) */
-
-.form-success,
-.form-error {
-    padding: var(--space-4) var(--space-5);
-    border-radius: var(--radius);
+.checkbox-row {
+    display: flex;
+    align-items: center;
     margin-bottom: var(--space-4);
-    font-weight: 500;
 }
 
-.form-success {
-    background: var(--success-bg);
-    border: 1px solid var(--success-border);
-    color: var(--success-text);
-}
-
-.form-error {
-    background: var(--error-bg);
-    border: 1px solid var(--error-border);
-    color: var(--error-text);
+.checkbox-row label {
+    margin-bottom: 0;
+    cursor: pointer;
 }

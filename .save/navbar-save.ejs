@@ -1,0 +1,307 @@
+<nav class="er-navbar">
+<div class="er-navbar-inner">
+
+    <!-- LEFT: Logo + (Desktop) Menu -->
+    <div class="er-navbar-left">
+        <a href="/" class="er-navbar-logo">
+            <img src="/img/logo-no-bg.png" alt="Ella Rises Logo">
+        </a>
+
+        <!-- DESKTOP & MOBILE MENU -->
+        <ul class="er-navbar-menu" id="mobileMenu">
+        <%
+            const isManager = session && session.access_level &&
+                (
+                    session.access_level.toLowerCase() === "manager" ||
+                    session.access_level.toLowerCase() === "admin"
+                );
+
+            const isLoggedIn = session && session.isLoggedIn;
+
+            const menus = [
+                {
+                    label: "EVENTS",
+                    href: "/events"
+                },
+                {
+                    label: "REGISTER",
+                    items: [
+                        { text: "Registrations", href: "/registrations" },
+                        { text: "Participants", href: "/participants" },
+                        { text: "Milestones", href: "/milestones" }
+                    ]
+                }
+            ];
+
+            if (isLoggedIn) {
+                menus.push({
+                    label: "SURVEY",
+                    items: [
+                        { text: "Surveys", href: "/surveys" },
+                        { text: "Dashboard", href: "/dashboard" }
+                    ]
+                });
+            }
+        %>
+
+            <% menus.forEach(menu=> { %>
+                <% if (menu.href) { %>
+                    <li class="nav-item">
+                        <a href="<%= menu.href %>" class="er-nav-link">
+                            <%= menu.label %>
+                        </a>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="er-nav-link dropdown-toggle" data-dropdown-toggle>
+                            <%= menu.label %>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown-items-container">
+                        <ul class="dropdown-menu">
+                            <% menu.items.forEach(item=> { %>
+                                <li>
+                                    <a class="dropdown-item" href="<%= item.href %>">
+                                        <%= item.text %>
+                                    </a>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    </li>
+                <% } %>
+            <% }) %>
+
+            <!-- DONATE (styled as link in mobile) -->
+            <li class="er-navbar-donate-wrapper">
+                <a class="er-navbar-donate" href="/donations/new">DONATE</a>
+            </li>
+
+            <!-- MOBILE ONLY - LOGIN (only visible if not logged in) -->
+            <% if (!isLoggedIn) { %>
+                <li class="nav-item mobile-login-item">
+                    <a href="/auth/login" class="er-nav-link">LOGIN</a>
+                </li>
+            <% } %>
+
+            <!-- MOBILE ONLY - ADMIN TOOLS (only visible if logged in as admin) -->
+            <% if (isLoggedIn && isManager) { %>
+                <li class="nav-item mobile-admin-dropdown">
+                    <a href="#" class="er-nav-link dropdown-toggle"
+                        data-dropdown-toggle>
+                        ADMIN TOOLS
+                    </a>
+                </li>
+                <li class="nav-item dropdown-items-container mobile-admin-dropdown">
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/maintenance_index">Manage Users</a></li>
+                        <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                    </ul>
+                </li>
+            <% } %>
+
+            <!-- MOBILE ONLY - LOGOUT (only visible if logged in) -->
+            <% if (isLoggedIn) { %>
+                <li class="nav-item mobile-logout-item">
+                    <a href="/auth/logout" class="er-nav-link">LOGOUT</a>
+                </li>
+            <% } %>
+        </ul>
+    </div> <!-- END OF er-navbar-right -->
+
+    <!-- RIGHT: Desktop Login / Username -->
+    <div class="er-navbar-right">
+        <!-- IF NOT LOGGED IN, SHOW LOGIN LINK -->
+        <% if (!isLoggedIn) { %>
+            <a href="/auth/login" class="er-nav-link">LOGIN</a>
+        <% } else { %>
+            <!-- IF LOGGED IN, Show First Name or Username -->
+            <div class="nav-item dropdown er-account-dropdown">
+                <a class="er-nav-link dropdown-toggle" href="#">
+                    <%= session.firstname || session.username %>
+                </a>
+                <!-- DROPDOWN MENU -->
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <!-- IF ADMIN, Show Admin Tools Dropdown -->
+                    <% if (isManager) { %>
+                        <li><a class="dropdown-item" href="/maintenance_index">Manage Users</a></li>
+                        <li><a class="dropdown-item" href="/donations">Manage Donations</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                    <% } %>
+                    <!-- Logout Option -->
+                    <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+                </ul>
+            </div>
+        <% } %>
+    </div> <!-- END OF er-navbar-left -->
+
+    <!-- MOBILE HAMBURGER ICON -->
+    <div class="er-navbar-hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    </div>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const hamburger = document.getElementById("hamburger");
+        const menu = document.getElementById("mobileMenu");
+
+        // Toggle hamburger menu
+        hamburger.addEventListener("click", () => {
+            hamburger.classList.toggle("active");
+            menu.classList.toggle("open");
+            document.body.style.overflow = menu.classList.contains("open") ? "hidden" : "";
+        });
+
+        // Check if we're in mobile view
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
+
+        // Handle dropdown toggles (both mobile and desktop)
+        document.querySelectorAll("[data-dropdown-toggle]").forEach(toggle => {
+            // Click handler - prevent navigation for dropdown toggles
+            toggle.addEventListener("click", (e) => {
+                // Always prevent default navigation for dropdown toggles
+                if (toggle.getAttribute("href") === "#") {
+                    e.preventDefault();
+                }
+                
+                // On mobile, toggle the open state
+                if (isMobile()) {
+                    e.stopPropagation();
+                    const dropdownParent = toggle.closest(".dropdown, .mobile-admin-dropdown");
+                    if (dropdownParent) {
+                        // Close other dropdowns first
+                        document.querySelectorAll(".dropdown.open, .mobile-admin-dropdown.open").forEach(dd => {
+                            if (dd !== dropdownParent) {
+                                dd.classList.remove("open");
+                            }
+                        });
+                        dropdownParent.classList.toggle("open");
+                    }
+                } else {
+                    // Desktop: toggle click state (close others, toggle this one)
+                    e.stopPropagation();
+                    const dropdownParent = toggle.closest(".nav-item.dropdown");
+                    if (dropdownParent) {
+                        const container = dropdownParent.nextElementSibling;
+                        if (container && container.classList.contains("dropdown-items-container")) {
+                            // Close all other dropdowns
+                            document.querySelectorAll(".dropdown-items-container").forEach(cont => {
+                                if (cont !== container) {
+                                    cont.style.display = "none";
+                                }
+                            });
+                            // Toggle this one - use class instead of inline style to work with CSS
+                            if (container.classList.contains("force-open")) {
+                                container.classList.remove("force-open");
+                                container.style.display = "none";
+                            } else {
+                                container.classList.add("force-open");
+                                positionDesktopDropdowns(); // Reposition after showing
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Desktop: Close dropdowns when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!isMobile()) {
+                if (!e.target.closest(".nav-item.dropdown") && 
+                    !e.target.closest(".dropdown-items-container") &&
+                    !e.target.closest(".er-account-dropdown")) {
+                    // Remove force-open class from all dropdowns
+                    document.querySelectorAll(".dropdown-items-container").forEach(container => {
+                        container.classList.remove("force-open");
+                        container.style.display = "none";
+                    });
+                    // Also close account dropdown
+                    const accountDropdown = document.querySelector(".er-account-dropdown .dropdown-menu");
+                    if (accountDropdown && !e.target.closest(".er-account-dropdown")) {
+                        accountDropdown.style.display = "none";
+                    }
+                }
+            }
+        });
+
+        // Close mobile menu when clicking navigation links (but not dropdown toggles)
+        document.querySelectorAll(".er-navbar-menu a:not([data-dropdown-toggle])").forEach(link => {
+            link.addEventListener("click", () => {
+                if (menu.classList.contains("open")) {
+                    hamburger.classList.remove("active");
+                    menu.classList.remove("open");
+                    document.body.style.overflow = "";
+
+                    // Close any open dropdowns
+                    document.querySelectorAll(".dropdown.open").forEach(dropdown => {
+                        dropdown.classList.remove("open");
+                    });
+                }
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", (e) => {
+            if (isMobile() && !e.target.closest(".dropdown") && !e.target.closest(".mobile-admin-dropdown") && !e.target.closest(".er-navbar-hamburger")) {
+                document.querySelectorAll(".dropdown.open, .mobile-admin-dropdown.open").forEach(dropdown => {
+                    dropdown.classList.remove("open");
+                });
+            }
+        });
+        
+        // Position desktop dropdown containers relative to their triggers
+        function positionDesktopDropdowns() {
+            if (!isMobile()) {
+                document.querySelectorAll(".nav-item.dropdown").forEach(dropdown => {
+                    const container = dropdown.nextElementSibling;
+                    if (container && container.classList.contains("dropdown-items-container")) {
+                        const dropdownRect = dropdown.getBoundingClientRect();
+                        const menuRect = dropdown.querySelector("a").getBoundingClientRect();
+                        const navbarRect = document.querySelector(".er-navbar-menu").getBoundingClientRect();
+                        
+                        container.style.left = (menuRect.left - navbarRect.left) + "px";
+                        container.style.top = (dropdownRect.bottom - navbarRect.top) + "px";
+                    }
+                });
+            }
+        }
+        
+        // Ensure all desktop dropdowns start hidden on page load
+        if (!isMobile()) {
+            document.querySelectorAll(".dropdown-items-container").forEach(container => {
+                container.style.display = "none";
+            });
+            // Don't set display: none on account dropdown - let CSS handle it
+            // The account dropdown menu already has display: none in CSS by default
+        }
+        
+        // Position on load and resize
+        positionDesktopDropdowns();
+        window.addEventListener("resize", positionDesktopDropdowns);
+        
+        // Desktop: Close other dropdowns when hovering over a new one
+        if (!isMobile()) {
+            document.querySelectorAll(".nav-item.dropdown").forEach(dropdown => {
+                dropdown.addEventListener("mouseenter", () => {
+                    // Remove force-open class from all other dropdowns
+                    document.querySelectorAll(".dropdown-items-container").forEach(container => {
+                        if (container !== dropdown.nextElementSibling) {
+                            container.classList.remove("force-open");
+                            container.style.display = "none";
+                        }
+                    });
+                    // Position dropdown (CSS will handle the display on hover)
+                    positionDesktopDropdowns();
+                });
+            });
+        }
+    });
+</script>

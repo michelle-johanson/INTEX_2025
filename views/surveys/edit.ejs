@@ -4,7 +4,8 @@
 
     <form action="/surveys/<%= survey.event_occurrence_id %>/<%= survey.participant_id %>/edit" method="POST" class="form">
 
-        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+        <!-- #TO-DO: create class for info box with background: #f8f9fa; padding: 1rem; border-radius: 4px; -->
+        <div class="mb-2">
             <strong>Event:</strong> <%= survey.event_name %> (<%= new Date(survey.starts_at).toLocaleDateString() %>)<br>
             <strong>Participant:</strong> <%= survey.first_name %> <%= survey.last_name %>
         </div>
@@ -49,10 +50,11 @@
                 value="<%= survey.submission_date ? new Date(survey.submission_date).toISOString().split('T')[0] : '' %>" 
                 required />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
+        <div class="d-flex mt-2">
             <button class="btn-submit">Save Changes</button>
             
-            <a href="/surveys/occurrence/<%= survey.event_occurrence_id %>" style="text-decoration: none; color: #666;">Cancel</a>
+            <a href="/surveys/occurrence/<%= survey.event_occurrence_id %>">Cancel</a>
         </div>
 
     </form>

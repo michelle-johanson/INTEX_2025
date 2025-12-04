@@ -40,9 +40,11 @@
         <label>Field of Interest</label>
         <input type="text" name="FieldOfInterest" value="<%= participant.field_of_interest %>" />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
+        <div class="d-flex mt-2">
             <button class="btn-submit">Save Changes</button>
-            <a href="/participants/<%= participant.participant_id %>" style="text-decoration: none; color: #666;">Cancel</a>        </div>
+            <a href="/participants/<%= participant.participant_id %>">Cancel</a>
+        </div>
     </form>
 
 </div>

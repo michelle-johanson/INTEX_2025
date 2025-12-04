@@ -8,7 +8,8 @@
         const isManager = userRole === "manager" || userRole === "admin"; 
     %>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <!-- #TO-DO: create class for flex container with justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; -->
+    <div class="d-flex mb-3">
         
         <% if (isManager) { %>
             <a href="/eventOccurrences/new" class="btn btn-primary btn-small">
@@ -18,17 +19,19 @@
             <div></div>
         <% } %>
 
-        <form action="/eventOccurrences" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
+        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
+        <form action="/eventOccurrences" method="GET" class="d-flex">
+            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
             <input type="text" 
                    name="search" 
                    placeholder="Search event, type, or location..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
-                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
+                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
             >
             <button type="submit" class="btn btn-secondary btn-small">Search</button>
             
             <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <a href="/eventOccurrences" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
+                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
+                <a href="/eventOccurrences">Clear</a>
             <% } %>
         </form>
     </div>
@@ -58,18 +61,22 @@
                         <td><%= o.location %></td>
                         <td><%= o.capacity %></td>
                         
-                        <td class="table-actions" style="display: flex; gap: 5px;">
+                        <!-- #TO-DO: create class for table-actions with display: flex; gap: 5px; -->
+                        <td class="table-actions d-flex">
                             <a href="/eventOccurrences/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
                                 View
                             </a>
 
                             <% if (isManager) { %>
-                                <a href="/eventOccurrences/<%= o.event_occurrence_id %>/edit" class="btn btn-primary btn-small" style="background-color: #f0ad4e; border-color: #eea236;">
+                                <!-- #TO-DO: create class for btn-warning with background-color: #f0ad4e; border-color: #eea236; -->
+                                <a href="/eventOccurrences/<%= o.event_occurrence_id %>/edit" class="btn btn-primary btn-small">
                                     Edit
                                 </a>
 
-                                <form action="/eventOccurrences/<%= o.event_occurrence_id %>/delete" method="POST" style="display:inline;">
-                                    <button type="submit" class="btn btn-secondary btn-small" style="background-color: #d9534f; border-color: #d43f3a; color: white;" onclick="return confirm('Are you sure you want to delete this scheduled event?');">
+                                <!-- #TO-DO: create class for inline form display -->
+                                <form action="/eventOccurrences/<%= o.event_occurrence_id %>/delete" method="POST">
+                                    <!-- #TO-DO: create class for btn-danger with background-color: #d9534f; border-color: #d43f3a; color: white; -->
+                                    <button type="submit" class="btn btn-secondary btn-small" onclick="return confirm('Are you sure you want to delete this scheduled event?');">
                                         Delete
                                     </button>
                                 </form>

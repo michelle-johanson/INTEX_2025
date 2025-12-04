@@ -55,10 +55,12 @@
         </div>
 
         <% if (isManager) { %>
-            <div class="detail-actions" style="border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem;">
+            <!-- #TO-DO: create class for detail-actions with border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem; -->
+            <div class="detail-actions mt-2">
                 <a href="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit">Edit</a>
                 
-                <a href="/registrations/event/<%= registration.event_occurrence_id %>" style="margin-left: 1rem; font-size: 0.9em;">
+                <!-- #TO-DO: create class for link with margin-left: 1rem; font-size: 0.9em; -->
+                <a href="/registrations/event/<%= registration.event_occurrence_id %>">
                     View All Registrants for this Event
                 </a>
             </div>
@@ -66,11 +68,11 @@
     </div>
 
     <% if (isManager) { %>
-        <div style="margin-top: 2rem;">
+        <div class="mt-4">
             <a href="/registrations/event/<%= registration.event_occurrence_id %>" class="btn btn-secondary">← Back to Event List</a>
         </div>
     <% } else { %>
-        <div style="margin-top: 2rem;">
+        <div class="mt-4">
             <a href="/registrations" class="btn btn-secondary">← Back to My Registrations</a>
         </div>
     <% } %>

@@ -47,10 +47,11 @@
                             <% if (isManager) { %>
                                 <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/edit">Edit</a>
 
+                                <!-- #TO-DO: create class for inline form display -->
                                 <form action="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/delete" 
-                                      method="POST" 
-                                      style="display:inline;">
-                                    <button class="btn btn-danger btn-small" style="padding:0.2rem 0.6rem;">
+                                      method="POST">
+                                    <!-- #TO-DO: create class for btn-danger with padding:0.2rem 0.6rem; -->
+                                    <button class="btn btn-danger btn-small">
                                         Delete
                                     </button>
                                 </form>
@@ -63,7 +64,8 @@
     <% } %>
 
     <% if (isManager) { %>
-        <div style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
+        <!-- #TO-DO: create class for section divider with margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem; -->
+        <div class="mt-4">
             <a href="/milestones" class="btn btn-secondary">← Back to Participant Directory</a>
         </div>
     <% } %>
