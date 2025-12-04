@@ -1,0 +1,49 @@
+<div class="page-container">
+    
+    <h1 class="page-title">Participants with: <%= milestoneTitle %></h1>
+    <p class="text-muted">Below is a list of all participants who have achieved this specific milestone.</p>
+    
+    <% 
+        const role = session && session.access_level ? session.access_level.toLowerCase() : '';
+        const isAdmin = role === "admin" || role === "manager"; 
+    %>
+
+    <% if (participants.length === 0) { %>
+        <p>No participants have achieved the milestone "<%= milestoneTitle %>" yet.</p>
+    <% } else { %>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Participant Name</th>
+                    <th>Email</th>
+                    <th>Achieved Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% participants.forEach(p => { %>
+                    <tr>
+                        <td><strong><%= p.first_name %> <%= p.last_name %></strong></td>
+                        <td><%= p.email %></td>
+                        
+                        <td>
+                            <%= p.achieved_date ? new Date(p.achieved_date).toLocaleDateString() : 'N/A' %>
+                        </td>
+                        
+                        <td class="table-actions">
+                            <a href="/participants/<%= p.participant_id %>" class="btn btn-secondary btn-small">
+                                View Profile
+                            </a>
+                            
+                            </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+
+    <div style="margin-top: 2rem;">
+        <a href="/milestones" class="btn btn-secondary">&larr; Back to Milestone Types Directory</a>
+    </div>
+
+</div>

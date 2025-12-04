@@ -8,24 +8,25 @@ const Milestones = require("../models/milestones");
 const Participants = require("../models/participants");
 
 /* ============================================================
-   MAIN INDEX ROUTE
+   LEVEL 1: MAIN INDEX ROUTE
+   - If Manager: Shows List of Milestone Titles (New View)
+   - If User: Shows their OWN milestones (Existing View)
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        // DEBUGGING: Check your terminal to see what this prints!
-        console.log("Current User Role:", req.session.access_level);
-
         // NORMALIZE THE CHECK: 
         const role = (req.session.access_level || "").toLowerCase();
 
         // SCENARIO 1: MANAGER LOGGED IN
         if (role === "manager" || role === "admin") {
-            const participants = await Participants.getAll();
             
-            // Render the Directory View
-            return res.render("milestones/manager_index", {
-                title: "Manage Milestones",
-                participants
+            // NEW LOGIC: Fetch unique milestone titles (e.g., "Graduated High School")
+            const milestoneTypes = await Milestones.getUniqueTitles();
+            
+            // Render the new Directory View for Milestone Types
+            return res.render("milestones/types_index", { // NEW VIEW: types_index.ejs
+                title: "Milestone Achievements Directory",
+                milestoneTypes: milestoneTypes
             });
         }
 
@@ -45,7 +46,31 @@ router.get("/", requireLogin, async (req, res) => {
 });
 
 /* ============================================================
-   MANAGER DRILL-DOWN (View specific person's list)
+   LEVEL 2: DRILL-DOWN (View people who earned a specific Milestone Type)
+   URL: /milestones/type/Python%20Coding%20Certificate
+============================================================ */
+router.get("/type/:title", requireAdmin, async (req, res) => {
+    try {
+        const milestoneTitle = req.params.title;
+        
+        // NEW LOGIC: Fetch all participants who have achieved this milestone
+        const participants = await Milestones.getParticipantsByTitle(milestoneTitle);
+
+        res.render("milestones/participants_by_type", { // NEW VIEW: participants_by_type.ejs
+            title: `Participants with: ${milestoneTitle}`,
+            participants: participants,
+            milestoneTitle: milestoneTitle
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading participants by milestone type");
+    }
+});
+
+
+/* ============================================================
+   LEVEL 3: MANAGER DRILL-DOWN (View specific person's list) - Existing logic
    URL: /milestones/participant/5
 ============================================================ */
 router.get("/participant/:id", requireAdmin, async (req, res) => {
@@ -60,12 +85,12 @@ router.get("/participant/:id", requireAdmin, async (req, res) => {
 
         if (!participant) return res.status(404).send("Participant not found");
 
-        // FIX: Pass the 'participant' object to the view
+        // We REUSE 'index.ejs' but populate it with this person's data
         res.render("milestones/index", {
             title: `${participant.first_name}'s Milestones`,
             milestones: milestones,
             participantName: `${participant.first_name}'s`,
-            participant: participant // <--- CRITICAL: Pass the participant object
+            participant: participant // Pass the participant object for the 'Add' button fix
         });
 
     } catch (err) {
@@ -76,7 +101,7 @@ router.get("/participant/:id", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   NEW MILESTONE (ADMIN ONLY)
+   NEW MILESTONE (ADMIN ONLY) - Existing logic
 ============================================================ */
 
 // Show form
@@ -84,8 +109,6 @@ router.get("/new", requireAdmin, async (req, res) => {
     try {
         const participants = await Participants.getAll();
         
-        // Check if we passed a specific participant ID in the query (optional UX improvement)
-        // Example link: /milestones/new?participant_id=5
         const selectedId = req.query.participant_id;
 
         res.render("milestones/new", {
@@ -121,7 +144,7 @@ router.post("/new", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   EDIT MILESTONE (ADMIN ONLY)
+   EDIT MILESTONE (ADMIN ONLY) - Existing logic
    URL: /:pid/:mno/edit
 ============================================================ */
 
@@ -165,7 +188,7 @@ router.post("/:pid/:mno/edit", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   DELETE MILESTONE (ADMIN ONLY)
+   DELETE MILESTONE (ADMIN ONLY) - Existing logic
    URL: /:pid/:mno/delete
 ============================================================ */
 router.post("/:pid/:mno/delete", requireAdmin, async (req, res) => {
@@ -182,7 +205,7 @@ router.post("/:pid/:mno/delete", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   SHOW SINGLE MILESTONE (LOGIN REQUIRED)
+   SHOW SINGLE MILESTONE (LOGIN REQUIRED) - Existing logic
    URL: /:pid/:mno
 ============================================================ */
 router.get("/:pid/:mno", requireLogin, async (req, res) => {

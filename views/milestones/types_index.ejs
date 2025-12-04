@@ -1,0 +1,40 @@
+<div class="page-container">
+    <h1 class="page-title">Milestone Achievements Directory</h1>
+    <p class="text-muted">Select a milestone type below to view all participants who have achieved it.</p>
+
+    <% 
+        const role = session && session.access_level ? session.access_level.toLowerCase() : '';
+        const isAdmin = role === "admin" || role === "manager"; 
+    %>
+
+    <% if (milestoneTypes.length === 0) { %>
+        <p>No milestone types have been recorded yet.</p>
+    <% } else { %>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Milestone Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% milestoneTypes.forEach(title => { %>
+                    <tr>
+                        <td><strong><%= title %></strong></td>
+                        
+                        <td class="table-actions">
+                            <a href="/milestones/type/<%= encodeURIComponent(title) %>" class="btn btn-secondary btn-small">
+                                View Participants
+                            </a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+
+    <div style="margin-top: 2rem;">
+        <a href="/milestones" class="btn btn-secondary">&larr; Back to Participant Directory</a>
+    </div>
+
+</div>
