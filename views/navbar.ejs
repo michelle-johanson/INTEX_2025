@@ -45,7 +45,7 @@
                                     <% }) %>
 
                                         <!-- DONATE (styled as link in mobile) -->
-                                        <li class="nav-item er-navbar-donate-wrapper">
+                                        <li class="er-navbar-donate-wrapper">
                                             <a class="er-navbar-donate" href="/donations/new">DONATE</a>
                                         </li>
 
@@ -66,7 +66,7 @@
                                                     </li>
                                                     <li class="nav-item dropdown-items-container mobile-admin-dropdown">
                                                         <ul class="dropdown-menu">
-                                                            <li><a class="dropdown-item" href="/users">Manage Users</a>
+                                                            <li><a class="dropdown-item" href="/participants">Manage Users</a>
                                                             </li>
                                                             <li><a class="dropdown-item" href="/donations">Manage
                                                                     Donations</a></li>
@@ -134,32 +134,72 @@
             return window.innerWidth <= 768;
         }
 
-        // Toggle mobile dropdown accordion (click/tap)
+        // Handle dropdown toggles (both mobile and desktop)
         document.querySelectorAll("[data-dropdown-toggle]").forEach(toggle => {
-            // Click handler for mobile
+            // Click handler - prevent navigation for dropdown toggles
             toggle.addEventListener("click", (e) => {
-                if (isMobile()) {
+                // Always prevent default navigation for dropdown toggles
+                if (toggle.getAttribute("href") === "#") {
                     e.preventDefault();
+                }
+                
+                // On mobile, toggle the open state
+                if (isMobile()) {
                     e.stopPropagation();
                     const dropdownParent = toggle.closest(".dropdown, .mobile-admin-dropdown");
-                    dropdownParent.classList.toggle("open");
+                    if (dropdownParent) {
+                        // Close other dropdowns first
+                        document.querySelectorAll(".dropdown.open, .mobile-admin-dropdown.open").forEach(dd => {
+                            if (dd !== dropdownParent) {
+                                dd.classList.remove("open");
+                            }
+                        });
+                        dropdownParent.classList.toggle("open");
+                    }
+                } else {
+                    // Desktop: toggle click state (close others, toggle this one)
+                    e.stopPropagation();
+                    const dropdownParent = toggle.closest(".nav-item.dropdown");
+                    if (dropdownParent) {
+                        const container = dropdownParent.nextElementSibling;
+                        if (container && container.classList.contains("dropdown-items-container")) {
+                            // Close all other dropdowns
+                            document.querySelectorAll(".dropdown-items-container").forEach(cont => {
+                                if (cont !== container) {
+                                    cont.style.display = "none";
+                                }
+                            });
+                            // Toggle this one - use class instead of inline style to work with CSS
+                            if (container.classList.contains("force-open")) {
+                                container.classList.remove("force-open");
+                                container.style.display = "none";
+                            } else {
+                                container.classList.add("force-open");
+                                positionDesktopDropdowns(); // Reposition after showing
+                            }
+                        }
+                    }
                 }
             });
-
-            // Hover handler for split-screen desktop mode
-            const dropdownParent = toggle.closest(".dropdown, .mobile-admin-dropdown");
-            if (dropdownParent) {
-                dropdownParent.addEventListener("mouseenter", () => {
-                    if (isMobile()) {
-                        dropdownParent.classList.add("open");
+        });
+        
+        // Desktop: Close dropdowns when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!isMobile()) {
+                if (!e.target.closest(".nav-item.dropdown") && 
+                    !e.target.closest(".dropdown-items-container") &&
+                    !e.target.closest(".er-account-dropdown")) {
+                    // Remove force-open class from all dropdowns
+                    document.querySelectorAll(".dropdown-items-container").forEach(container => {
+                        container.classList.remove("force-open");
+                        container.style.display = "none";
+                    });
+                    // Also close account dropdown
+                    const accountDropdown = document.querySelector(".er-account-dropdown .dropdown-menu");
+                    if (accountDropdown && !e.target.closest(".er-account-dropdown")) {
+                        accountDropdown.style.display = "none";
                     }
-                });
-
-                dropdownParent.addEventListener("mouseleave", () => {
-                    if (isMobile()) {
-                        dropdownParent.classList.remove("open");
-                    }
-                });
+                }
             }
         });
 
@@ -187,5 +227,53 @@
                 });
             }
         });
+        
+        // Position desktop dropdown containers relative to their triggers
+        function positionDesktopDropdowns() {
+            if (!isMobile()) {
+                document.querySelectorAll(".nav-item.dropdown").forEach(dropdown => {
+                    const container = dropdown.nextElementSibling;
+                    if (container && container.classList.contains("dropdown-items-container")) {
+                        const dropdownRect = dropdown.getBoundingClientRect();
+                        const menuRect = dropdown.querySelector("a").getBoundingClientRect();
+                        const navbarRect = document.querySelector(".er-navbar-menu").getBoundingClientRect();
+                        
+                        container.style.left = (menuRect.left - navbarRect.left) + "px";
+                        container.style.top = (dropdownRect.bottom - navbarRect.top) + "px";
+                    }
+                });
+            }
+        }
+        
+        // Ensure all desktop dropdowns start hidden on page load
+        if (!isMobile()) {
+            document.querySelectorAll(".dropdown-items-container").forEach(container => {
+                container.style.display = "none";
+            });
+            document.querySelectorAll(".er-account-dropdown .dropdown-menu").forEach(menu => {
+                menu.style.display = "none";
+            });
+        }
+        
+        // Position on load and resize
+        positionDesktopDropdowns();
+        window.addEventListener("resize", positionDesktopDropdowns);
+        
+        // Desktop: Close other dropdowns when hovering over a new one
+        if (!isMobile()) {
+            document.querySelectorAll(".nav-item.dropdown").forEach(dropdown => {
+                dropdown.addEventListener("mouseenter", () => {
+                    // Remove force-open class from all other dropdowns
+                    document.querySelectorAll(".dropdown-items-container").forEach(container => {
+                        if (container !== dropdown.nextElementSibling) {
+                            container.classList.remove("force-open");
+                            container.style.display = "none";
+                        }
+                    });
+                    // Position dropdown (CSS will handle the display on hover)
+                    positionDesktopDropdowns();
+                });
+            });
+        }
     });
 </script>
