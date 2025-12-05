@@ -10,16 +10,17 @@ const EventOccurrences = require("../models/eventOccurrences"); // Keep this imp
    LIST ALL EVENT TEMPLATES (Level 1)
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
-    try {
-        const searchTerm = req.query.search || "";
-        const events = await Events.getAll(searchTerm);
-        
-        res.render("events/index", {
-            title: "Event Types",
-            events,
-            searchTerm,
-            session: req.session
-        });
+    try {
+        const q = req.query.q || "";
+        console.log("QUERY RECEIVED:", req.query);
+        const events = await Events.getAll(q);
+        
+        res.render("events/index", {
+            title: "Event Types",
+            events,
+            q,
+            session: req.session
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading events");

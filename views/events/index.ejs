@@ -1,4 +1,5 @@
 <%
+    let qValue = (typeof q !== "undefined") ? q : "";
     // Normalize session user role safely
     const s = session || {};
     const user = s.user || s;
@@ -7,72 +8,56 @@
 %>
 
 <section class="page-container">
+<div class="container-inner">
 
     <!-- HEADER AREA -->
     <div class="container-header">
         <h1>Event Types</h1>
         <div class="heading-underline" aria-hidden="true"></div>
-
-        <div class="page-actions">
-
-            <% if (isManager) { %>
-                <a href="/events/new" class="btn btn-primary">
-                    + Create New Event Type
-                </a>
-            <% } else { %>
-                <span></span>
-            <% } %>
-
-            <form action="/events" method="GET" class="search-bar">
-                <input type="text" name="search" placeholder="Search event name or type..."
-                    class="search-input" value="<%= searchTerm || '' %>">
-
-                <button type="submit" class="btn btn-secondary">
-                    Search
-                </button>
-
-                <% if (searchTerm) { %>
-                    <a href="/events" class="btn btn-outline">Clear</a>
-                <% } %>
-            </form>
-
-        </div>
     </div>
+
+    <%- include("../partials/tableControls", {
+        showAddButton: isManager,
+        addHref: "/events/new",
+        searchAction: "/events",
+        searchPlaceholder: "Search events...",
+        searchQuery: qValue,
+        searchParamName: "q"
+    }) %>
 
     <!-- TABLE AREA -->
-    <div class="container-inner">
 
-        <% if (!events || events.length === 0) { %>
-            <p>No event types found.</p>
-        <% } else { %>
+    <% if (!events || events.length === 0) { %>
+        <p>No event types found.</p>
+    <% } else { %>
 
-            <div class="table-container">
-                <table>
-                    <thead>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% events.forEach(event => { %>
                         <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th></th>
+                            <td><%= event.name %></td>
+                            <td><%= event.type %></td>
+                            <td class="table-actions">
+                                <a href="/events/<%= event.event_id %>" class="btn btn-outline btn-table">
+                                    View
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
 
-                    <tbody>
-                        <% events.forEach(event => { %>
-                            <tr>
-                                <td><%= event.name %></td>
-                                <td><%= event.type %></td>
-                                <td class="table-actions">
-                                    <a href="/events/<%= event.event_id %>" class="btn btn-outline btn-table">
-                                        View
-                                    </a>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
+    <% } %>
 
-        <% } %>
-
-    </div>
+</div>
 </section>
