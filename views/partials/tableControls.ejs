@@ -1,14 +1,20 @@
 <div class="table-controls">
 
     <% if (showAddButton) { %>
-        <a href="<%= addHref %>" class="btn btn-add">
+        <a href="<%= addHref || '#' %>" class="btn btn-add">
             <%= addLabel || "Add New" %>
         </a>
     <% } %>
 
-    <form method="GET" action="<%= searchAction %>" class="search-form">
-        <input type="text" name="<%= searchParamName %>" value="<%= query || "" %>"
-            placeholder="<%= searchPlaceholder %>" class="search-input" />
+    <form method="GET" action="<%= searchAction || '' %>" class="search-form">
+        <input 
+            type="text" 
+            name="<%= 'q' %>" 
+            value="<%= query || '' %>"
+            placeholder="<%= searchPlaceholder || 'Search…' %>"
+            class="search-input" 
+        />
+
         <button type="submit" class="btn-search">
             Search
         </button>

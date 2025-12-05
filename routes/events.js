@@ -8,7 +8,7 @@ const EventOccurrences = require("../models/eventOccurrences");
 /* GET /events — list all event types */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const query = req.query.q || req.query.search || "";
+        const query = req.query.q || "";
         const events = await Events.getAll(query);
 
         res.render("events/index", {
@@ -55,7 +55,7 @@ router.get("/:id", requireLogin, async (req, res) => {
         const event = await Events.getById(req.params.id);
         if (!event) return res.status(404).send("Event not found");
 
-        const query = req.query.q || req.query.search || "";
+        const query = req.query.q || "";
         const occurrences = await EventOccurrences.getByEventId(req.params.id, query);
 
         res.render("events/show", {

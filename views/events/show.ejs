@@ -14,8 +14,8 @@
                     Edit Event Info
                 </a>
         
-                <form action="/events/<%= event.event_id %>?_method=DELETE" method="POST">
-                    <button class="btn btn-delete btn-lg">
+                <form action="/events/<%= event.event_id %>/delete" method="POST">
+                    <button class="btn btn-delete btn-lg" onclick="return confirm('Delete this event?');">
                         Delete Event Type
                     </button>
                 </form>
@@ -33,11 +33,10 @@
     <!-- SCHEDULED OCCURRENCES -->
     <%- include("../partials/tableControls", {
         showAddButton: isManager,
-        addHref: `/eventOccurrences/new?event_id=1`,
+        addHref: `/eventOccurrences/new?event_id=${event.event_id}`,
         addLabel: "Schedule New Occurrence",
         searchAction: `/events/${event.event_id}`,
         searchPlaceholder: "Search location…",
-        searchParamName: "location",
         query: query   // your route must pass this
     }) %>
 
