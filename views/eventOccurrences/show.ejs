@@ -10,7 +10,9 @@
         const isParticipant = session && session.isLoggedIn && !isAdmin;
         
         // 4. Check registration status for dynamic button display
-        const isRegistered = registrationStatus === 'registered' || registrationStatus === 'waitlist'; 
+        // FIX: Normalize to lowercase to handle 'Registered' (DB) vs 'registered' (Code) mismatch
+        const status = registrationStatus ? registrationStatus.toLowerCase() : "";
+        const isRegistered = status === 'registered' || status === 'waitlist'; 
     %>
 
     <!-- FLASH MESSAGE DISPLAY -->
@@ -57,16 +59,14 @@
             <div class="d-flex gap-2">
                 
                 <% if (showSurveyButton) { %>
-                    <!-- FIX: Button links to the new participant-specific GET route -->
                     <a href="/surveys/submit/<%= occurrence.event_occurrence_id %>"
                         class="btn btn-success btn-large">
                         Submit Survey
                     </a>
                 <% } else if (hasSubmittedSurvey) { %>
-                    <!-- STATUS: Survey Complete -->
                     <button class="btn btn-success btn-large" disabled>Survey Submitted</button>
                 <% } else if (isRegistered) { %>
-                    <!-- BUTTON 2: UNREGISTER (Visible if registered and not yet submitted survey) -->
+                    <!-- BUTTON 2: UNREGISTER (Now shows correctly due to casing fix) -->
                     <form action="/registrations/unregister/<%= occurrence.event_occurrence_id %>"
                           method="POST"
                           onsubmit="return confirm('Are you sure you want to unregister from this event?');"
@@ -76,7 +76,7 @@
                         </button>
                     </form>
                 <% } else { %>
-                    <!-- BUTTON 3: REGISTER NOW (Visible if not registered) -->
+                    <!-- BUTTON 3: REGISTER NOW -->
                     <form action="/registrations/register/<%= occurrence.event_occurrence_id %>"
                           method="POST"
                           onsubmit="return confirm('Confirm registration for this event?');"
@@ -99,7 +99,7 @@
         <!-- Registration Status Indicator -->
         <% if (isRegistered) { %>
             <% 
-                let statusText = registrationStatus.toUpperCase();
+                let statusText = (registrationStatus || "").toUpperCase();
                 let statusClass = 'alert-info';
                 
                 // Show if attended status or waiting for attendance status
@@ -109,10 +109,10 @@
                 } else if (hasAttended && hasSubmittedSurvey) {
                     statusText = 'ATTENDED (Survey Complete)';
                     statusClass = 'alert-success';
-                } else if (registrationStatus === 'registered') {
+                } else if (status === 'registered') { // Use normalized 'status'
                     statusText = 'REGISTERED';
                     statusClass = 'alert-info';
-                } else if (registrationStatus === 'waitlist') {
+                } else if (status === 'waitlist') { // Use normalized 'status'
                     statusText = 'WAITLIST';
                     statusClass = 'alert-warning';
                 }
