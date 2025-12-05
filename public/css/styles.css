@@ -1,23 +1,35 @@
-/* TOKENS */
-@import "./tokens/colors.css";
-@import "./tokens/typography.css";
-@import "./tokens/spacing.css";
-@import "./tokens/effects.css";
+/* ============================================================
+   MASTER STYLES IMPORT
+============================================================ */
 
-/* BASE */
-@import "./base/reset.css";
-@import "./base/utilities.css";
+/* -----------------------------
+   TOKENS (global palette, fonts)
+------------------------------ */
+@import url("./tokens/colors.css");
+@import url("./tokens/typography.css");
 
-/* LAYOUT */
-@import "./layout/containers.css";
-@import "./layout/forms.css";
-@import "./layout/buttons.css";
-@import "./layout/tables.css";
+/* -----------------------------
+   CORE (reset, effects, utilities)
+------------------------------ */
+@import url("./core/foundation.css");
+@import url("./core/utilities.css");
 
-/* COMPONENTS */
-@import "./components/navbar.css";
-@import "./components/footer.css";
+/* -----------------------------
+   CHROME (site frame)
+------------------------------ */
+@import url("./chrome/navbar.css");
+@import url("./chrome/footer.css");
 
-/* PAGE-SPECIFIC STYLES (create as needed) */
-@import "./pages/home.css";
-/* @import "./pages/events.css"; */
+/* -----------------------------
+   COMPONENTS (buttons, forms, tables, layout)
+------------------------------ */
+@import url("./components/buttons.css");
+@import url("./components/forms.css");
+@import url("./components/containers.css");
+@import url("./components/tables.css");
+
+/* -----------------------------
+   PAGE-SPECIFIC STYLES
+------------------------------ */
+@import url("./pages/home.css");
+@import url("./pages/dashboard.css");

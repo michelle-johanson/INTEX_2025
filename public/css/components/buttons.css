@@ -1,0 +1,247 @@
+/* ============================================================
+   BUTTON TOKENS (Component-Scoped, mapped to global palette)
+   These reference global tokens from colors.css.
+============================================================ */
+
+:root {
+    /* PRIMARY (brand rose/pink) */
+    --btn-primary-bg: var(--rose);
+    --btn-primary-text: #ffffff;
+    --btn-primary-hover-bg: #b82b50;
+    /* darker rose */
+    --btn-primary-hover-text: #ffffff;
+
+    /* SECONDARY (neutral / border) */
+    --btn-secondary-bg: #ffffff;
+    --btn-secondary-border: #d4cec4;
+    --btn-secondary-text: var(--charcoal);
+    --btn-secondary-hover-bg: #f2eee7;
+    --btn-secondary-hover-text: var(--charcoal);
+
+    /* OUTLINE (pink outline variant) */
+    --btn-outline-bg: transparent;
+    --btn-outline-text: var(--charcoal);
+    --btn-outline-border: var(--pink);
+    --btn-outline-hover-bg: var(--pink);
+    --btn-outline-hover-text: var(--charcoal);
+
+    /* RED (solid danger button — red → white on hover) */
+    --btn-red-bg: #e10700;
+    --btn-red-text: #ffffff;
+    --btn-red-hover-bg: #8a0000;
+    --btn-red-hover-text: #ffffff;
+
+    /* DELETE (white → red hover) */
+    --btn-delete-bg: #ffffff;
+    --btn-delete-text: var(--btn-red-bg);
+    --btn-delete-border: var(--btn-red-bg);
+    --btn-delete-hover-bg: var(--btn-red-bg);
+    --btn-delete-hover-text: #ffffff;
+
+    /* EDIT (white → yellow hover) */
+    --btn-edit-bg: #ffffff;
+    --btn-edit-text: #d49800;
+    --btn-edit-border: #d49800;
+    --btn-edit-hover-bg: #d49800;
+    --btn-edit-hover-text: #ffffff;
+
+    /* ADD (white → green hover) */
+    --btn-add-bg: #ffffff;
+    --btn-add-text: #00a30e;
+    --btn-add-border: #00a30e;
+    --btn-add-hover-bg: #00a30e;
+    --btn-add-hover-text: #ffffff;
+
+    /* SEARCH (dark gray → black hover) */
+    --btn-search-bg: #4a4a4a;
+    --btn-search-text: #ffffff;
+    --btn-search-border: #4a4a4a;
+    --btn-search-hover-bg: #000000;
+    --btn-search-hover-text: #ffffff;
+}
+
+
+/* ============================================================
+   BASE BUTTON
+============================================================ */
+
+.btn {
+    display: inline-block;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+    text-decoration: none;
+}
+
+/* Large size */
+.btn-lg {
+    padding: 0.9rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 6px;
+    width: 220px;
+}
+
+/* Table size */
+.btn-table {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+/* ============================================================
+   PRIMARY BUTTON
+============================================================ */
+
+.btn-primary {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border-color: var(--btn-primary-bg);
+}
+
+.btn-primary:hover {
+    background-color: var(--btn-primary-hover-bg);
+    color: var(--btn-primary-hover-text);
+    border-color: var(--btn-primary-hover-bg);
+}
+
+
+/* ============================================================
+   SECONDARY BUTTON
+============================================================ */
+
+.btn-secondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--btn-secondary-border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--btn-secondary-hover-bg);
+    color: var(--btn-secondary-hover-text);
+    border-color: var(--btn-secondary-border);
+}
+
+
+/* ============================================================
+   OUTLINE BUTTON
+============================================================ */
+
+.btn-outline {
+    background-color: var(--btn-outline-bg);
+    color: var(--btn-outline-text);
+    border: 1px solid var(--btn-outline-border);
+}
+
+.btn-outline:hover {
+    background-color: var(--btn-outline-hover-bg);
+    color: var(--btn-outline-hover-text);
+}
+
+
+/* ============================================================
+   RED (Danger) — solid red → white hover
+============================================================ */
+
+.btn-red {
+    background-color: var(--btn-red-bg);
+    color: var(--btn-red-text);
+    border-color: var(--btn-red-bg);
+}
+
+.btn-red:hover {
+    background-color: var(--btn-red-hover-bg);
+    color: var(--btn-red-hover-text);
+    border-color: var(--btn-red-hover-bg);
+}
+
+
+/* ============================================================
+   DELETE — white → red hover
+============================================================ */
+
+.btn-delete {
+    background-color: var(--btn-delete-bg);
+    color: var(--btn-delete-text);
+    border: 1px solid var(--btn-delete-border);
+}
+
+.btn-delete:hover {
+    background-color: var(--btn-delete-hover-bg);
+    color: var(--btn-delete-hover-text);
+    border-color: var(--btn-delete-hover-bg);
+}
+
+
+/* ============================================================
+   EDIT — white → yellow hover
+============================================================ */
+
+.btn-edit {
+    background-color: var(--btn-edit-bg);
+    color: var(--btn-edit-text);
+    border: 1px solid var(--btn-edit-border);
+}
+
+.btn-edit:hover {
+    background-color: var(--btn-edit-hover-bg);
+    color: var(--btn-edit-hover-text);
+    border-color: var(--btn-edit-hover-bg);
+}
+
+/* ============================================================
+   ADD — white → green hover
+============================================================ */
+
+.btn-add {
+    background-color: var(--btn-add-bg);
+    color: var(--btn-add-text);
+    border: 1px solid var(--btn-add-border);
+}
+
+.btn-add:hover {
+    background-color: var(--btn-add-hover-bg);
+    color: var(--btn-add-hover-text);
+    border-color: var(--btn-add-hover-bg);
+}
+
+/* ============================================================
+   SEARCH — dark gray → black hover
+============================================================ */
+
+.btn-search {
+    background-color: var(--btn-search-bg);
+    color: var(--btn-search-text);
+    border: 1px solid var(--btn-search-border);
+}
+
+.btn-search:hover {
+    background-color: var(--btn-search-hover-bg);
+    color: var(--btn-search-hover-text);
+    border-color: var(--btn-search-hover-bg);
+}
+
+
+/* ============================================================
+   DISABLED STATE
+============================================================ */
+
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+}

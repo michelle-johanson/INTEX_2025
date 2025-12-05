@@ -1,46 +1,5 @@
 <section class="container">
 
-    <!-- TOP INFO CARD -->
-    <div class="card card--info">
-
-        <div class="flex" style="justify-content: space-between; align-items: flex-start;">
-
-            <!-- LEFT: Event Title & Info -->
-            <div>
-                <h1>
-                    <%= event.name %>
-                </h1>
-
-                <p><strong>Type:</strong>
-                    <%= event.type %>
-                </p>
-
-                <% if (event.description) { %>
-                    <p>
-                        <%= event.description %>
-                    </p>
-                    <% } %>
-            </div>
-
-            <!-- RIGHT: Action Buttons -->
-            <div class="flex-col" style="gap: 0.5rem; align-items: flex-end;">
-                <a href="/events/<%= event.event_id %>/edit" class="btn btn--secondary btn--lg">
-                    Edit Event Info
-                </a>
-
-                <form action="/events/<%= event.event_id %>?_method=DELETE" method="POST">
-                    <button type="submit" class="btn btn--red btn--lg">
-                        Delete Event Type
-                    </button>
-                </form>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<section class="page-container">
-
     <% 
         const s = session || {};
         const user = s.user || s;
@@ -57,12 +16,12 @@
             <% if (isManager) { %>
             <div class="page-card-actions">
                 <a href="/events/<%= event.event_id %>/edit" 
-                   class="btn btn-warning btn-pill">
+                   class="btn btn-edit btn-lg">
                     Edit Event Info
                 </a>
 
                 <form action="/events/<%= event.event_id %>?_method=DELETE" method="POST">
-                    <button class="btn btn-danger btn-pill">
+                    <button class="btn btn-delete btn-lg">
                         Delete Event Type
                     </button>
                 </form>
@@ -96,12 +55,12 @@
                         value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
                         class="search-input"
                     >
-                    <button type="submit" class="btn btn-secondary btn-small btn-search">Search</button>
+                    <button type="submit" class="btn btn-secondary">Search</button>
                 </form>
                 <!-- end search bar -->
 
                 <% if (isManager) { %>
-                <a href="/eventOccurrences/new/<%= event.event_id %>" class="btn btn-primary btn-pill">
+                <a href="/eventOccurrences/new/<%= event.event_id %>" class="btn btn-primary">
                     + Schedule New
                 </a>
                 <% } %>
@@ -130,7 +89,7 @@
                         <td><%= o.capacity %></td>
                         <td>
                             <a href="/eventOccurrences/<%= o.event_occurrence_id %>" 
-                                class="btn btn-table-details btn-small">
+                                class="btn btn-outline btn-table">
                                 View
                             </a>
                         </td>

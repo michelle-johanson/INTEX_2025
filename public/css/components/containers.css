@@ -1,40 +1,50 @@
-/* =====================================
-   GLOBAL PAGE CONTAINER SYSTEM
-===================================== */
+/* ============================================================
+   GLOBAL PAGE WRAPPER (layout.ejs)
+============================================================ */
 
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.page-wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-content {
+    flex: 1;
+}
+
+/* ============================================================
+   PAGE SECTIONS (FULL-WIDTH)
+============================================================ */
+
+/* STRUCTURAL FULL-WIDTH SECTION */
 .page-container {
     width: 100%;
-    max-width: 1200px;
-    padding: var(--space-6) 2rem;
-    margin: 0 auto;
+    margin: 0;
+    padding: var(--space-8) 0;     /* padding stays INSIDE the section */
+    display: block;
     box-sizing: border-box;
 }
 
-/* NEW: Inner max-width container */
+/* CENTERED INNER CONTENT */
 .container-inner {
+    width: 100%;
     max-width: 1200px;
+    padding: 0 2rem;               /* prevent content from touching screen edges */
     margin: 0 auto;
-    padding-left: 2rem;
-    padding-right: 2rem;
     box-sizing: border-box;
 }
 
-/* SECTION COLORS */
-.hero-container {
-    background: var(--light-pink);
-    text-align: center;
-}
 
-.impact-container {
-    background: var(--cream);
-}
+/* ============================================================
+   CARDS (unchanged styles)
+============================================================ */
 
-.donate-container {
-    background: var(--pink);
-    text-align: center;
-}
-
-/* Existing Cards */
 .page-card,
 .page-card-wide {
     background: var(--card-bg);
@@ -53,37 +63,21 @@
     max-width: 900px;
 }
 
-/* Layout flex for footer */
-html,
-body {
-    height: 100%;
-    margin: 0;
-}
-
-.page-wrapper {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.page-content {
-    flex: 1;
-}
 
 /* ============================================================
-   PAGE CONTAINER HEADER (nested inside .page-container)
+   SECTION HEADER (for pages w/ title + action row)
 ============================================================ */
 
-.container-header {
+.section-header {
     width: 100%;
     padding-top: var(--space-8);
     padding-bottom: var(--space-6);
     margin-bottom: var(--space-4);
     background: transparent;
-    /* no full-width color */
+    text-align: center;
 }
 
-.container-header .heading-underline {
+.section-header .heading-underline {
     width: 192px;
     height: 3px;
     margin: var(--space-3) auto var(--space-6);
@@ -91,8 +85,7 @@ body {
     border-radius: 999px;
 }
 
-/* Action Row */
-.container-header .page-actions {
+.section-header .section-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -102,16 +95,16 @@ body {
     margin: 0 auto;
 }
 
-/* Search bar spacing inside header */
-.container-header .search-bar {
+.section-header .search-bar {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: var(--space-3);
 }
 
+
 /* ============================================================
-   EVENT DETAILS — REUSABLE LAYOUT HELPERS
+   EVENT DETAILS CARD (unchanged)
 ============================================================ */
 
 .page-card-detail {
@@ -136,3 +129,4 @@ body {
     text-align: left;
     margin-bottom: 0.5rem;
 }
+

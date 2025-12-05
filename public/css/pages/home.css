@@ -53,3 +53,22 @@
     max-width: 600px;
     margin: 0 auto 2rem;
 }
+
+/* ============================================================
+   SECTION VARIANTS
+   These define ONLY background color & text alignment.
+============================================================ */
+
+.hero-section {
+    background: var(--light-pink);
+    text-align: center;
+}
+
+.impact-section {
+    background: var(--cream);
+}
+
+.donate-section {
+    background: var(--pink);
+    text-align: center;
+}
