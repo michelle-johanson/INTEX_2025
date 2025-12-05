@@ -1,0 +1,22 @@
+/* Temporary styles for maintenance dashboard cards */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.card-grid .card-tile {
+    border: none;
+    box-shadow: var(--shadow);
+    padding: var(--space-5);
+    background: var(--card-bg);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    justify-content: space-between;
+}
+
+.card-grid .card-tile .btn-wrapper {
+    margin-top: auto;
+}

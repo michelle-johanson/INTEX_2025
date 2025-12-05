@@ -1,74 +1,233 @@
-/* =====================================
-   HOMEPAGE SECTIONS (now using .page-container)
-===================================== */
+/* ============================================================
+   HOMEPAGE — Hero Slider, Mission, Impact Cards, Gallery, CTA
+============================================================ */
 
-/* HERO */
-.hero-container {
-    padding-top: 5rem;
-    padding-bottom: 6rem;
+/* ------------------------------------------------------------
+   HERO SLIDER
+------------------------------------------------------------ */
+.hero-slider {
+    position: relative;
+    height: 90vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 2;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: slideShow 36s infinite;
+}
+
+.hero-slide:nth-of-type(2) {
+    animation-delay: 6s;
+}
+
+.hero-slide:nth-of-type(3) {
+    animation-delay: 12s;
+}
+
+.hero-slide:nth-of-type(4) {
+    animation-delay: 18s;
+}
+
+.hero-slide:nth-of-type(5) {
+    animation-delay: 24s;
+}
+
+.hero-slide:nth-of-type(6) {
+    animation-delay: 30s;
+}
+
+@keyframes slideShow {
+    0% {
+        opacity: 0;
+    }
+
+    6% {
+        opacity: 1;
+    }
+
+    22% {
+        opacity: 1;
+    }
+
+    28% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.hero-content {
+    position: relative;
+    text-align: center;
+    z-index: 3;
 }
 
 .hero-title {
-    font-size: 2.8rem;
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 6px 25px rgba(0, 0, 0, 0.7);
+}
+
+.hero-subtitle {
+    font-family: var(--font-heading);
+    font-size: 1.7rem;
+    margin-top: 0.75rem;
+    margin-bottom: 2rem;
+    color: #ffffff;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+}
+
+
+/* ------------------------------------------------------------
+   MISSION SECTION
+------------------------------------------------------------ */
+.mission-section {
+    background: var(--cream);
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 2.3rem;
+    color: var(--charcoal);
     margin-bottom: 1rem;
 }
 
-.hero-text {
-    max-width: 650px;
-    margin: 0 auto 2rem;
-    font-size: 1.2rem;
+.section-text {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.25rem;
+    color: var(--charcoal);
+    line-height: 1.6;
 }
 
-/* IMPACT */
-.impact-container {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+
+/* ------------------------------------------------------------
+   IMPACT CARDS (TEXT VERSION)
+------------------------------------------------------------ */
+.impact-cards-section {
+    background: white;
+    padding: 4rem 0;
 }
 
-.impact-grid {
+.impact-cards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2.2rem;
-    margin-top: 2rem;
+    gap: 2rem;
 }
 
-.impact-card {
-    background: white;
+@media (max-width: 900px) {
+    .impact-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.impact-info-card {
+    background: var(--light-pink);
     padding: 2rem;
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
+    text-align: center;
     box-shadow: var(--shadow);
 }
 
-/* DONATE */
-.donate-container {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+.impact-info-card h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 0.75rem;
+    color: var(--charcoal);
+    font-size: 1.8rem;
 }
 
-.donate-container h2 {
-    margin-bottom: 1rem;
+.impact-info-card p {
+    font-size: 1.1rem;
+    color: var(--charcoal);
 }
 
-.donate-container p {
-    max-width: 600px;
-    margin: 0 auto 2rem;
-}
 
-/* ============================================================
-   SECTION VARIANTS
-   These define ONLY background color & text alignment.
-============================================================ */
-
-.hero-section {
-    background: var(--light-pink);
-    text-align: center;
-}
-
-.impact-section {
+/* ------------------------------------------------------------
+   IMPACT GALLERY (PHOTOS)
+------------------------------------------------------------ */
+.impact-gallery-section {
     background: var(--cream);
+    padding-top: 4rem;
+    padding-bottom: 5rem;
 }
 
+.impact-grid {
+    columns: 3;
+    column-gap: 1.5rem;
+}
+
+@media (max-width: 992px) {
+    .impact-grid {
+        columns: 2;
+    }
+}
+
+@media (max-width: 600px) {
+    .impact-grid {
+        columns: 1;
+    }
+}
+
+.impact-card {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: white;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.impact-card img {
+    width: 100%;
+    display: block;
+}
+
+.impact-card:hover {
+    transform: translateY(-6px);
+}
+
+
+/* ------------------------------------------------------------
+   DONATE CTA
+------------------------------------------------------------ */
 .donate-section {
     background: var(--pink);
     text-align: center;
+    padding: 4rem 0;
+}
+
+.section-title-dark {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    color: var(--charcoal);
+}
+
+.section-text-dark {
+    max-width: 650px;
+    margin: 0 auto 2rem;
+    font-size: 1.2rem;
+    color: var(--charcoal);
 }
