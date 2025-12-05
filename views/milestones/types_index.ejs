@@ -18,10 +18,27 @@
             const isAdmin = role === "admin" || role === "manager";
         %>
 
+        <!-- SEARCH BAR -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+            <form action="/milestones" method="GET" class="search-form">
+                <input type="text" 
+                       name="search" 
+                       placeholder="Search milestones..." 
+                       value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                       class="search-input"
+                >
+                <button type="submit" class="btn-search">Search</button>
+                
+                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                    <a href="/milestones" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
+                <% } %>
+            </form>
+        </div>
+
         <!-- EMPTY STATE -->
         <% if (milestoneTypes.length === 0) { %>
 
-            <p>No milestone types have been recorded yet.</p>
+            <p>No milestone types found matching your search.</p>
 
         <% } else { %>
 
@@ -31,7 +48,7 @@
                     <thead>
                         <tr>
                             <th>Milestone Type</th>
-                            <th></th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
@@ -41,6 +58,7 @@
                                 <td><strong><%= title %></strong></td>
 
                                 <td class="table-actions">
+                                    <!-- Use encodeURIComponent to handle spaces in titles (e.g. "Python Certificate") -->
                                     <a href="/milestones/type/<%= encodeURIComponent(title) %>"
                                        class="btn btn-outline btn-table">
                                         View Participants

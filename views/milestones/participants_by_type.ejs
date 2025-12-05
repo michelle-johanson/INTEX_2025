@@ -43,6 +43,22 @@
 
         <% } else { %>
 
+            <!-- SEARCH BAR -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+                <form action="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>" method="GET" class="search-form">
+                    <input type="text" 
+                        name="search" 
+                        placeholder="Search milestones..." 
+                        value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                        class="search-input"
+                    >
+                    <button type="submit" class="btn-search">Search</button>
+                    
+                    <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                        <a href="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
+                    <% } %>
+                </form>
+            </div>
             <!-- TABLE -->
             <div class="table-container">
                 <table>
