@@ -1,57 +1,75 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Edit Donation</h1>
+        <h1 class="page-title">Edit Donation</h1>
 
-    <% 
-        // Helper function to format the date correctly (YYYY-MM-DD)
-        const formatDate = (dateVal) => {
-            if (!dateVal) return '';
-            
-            // If it's already a string, just grab the first 10 characters (YYYY-MM-DD)
-            if (typeof dateVal === 'string') {
-                return dateVal.substring(0, 10);
-            }
-            
-            // If it's a Date object, return the ISO date string
-            // Postgres DATE columns are typically read as UTC midnight, so ISO is safe.
-            if (dateVal instanceof Date) {
-                // Ensure valid date before calling methods
-                if (isNaN(dateVal.getTime())) return '';
-                return dateVal.toISOString().split('T')[0];
-            }
-            
-            return '';
-        };
-    %>
+        <% 
+            // Format YYYY-MM-DD safely
+            const formatDate = (dateVal) => {
+                if (!dateVal) return '';
 
-    <form action="/donations/<%= donation.participant_id %>/<%= donation.donation_no %>/edit" method="POST" class="form">
+                if (typeof dateVal === 'string') {
+                    return dateVal.substring(0, 10);
+                }
 
-        <label>Donor (Read-Only)</label>
-        <input type="text" 
-               value="<%= donation.first_name %> <%= donation.last_name %> (ID #<%= donation.participant_id %>)" 
-               disabled 
-               style="background-color: #e9ecef; cursor: not-allowed; color: #495057;" />
+                if (dateVal instanceof Date && !isNaN(dateVal.getTime())) {
+                    return dateVal.toISOString().split('T')[0];
+                }
 
-        <label for="DonationDate">Donation Date</label>
-        <input id="DonationDate" 
-               type="date" 
-               name="DonationDate" 
-               value="<%= formatDate(donation.donation_date) %>" 
-               required />
+                return '';
+            };
+        %>
 
-        <label for="DonationAmount">Donation Amount (USD)</label>
-        <input id="DonationAmount" 
-               type="number" 
-               name="DonationAmount" 
-               min="1" 
-               step="0.01"
-               value="<%= donation.amount %>" 
-               required />
+        <!-- FORM -->
+        <form 
+            action="/donations/<%= donation.participant_id %>/<%= donation.donation_no %>/edit" 
+            method="POST"
+            class="form"
+        >
 
-        <div class="d-flex mt-2" style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
-            <button class="btn-submit" type="submit">Save Changes</button>
-            <a href="/donations" style="color: #666; text-decoration: none;">Cancel</a>
-        </div>
-    </form>
+            <!-- DONOR INFO (READ ONLY) -->
+            <label>Donor</label>
+            <input 
+                type="text"
+                value="<%= donation.first_name %> <%= donation.last_name %> (ID #<%= donation.participant_id %>)"
+                disabled
+                class="input-disabled"
+            />
 
-</div>
+            <!-- DONATION DATE -->
+            <label for="DonationDate">Donation Date</label>
+            <input 
+                id="DonationDate" 
+                type="date"
+                name="DonationDate"
+                value="<%= formatDate(donation.donation_date) %>"
+                required
+            />
+
+            <!-- DONATION AMOUNT -->
+            <label for="DonationAmount">Donation Amount (USD)</label>
+            <input 
+                id="DonationAmount"
+                type="number"
+                name="DonationAmount"
+                min="1"
+                step="0.01"
+                value="<%= donation.amount %>"
+                required
+            />
+
+            <!-- ACTION BUTTONS -->
+            <div class="btn-wrapper" style="margin-top: 1.75rem;">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Save Changes
+                </button>
+
+                <a href="/donations" class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</section>

@@ -1,42 +1,60 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="page-card-wide">
 
-    <h1 class="page-title">Donation Details</h1>
+        <h1 class="page-title">Donation Details</h1>
 
-    <div class="detail-card">
+        <div class="detail-card">
 
-        <div class="detail-row">
-            <span class="detail-label">Donation No</span>
-            <span class="detail-value">#<%= donation.donation_no %></span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Participant</span>
-            <span class="detail-value">
-                <%= donation.first_name %> <%= donation.last_name %> 
-                (ID #<%= donation.participant_id %>)
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Date</span>
-            <span class="detail-value">
-                <%= new Date(donation.donation_date).toLocaleDateString() %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Amount</span>
-            <span class="detail-value">
-                $<%= Number(donation.amount).toFixed(2) %>
-            </span>
-        </div>
-
-        <% if (session && session.access_level === "manager") { %>
-            <div class="detail-actions">
-                <a href="/donations/<%= donation.participant_id %>/<%= donation.donation_no %>/edit">Edit</a>
+            <div class="detail-row">
+                <span class="detail-label">Donation No</span>
+                <span class="detail-value">#<%= donation.donation_no %></span>
             </div>
-        <% } %>
+
+            <div class="detail-row">
+                <span class="detail-label">Participant</span>
+                <span class="detail-value">
+                    <%= donation.first_name %>
+                        <%= donation.last_name %>
+                            (ID #<%= donation.participant_id %>)
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value">
+                    <%= new Date(donation.donation_date).toLocaleDateString() %>
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Amount</span>
+                <span class="detail-value">
+                    $<%= Number(donation.amount).toFixed(2) %>
+                </span>
+            </div>
+
+        </div>
+
+        <% const role=session && session.access_level ? session.access_level.toLowerCase() : "" ; const
+            isManager=role==="admin" || role==="manager" ; %>
+
+            <% if (isManager) { %>
+                <div class="btn-wrapper" style="margin-top: 1.5rem;">
+
+                    <a href="/donations/<%= donation.participant_id %>/<%= donation.donation_no %>/edit"
+                        class="btn btn-edit btn-lg">
+                        Edit Donation
+                    </a>
+
+                </div>
+                <% } %>
+
+                    <!-- BACK BUTTON -->
+                    <div class="btn-wrapper" style="margin-top: 2rem;">
+                        <a href="/donations" class="btn btn-secondary btn-lg">
+                            ← Back to Donation List
+                        </a>
+                    </div>
 
     </div>
-
-</div>
+</section>
