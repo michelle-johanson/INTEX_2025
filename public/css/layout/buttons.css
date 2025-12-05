@@ -134,3 +134,48 @@
     cursor: not-allowed;
     pointer-events: none;
 }
+
+/* ======================================================
+   DETAIL PAGE BUTTONS (Internship-style)
+====================================================== */
+
+.btn-detail {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+/* Yellow edit button */
+.btn-edit {
+    background: #fcd34d;
+    color: #4a4a4a;
+}
+
+.btn-edit:hover {
+    background: #fbbf24;
+}
+
+/* Red delete button */
+.btn-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+}
+
+/* Pink “Schedule New” button */
+.btn-schedule {
+    background: var(--light-pink);
+    color: var(--charcoal);
+}
+
+.btn-schedule:hover {
+    background: var(--pink);
+    color: white;
+}

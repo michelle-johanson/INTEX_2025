@@ -1,77 +1,118 @@
-<div class="page-container">
+<section class="container">
 
-    <% 
-        // 1. Get the user object (it might be session.user or just session)
-        const user = session.user || session; 
-        
-        // 2. Get the role (check 'role' or 'access_level')
-        const rawRole = user.role || user.access_level || "";
-        
-        // 3. Normalize to lowercase for comparison
-        const userRole = rawRole.toLowerCase();
+    <!-- TOP INFO CARD -->
+    <div class="card card--info">
 
-        // 4. Final Boolean Check
-        const isManager = userRole === "manager" || userRole === "admin"; 
-    %>
+        <div class="flex" style="justify-content: space-between; align-items: flex-start;">
 
-    <div class="d-flex mb-4">
-        <div>
-            <h1 class="page-title mb-1"><%= event.name %></h1>
-            <p class="text-muted">
-                Type: <strong><%= event.type %></strong>
-            </p>
-            <% if (event.description) { %>
-                <p><%= event.description %></p>
-            <% } %>
-        </div>
+            <!-- LEFT: Event Title & Info -->
+            <div>
+                <h1>
+                    <%= event.name %>
+                </h1>
 
-        <% if (isManager) { %>
-            <div class="d-flex">
-                <a href="/events/<%= event.event_id %>/edit" class="btn btn-warning btn-small">
+                <p><strong>Type:</strong>
+                    <%= event.type %>
+                </p>
+
+                <% if (event.description) { %>
+                    <p>
+                        <%= event.description %>
+                    </p>
+                    <% } %>
+            </div>
+
+            <!-- RIGHT: Action Buttons -->
+            <div class="flex-col" style="gap: 0.5rem; align-items: flex-end;">
+                <a href="/events/<%= event.event_id %>/edit" class="btn btn--secondary btn--lg">
                     Edit Event Info
                 </a>
-                
-                <form action="/events/<%= event.event_id %>/delete" 
-                      method="POST" 
-                      onsubmit="return confirm('Are you sure? This will fail if there are scheduled occurrences attached to this event.');">
-                    <button class="btn btn-danger btn-sm">Delete Event Type</button>
+
+                <form action="/events/<%= event.event_id %>?_method=DELETE" method="POST">
+                    <button type="submit" class="btn btn--red btn--lg">
+                        Delete Event Type
+                    </button>
                 </form>
             </div>
-        <% } %>
+        </div>
+
     </div>
+</section>
 
-    <hr class="my-4">
+<section class="page-container">
 
-    <div class="d-flex mb-3">
-        <h3>Scheduled Occurrences</h3>
+    <% 
+        const s = session || {};
+        const user = s.user || s;
+        const rawRole = (user.access_level || user.role || "").toLowerCase();
+        const isManager = ["manager", "admin"].includes(rawRole);
+    %>
 
-        <div class="d-flex">
-            <form action="/events/<%= event.event_id %>" method="GET" class="d-flex">
-                <input type="text" 
-                        name="search" 
-                        placeholder="Search location..." 
-                        value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                >
-                <button type="submit" class="btn btn-secondary btn-small">Search</button>
-                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                    <a href="/events/<%= event.event_id %>">Clear</a>
-                <% } %>
-            </form>
+    <!-- EVENT INFO CARD -->
+    <div class="page-card-detail">
+
+        <div class="page-card-header">
+            <h2><%= event.name %></h2>
 
             <% if (isManager) { %>
-                <a href="/eventOccurrences/new?event_id=<%= event.event_id %>" class="btn btn-primary btn-small">
+            <div class="page-card-actions">
+                <a href="/events/<%= event.event_id %>/edit" 
+                   class="btn btn-warning btn-pill">
+                    Edit Event Info
+                </a>
+
+                <form action="/events/<%= event.event_id %>?_method=DELETE" method="POST">
+                    <button class="btn btn-danger btn-pill">
+                        Delete Event Type
+                    </button>
+                </form>
+            </div>
+            <% } %>
+        </div>
+
+        <p class="text-muted">
+            Type: <strong><%= event.type %></strong>
+        </p>
+
+        <p><%= event.description %></p>
+
+    </div>
+
+
+    <!-- SCHEDULED OCCURRENCES -->
+    <div class="page-card-wide" style="margin-top: 2rem;">
+
+        <div class="page-card-header">
+            <h2>Scheduled Occurrences</h2>
+
+            <div class="page-card-actions">
+
+                <!-- DO NOT TOUCH SEARCH BAR — RESTORED EXACTLY -->
+                <form action="/events/<%= event.event_id %>" method="GET" class="search-bar">
+                    <input 
+                        type="text" 
+                        name="location" 
+                        placeholder="Search location…" 
+                        value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                        class="search-input"
+                    >
+                    <button type="submit" class="btn btn-secondary btn-small btn-search">Search</button>
+                </form>
+                <!-- end search bar -->
+
+                <% if (isManager) { %>
+                <a href="/eventOccurrences/new/<%= event.event_id %>" class="btn btn-primary btn-pill">
                     + Schedule New
                 </a>
-            <% } %>
+                <% } %>
+
+            </div>
         </div>
     </div>
 
-    <% if (occurrences.length === 0) { %>
-        <div class="text-center">
-            <p class="text-muted">No occurrences scheduled for this event type.</p>
-        </div>
-    <% } else { %>
-        <table class="table">
+        <!-- TABLE -->
+    <div class="table-container">
+        <table>
             <thead>
                 <tr>
                     <th>Date & Time</th>
@@ -80,17 +121,16 @@
                     <th>Actions</th>
                 </tr>
             </thead>
+
             <tbody>
                 <% occurrences.forEach(o => { %>
                     <tr>
-                        <td><%= new Date(o.starts_at).toLocaleString() %></td>
-                        
+                        <td><%= o.starts_at %></td>
                         <td><%= o.location %></td>
-                        
                         <td><%= o.capacity %></td>
-                        
-                        <td class="table-actions d-flex">
-                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
+                        <td>
+                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>" 
+                                class="btn btn-table-details btn-small">
                                 View
                             </a>
                         </td>
@@ -98,6 +138,6 @@
                 <% }) %>
             </tbody>
         </table>
-    <% } %>
+    </div>
 
-</div>
+</section>

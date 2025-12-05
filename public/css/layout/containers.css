@@ -4,8 +4,8 @@
 
 .page-container {
     width: 100%;
-    padding-top: var(--space-6);
-    padding-bottom: var(--space-6);
+    max-width: 1200px;
+    padding: var(--space-6) 2rem;
     margin: 0 auto;
     box-sizing: border-box;
 }
@@ -83,12 +83,12 @@ body {
     /* no full-width color */
 }
 
-.container-header h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: var(--charcoal);
-    text-align: center;
-    margin-bottom: var(--space-5);
+.container-header .heading-underline {
+    width: 192px;
+    height: 3px;
+    margin: var(--space-3) auto var(--space-6);
+    background: var(--text-dark);
+    border-radius: 999px;
 }
 
 /* Action Row */
@@ -108,4 +108,31 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-3);
+}
+
+/* ============================================================
+   EVENT DETAILS — REUSABLE LAYOUT HELPERS
+============================================================ */
+
+.page-card-detail {
+    background: white;
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 2rem auto;
+}
+
+.page-card-detail h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.page-card-detail p {
+    font-size: 1rem;
+    text-align: left;
+    margin-bottom: 0.5rem;
 }
