@@ -13,9 +13,16 @@ module.exports = {
             .orderBy("milestones.achieved_date", "desc");
     },
     
-    // Get list of unique milestone types
-    getUniqueTitles: () => {
-        return knex("milestones")
+    // --- UPDATED FUNCTION: Get list of unique milestone types with SEARCH ---
+    getUniqueTitles: (searchTerm = null) => {
+        const query = knex("milestones");
+
+        // Add search filter if provided
+        if (searchTerm) {
+            query.where('title', 'ilike', `%${searchTerm}%`);
+        }
+
+        return query
             .distinct('title')
             .pluck('title')
             .orderBy('title', 'asc');
@@ -36,7 +43,6 @@ module.exports = {
             .orderBy('milestones.achieved_date', 'desc');
     },
 
-    // --- FIX: Use LEFT JOIN to ensure visibility ---
     // Get all milestones for a SPECIFIC participant
     getByParticipant: (participantId) => {
         return knex("milestones")
@@ -49,7 +55,6 @@ module.exports = {
             .where({ "milestones.participant_id": participantId })
             .orderBy("milestones.achieved_date", "desc");
     },
-    // -----------------------------------------------
 
     // Get specific milestone
     getById: (participantId, milestoneNo) => {
