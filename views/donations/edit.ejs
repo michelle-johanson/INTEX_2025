@@ -2,27 +2,56 @@
 
     <h1 class="page-title">Edit Donation</h1>
 
-    <form action="/donations/<%= donation.DonationID %>/edit" method="POST" class="form">
+    <% 
+        // Helper function to format the date correctly (YYYY-MM-DD)
+        const formatDate = (dateVal) => {
+            if (!dateVal) return '';
+            
+            // If it's already a string, just grab the first 10 characters (YYYY-MM-DD)
+            if (typeof dateVal === 'string') {
+                return dateVal.substring(0, 10);
+            }
+            
+            // If it's a Date object, return the ISO date string
+            // Postgres DATE columns are typically read as UTC midnight, so ISO is safe.
+            if (dateVal instanceof Date) {
+                // Ensure valid date before calling methods
+                if (isNaN(dateVal.getTime())) return '';
+                return dateVal.toISOString().split('T')[0];
+            }
+            
+            return '';
+        };
+    %>
 
-        <label for="ParticipantID">Participant</label>
-        <select id="ParticipantID" name="ParticipantID">
-            <option value="">No specific participant</option>
-            <% participants.forEach(p=> { %>
-                <option value="<%= p.ParticipantID %>" <%=p.ParticipantID===donation.ParticipantID ? "selected" : "" %>>
-                    <%= p.FirstName %>
-                        <%= p.LastName %> (ID #<%= p.ParticipantID %>)
-                </option>
-                <% }) %>
-        </select>
+    <form action="/donations/<%= donation.participant_id %>/<%= donation.donation_no %>/edit" method="POST" class="form">
+
+        <label>Donor (Read-Only)</label>
+        <input type="text" 
+               value="<%= donation.first_name %> <%= donation.last_name %> (ID #<%= donation.participant_id %>)" 
+               disabled 
+               style="background-color: #e9ecef; cursor: not-allowed; color: #495057;" />
 
         <label for="DonationDate">Donation Date</label>
-        <input id="DonationDate" type="date" name="DonationDate" value="<%= donation.DonationDate %>" required />
+        <input id="DonationDate" 
+               type="date" 
+               name="DonationDate" 
+               value="<%= formatDate(donation.donation_date) %>" 
+               required />
 
         <label for="DonationAmount">Donation Amount (USD)</label>
-        <input id="DonationAmount" type="number" name="DonationAmount" min="1" step="0.01"
-            value="<%= donation.DonationAmount %>" required />
+        <input id="DonationAmount" 
+               type="number" 
+               name="DonationAmount" 
+               min="1" 
+               step="0.01"
+               value="<%= donation.amount %>" 
+               required />
 
-        <button class="btn-submit">Save Changes</button>
+        <div class="d-flex mt-2" style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit" type="submit">Save Changes</button>
+            <a href="/donations" style="color: #666; text-decoration: none;">Cancel</a>
+        </div>
     </form>
 
 </div>

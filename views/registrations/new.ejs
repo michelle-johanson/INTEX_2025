@@ -2,18 +2,47 @@
 <div class="page-card-wide">
     <h1 class="page-title">New Registration</h1>
 
+    <!-- 
+       LOGIC UPDATE:
+       1. Define source IDs safely checking for 'query'.
+       2. Filter the occurrences list if a specific ID was passed in the URL.
+    -->
+    <% 
+        const sourceParticipantId = (typeof query !== 'undefined' && query.participant_id) ? query.participant_id : null;
+        const sourceEventId = (typeof query !== 'undefined' && query.event_id) ? query.event_id : null;
+        const targetOccurrenceId = (typeof query !== 'undefined' && query.event_occurrence_id) ? query.event_occurrence_id : null;
+
+        // FILTER: If we have a target ID, only show that occurrence in the dropdown
+        let occurrencesToShow = occurrences;
+        if (targetOccurrenceId) {
+            occurrencesToShow = occurrences.filter(o => String(o.event_occurrence_id) === String(targetOccurrenceId));
+        }
+    %>
+
     <form action="/registrations/new" method="POST" class="form">
+        
+        <!-- HIDDEN FIELDS TO CAPTURE SOURCE OF NAVIGATION -->
+        <% if (sourceParticipantId) { %>
+            <input type="hidden" name="SourceParticipantId" value="<%= sourceParticipantId %>">
+        <% } %>
+        <% if (sourceEventId) { %>
+            <input type="hidden" name="SourceEventId" value="<%= sourceEventId %>">
+        <% } %>
+
 
         <label for="EventOccurrenceID">Event Occurrence</label>
         <div class="select-wrapper">
             <select id="EventOccurrenceID" name="EventOccurrenceID" required>
-                <option value="">Select an event...</option>
-                <% occurrences.forEach(o=> { %>
-                    <option value="<%= o.event_occurrence_id %>" <%=(typeof query !=='undefined' &&
-                        query.event_occurrence_id==o.event_occurrence_id) ? 'selected' : '' %>>
+                <% if (!targetOccurrenceId) { %>
+                    <option value="">Select an event...</option>
+                <% } %>
+                
+                <% occurrencesToShow.forEach(o => { %>
+                    <option value="<%= o.event_occurrence_id %>" 
+                        <%= (String(o.event_occurrence_id) === String(targetOccurrenceId)) ? 'selected' : '' %>>
                         <%= o.event_name %> - <%= new Date(o.starts_at).toLocaleString() %>
                     </option>
-                    <% }) %>
+                <% }) %>
             </select>
         </div>
 
@@ -21,12 +50,11 @@
         <div class="select-wrapper">
             <select id="ParticipantID" name="ParticipantID" required>
                 <option value="">Select a participant...</option>
-                <% participants.forEach(p=> { %>
-                    <option value="<%= p.participant_id %>">
-                        <%= p.first_name %>
-                            <%= p.last_name %> (<%= p.email %>)
+                <% participants.forEach(p => { %>
+                    <option value="<%= p.participant_id %>" <%= sourceParticipantId && String(p.participant_id) === String(sourceParticipantId) ? 'selected' : '' %>>
+                        <%= p.first_name %> <%= p.last_name %> (<%= p.email %>)
                     </option>
-                    <% }) %>
+                <% }) %>
             </select>
         </div>
 
@@ -50,7 +78,24 @@
 
         <div class="form-actions">
             <button class="btn-submit">Create Registration</button>
-            <a href="/registrations">Cancel</a>
+            
+            <!-- FIX: Dynamic Cancel Link using filtered list lookup -->
+            <% 
+                let cancelHref = '/registrations';
+                
+                if (sourceParticipantId) {
+                    // Came from Participant list
+                    cancelHref = `/registrations/participant/${sourceParticipantId}`;
+                } else if (sourceEventId) {
+                    // Came from Event detail page via event_id
+                    cancelHref = `/events/${sourceEventId}`; 
+                } else if (targetOccurrenceId && occurrencesToShow.length > 0) {
+                    // Came from Event detail page via event_occurrence_id
+                    // Look up the event_id from the occurrence object we found
+                    cancelHref = `/events/${occurrencesToShow[0].event_id}`;
+                }
+            %>
+            <a href="<%= cancelHref %>">Cancel</a>
         </div>
 
     </form>

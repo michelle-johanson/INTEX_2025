@@ -4,8 +4,7 @@
 
     <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
 
-    <!-- #TO-DO: create class for flex container with justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; -->
-    <div class="d-flex mb-3">
+    <div class="d-flex mb-3" style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         
         <!-- Action Button (Manager Only) -->
         <% if (isManager) { %>
@@ -18,19 +17,17 @@
         <% } %>
 
         <!-- Search Bar -->
-        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
-        <form action="/donations" method="GET" class="d-flex">
-            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
+        <form action="/donations" method="GET" class="d-flex" style="gap: 0.5rem; align-items: center;">
             <input type="text" 
                    name="search" 
                    placeholder="Search donor name..." 
                    value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
             >
             <button type="submit" class="btn btn-secondary btn-small">Search</button>
             
             <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
-                <a href="/donations">Clear</a>
+                <a href="/donations" style="font-size: 0.9rem;">Clear</a>
             <% } %>
         </form>
     </div>
@@ -68,17 +65,16 @@
                         </td>
 
                         <td class="table-actions">
-                            <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>" class="btn btn-secondary btn-small">
-                                View
-                            </a>
-
                             <% if (isManager) { %>
                                 <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>/edit">Edit</a>
                                 
-                                <!-- #TO-DO: create class for inline form display -->
+                                <!-- Added style display:inline to keep buttons next to each other -->
+                                <!-- Added onsubmit return confirm for the safety check -->
                                 <form action="/donations/<%= d.participant_id %>/<%= d.donation_no %>/delete" 
-                                      method="POST">
-                                    <!-- #TO-DO: create class for btn-danger with padding:0.2rem 0.6rem; -->
+                                      method="POST" 
+                                      style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete this donation?');">
+                                    
                                     <button class="btn btn-danger btn-small">
                                         Delete
                                     </button>

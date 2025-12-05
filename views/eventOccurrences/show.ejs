@@ -55,8 +55,18 @@
         <% } else if (isParticipant) { %>
             <!-- PARTICIPANT DYNAMIC ACTIONS -->
             <div class="d-flex gap-2">
-                <% if (isRegistered) { %>
-                    <!-- BUTTON 1: UNREGISTER (Visible if registered) -->
+                
+                <% if (showSurveyButton) { %>
+                    <!-- FIX: Button links to the new participant-specific GET route -->
+                    <a href="/surveys/submit/<%= occurrence.event_occurrence_id %>"
+                        class="btn btn-success btn-large">
+                        Submit Survey
+                    </a>
+                <% } else if (hasSubmittedSurvey) { %>
+                    <!-- STATUS: Survey Complete -->
+                    <button class="btn btn-success btn-large" disabled>Survey Submitted</button>
+                <% } else if (isRegistered) { %>
+                    <!-- BUTTON 2: UNREGISTER (Visible if registered and not yet submitted survey) -->
                     <form action="/registrations/unregister/<%= occurrence.event_occurrence_id %>"
                           method="POST"
                           onsubmit="return confirm('Are you sure you want to unregister from this event?');"
@@ -66,7 +76,7 @@
                         </button>
                     </form>
                 <% } else { %>
-                    <!-- BUTTON 2: REGISTER NOW (Visible if not registered) -->
+                    <!-- BUTTON 3: REGISTER NOW (Visible if not registered) -->
                     <form action="/registrations/register/<%= occurrence.event_occurrence_id %>"
                           method="POST"
                           onsubmit="return confirm('Confirm registration for this event?');"
@@ -86,10 +96,29 @@
     </p>
 
     <div class="card mt-3 p-3">
-        <!-- Registration Status Indicator (Visible to everyone) -->
+        <!-- Registration Status Indicator -->
         <% if (isRegistered) { %>
-            <div class="alert alert-success mb-3 p-2 text-center" style="font-weight: bold;">
-                You are currently <%= registrationStatus.toUpperCase() %> for this event.
+            <% 
+                let statusText = registrationStatus.toUpperCase();
+                let statusClass = 'alert-info';
+                
+                // Show if attended status or waiting for attendance status
+                if (hasAttended && !hasSubmittedSurvey) {
+                    statusText = 'ELIGIBLE TO SUBMIT SURVEY';
+                    statusClass = 'alert-success';
+                } else if (hasAttended && hasSubmittedSurvey) {
+                    statusText = 'ATTENDED (Survey Complete)';
+                    statusClass = 'alert-success';
+                } else if (registrationStatus === 'registered') {
+                    statusText = 'REGISTERED';
+                    statusClass = 'alert-info';
+                } else if (registrationStatus === 'waitlist') {
+                    statusText = 'WAITLIST';
+                    statusClass = 'alert-warning';
+                }
+            %>
+            <div class="alert <%= statusClass %> mb-3 p-2 text-center" style="font-weight: bold;">
+                You are currently <%= statusText %> for this event.
             </div>
         <% } %>
         

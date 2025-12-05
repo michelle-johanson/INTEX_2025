@@ -9,29 +9,32 @@ const Participants = require("../models/participants");
 
 /* ============================================================
    LEVEL 1: MAIN INDEX ROUTE
-   - If Manager: Shows List of Milestone Titles (New View)
-   - If User: Shows their OWN milestones (Existing View)
+   - If Manager: Shows List of Milestone Titles
+   - If User: Shows their OWN milestones
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        // NORMALIZE THE CHECK: 
         const role = (req.session.access_level || "").toLowerCase();
 
         // SCENARIO 1: MANAGER LOGGED IN
         if (role === "manager" || role === "admin") {
-            
-            // NEW LOGIC: Fetch unique milestone titles (e.g., "Graduated High School")
             const milestoneTypes = await Milestones.getUniqueTitles();
             
-            // Render the new Directory View for Milestone Types
-            return res.render("milestones/types_index", { // NEW VIEW: types_index.ejs
+            return res.render("milestones/types_index", { 
                 title: "Milestone Achievements Directory",
                 milestoneTypes: milestoneTypes
             });
         }
 
         // SCENARIO 2: PARTICIPANT LOGGED IN
-        const myMilestones = await Milestones.getByParticipant(req.session.userID);
+        // Validate ID
+        const myId = Number(req.session.userID);
+        if (!myId) {
+            console.error("Milestone Route Error: No User ID in session.");
+            return res.redirect('/auth/login');
+        }
+
+        const myMilestones = await Milestones.getByParticipant(myId);
         
         res.render("milestones/index", {
             title: "My Milestones",
@@ -47,16 +50,13 @@ router.get("/", requireLogin, async (req, res) => {
 
 /* ============================================================
    LEVEL 2: DRILL-DOWN (View people who earned a specific Milestone Type)
-   URL: /milestones/type/Python%20Coding%20Certificate
 ============================================================ */
 router.get("/type/:title", requireAdmin, async (req, res) => {
     try {
         const milestoneTitle = req.params.title;
-        
-        // NEW LOGIC: Fetch all participants who have achieved this milestone
         const participants = await Milestones.getParticipantsByTitle(milestoneTitle);
 
-        res.render("milestones/participants_by_type", { // NEW VIEW: participants_by_type.ejs
+        res.render("milestones/participants_by_type", {
             title: `Participants with: ${milestoneTitle}`,
             participants: participants,
             milestoneTitle: milestoneTitle
@@ -69,15 +69,11 @@ router.get("/type/:title", requireAdmin, async (req, res) => {
 });
 
 /* ============================================================
-   EDIT MILESTONE TYPE (ADMIN ONLY) - NEW ROUTE
-   URL: /milestones/type/:title/edit
+   EDIT MILESTONE TYPE (ADMIN ONLY)
 ============================================================ */
-
-// Show edit form for a Milestone Type (Title)
 router.get("/type/:title/edit", requireAdmin, async (req, res) => {
     try {
         const oldTitle = req.params.title;
-
         res.render("milestones/type_edit", {
             title: `Rename Milestone Type`,
             oldTitle: oldTitle,
@@ -89,18 +85,12 @@ router.get("/type/:title/edit", requireAdmin, async (req, res) => {
     }
 });
 
-// Submit edit for a Milestone Type (Updates all records)
 router.post("/type/:title/edit", requireAdmin, async (req, res) => {
     try {
         const oldTitle = req.params.title;
         const newTitle = req.body.MilestoneTitle;
-
-        // NEW MODEL FUNCTION NEEDED: updateByTitle
         await Milestones.updateByTitle(oldTitle, newTitle);
-
-        // Redirect to the new list view using the new title
         res.redirect(`/milestones/type/${encodeURIComponent(newTitle)}`);
-
     } catch (err) {
         console.error(err);
         res.status(500).send("Error updating milestone type");
@@ -108,17 +98,12 @@ router.post("/type/:title/edit", requireAdmin, async (req, res) => {
 });
 
 /* ============================================================
-   DELETE MILESTONE TYPE (ADMIN ONLY) - NEW ROUTE
-   URL: /milestones/type/:title/delete
+   DELETE MILESTONE TYPE (ADMIN ONLY)
 ============================================================ */
 router.post("/type/:title/delete", requireAdmin, async (req, res) => {
     try {
         const titleToDelete = req.params.title;
-
-        // NEW MODEL FUNCTION NEEDED: deleteByTitle
         await Milestones.deleteByTitle(titleToDelete);
-
-        // Redirect back to the main list of milestone types (Level 1)
         res.redirect(`/milestones`);
     } catch (err) {
         console.error(err);
@@ -128,22 +113,31 @@ router.post("/type/:title/delete", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   LEVEL 3: MANAGER DRILL-DOWN (View specific person's list) - Existing logic
-   URL: /milestones/participant/5
+   LEVEL 3: PARTICIPANT/MANAGER DRILL-DOWN
+   URL: /milestones/participant/5
 ============================================================ */
-router.get("/participant/:id", requireAdmin, async (req, res) => {
+router.get("/participant/:id", requireLogin, async (req, res) => {
     try {
-        const participantId = req.params.id;
+        const participantId = Number(req.params.id);
+        const loggedInUserId = Number(req.session.userID);
+        const role = (req.session.access_level || "").toLowerCase();
+
+        // AUTHORIZATION CHECK
+        const isManager = role === 'manager' || role === 'admin';
+        const isOwner = loggedInUserId === participantId;
+
+        if (!isManager && !isOwner) {
+            return res.status(403).send("Unauthorized Access: You can only view your own milestones.");
+        }
         
-        // Fetch milestones for this specific person
+        // Fetch milestones
         const milestones = await Milestones.getByParticipant(participantId);
         
-        // Fetch participant details just for the name in the header
+        // Fetch participant details
         const participant = await Participants.getById(participantId);
 
         if (!participant) return res.status(404).send("Participant not found");
 
-        // We REUSE 'index.ejs' but populate it with this person's data
         res.render("milestones/index", {
             title: `${participant.first_name}'s Milestones`,
             milestones: milestones,
@@ -159,14 +153,11 @@ router.get("/participant/:id", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   NEW MILESTONE (ADMIN ONLY) - Existing logic
+   NEW MILESTONE
 ============================================================ */
-
-// Show form
 router.get("/new", requireAdmin, async (req, res) => {
     try {
         const participants = await Participants.getAll();
-        
         const selectedId = req.query.participant_id;
 
         res.render("milestones/new", {
@@ -180,7 +171,6 @@ router.get("/new", requireAdmin, async (req, res) => {
     }
 });
 
-// Submit form
 router.post("/new", requireAdmin, async (req, res) => {
     try {
         const newMilestone = {
@@ -190,10 +180,7 @@ router.post("/new", requireAdmin, async (req, res) => {
         };
 
         await Milestones.create(newMilestone);
-        
-        // Redirect back to that specific user's list
         res.redirect(`/milestones/participant/${newMilestone.participant_id}`);
-
     } catch (err) {
         console.error(err);
         res.status(500).send("Error creating milestone");
@@ -202,11 +189,8 @@ router.post("/new", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   EDIT MILESTONE (ADMIN ONLY) - Existing logic
-   URL: /:pid/:mno/edit
+   EDIT MILESTONE
 ============================================================ */
-
-// Show edit form
 router.get("/:pid/:mno/edit", requireAdmin, async (req, res) => {
     try {
         const milestone = await Milestones.getById(req.params.pid, req.params.mno);
@@ -225,7 +209,6 @@ router.get("/:pid/:mno/edit", requireAdmin, async (req, res) => {
     }
 });
 
-// Submit edit
 router.post("/:pid/:mno/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
@@ -234,10 +217,7 @@ router.post("/:pid/:mno/edit", requireAdmin, async (req, res) => {
         };
 
         await Milestones.update(req.params.pid, req.params.mno, updates);
-        
-        // Redirect back to that specific user's list
         res.redirect(`/milestones/participant/${req.params.pid}`);
-
     } catch (err) {
         console.error(err);
         res.status(500).send("Error updating milestone");
@@ -246,14 +226,11 @@ router.post("/:pid/:mno/edit", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   DELETE MILESTONE (ADMIN ONLY) - Existing logic
-   URL: /:pid/:mno/delete
+   DELETE MILESTONE
 ============================================================ */
 router.post("/:pid/:mno/delete", requireAdmin, async (req, res) => {
     try {
         await Milestones.delete(req.params.pid, req.params.mno);
-        
-        // Redirect back to that specific user's list
         res.redirect(`/milestones/participant/${req.params.pid}`);
     } catch (err) {
         console.error(err);
@@ -263,8 +240,7 @@ router.post("/:pid/:mno/delete", requireAdmin, async (req, res) => {
 
 
 /* ============================================================
-   SHOW SINGLE MILESTONE (LOGIN REQUIRED) - Existing logic
-   URL: /:pid/:mno
+   SHOW SINGLE MILESTONE
 ============================================================ */
 router.get("/:pid/:mno", requireLogin, async (req, res) => {
     try {
@@ -272,18 +248,14 @@ router.get("/:pid/:mno", requireLogin, async (req, res) => {
 
         if (!milestone) return res.status(404).send("Milestone not found");
 
-        // --- SECURITY FIX ---
-        // Get role safely and convert to lowercase
+        // SECURITY CHECK
         const role = (req.session.access_level || "").toLowerCase();
-
-        // Allow if role is manager/admin OR if the user owns the milestone
         const isAuthorized = (role === 'manager' || role === 'admin') || 
-                             (req.session.userID === milestone.participant_id);
+                             (String(req.session.userID) === String(milestone.participant_id));
 
         if (!isAuthorized) {
              return res.status(403).send("Unauthorized Access");
         }
-        // --------------------
 
         res.render("milestones/show", {
             title: "Milestone Details",

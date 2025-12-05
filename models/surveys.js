@@ -2,6 +2,22 @@
 const knex = require("../db");
 
 module.exports = {
+    // --- NEW METHOD: Check if participant has already submitted a survey ---
+    checkIfSubmitted: async (occurrenceId, participantId) => {
+        // We COUNT the number of records matching the occurrence ID and participant ID
+        const result = await knex("survey_responses")
+            .where({
+                event_occurrence_id: occurrenceId,
+                participant_id: participantId
+            })
+            .count('event_occurrence_id as count')
+            .first();
+
+        // If count > 0, the participant has submitted a survey
+        return result && result.count > 0;
+    },
+    // ----------------------------------------------------------------------
+
     // Get all surveys (Triple Join to get Participant Name AND Event Name)
     getAll: () => {
         return knex("survey_responses")
