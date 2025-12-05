@@ -2,37 +2,62 @@
 
     <h1 class="page-title">Make a Donation</h1>
     <p class="page-subtitle">
-        Support Ella Rises by making a one-time donation. You can optionally
-        designate your gift to support a specific participant.
+        Support Ella Rises by making a one-time donation.
     </p>
 
     <form action="/donations/new" method="POST" class="form">
 
-        <label for="ParticipantID">Participant (Required)</label>
-        <select id="ParticipantID" name="ParticipantID" required>
-            <option value="">Select a participant...</option>
-            
-            <% participants.forEach(p => { %>
-                <option value="<%= p.participant_id %>">
-                    <%= p.first_name %> <%= p.last_name %> (ID #<%= p.participant_id %>)
-                </option>
-            <% }) %>
-        </select>
+        <% if (user) { %>
+            <!-- SCENARIO: LOGGED IN USER -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="ParticipantDisplay">Donor Profile</label>
+                <!-- Visual read-only input so they know who they are donating as -->
+                <input type="text" 
+                       id="ParticipantDisplay" 
+                       value="<%= user.first_name %> <%= user.last_name %> (ID #<%= user.participant_id %>)" 
+                       disabled 
+                       style="background-color: #e9ecef; cursor: not-allowed; color: #495057;" />
+                
+                <!-- Hidden input to actually send the ID (though backend uses session for security) -->
+                <input type="hidden" name="ParticipantID" value="<%= user.participant_id %>">
+                
+                <small style="display:block; margin-top: 0.5rem; color: #666;">
+                    You are logged in as <b><%= user.first_name %></b>.
+                </small>
+            </div>
+
+        <% } else { %>
+            <!-- SCENARIO: GUEST USER -->
+            <div style="background-color: #e2f4ff; border-left: 5px solid #007bff; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                <strong>Welcome!</strong> Please enter your donation details below. 
+                <br>
+                You will be asked to <b>log in</b> or <b>sign up</b> on the next step to finalize your payment securely.
+            </div>
+        <% } %>
 
         <label for="DonationDate">Donation Date</label>
+        <!-- Check pendingDonation from session, otherwise default to today -->
         <input id="DonationDate" 
                type="date" 
                name="DonationDate" 
-               value="<%= new Date().toISOString().split('T')[0] %>" 
+               value="<%= (pendingDonation && pendingDonation.date) ? pendingDonation.date : new Date().toISOString().split('T')[0] %>" 
                required />
 
         <label for="DonationAmount">Donation Amount (USD)</label>
-        <input id="DonationAmount" type="number" name="DonationAmount" min="1" step="0.01" required />
+        <!-- Check pendingDonation from session -->
+        <input id="DonationAmount" 
+               type="number" 
+               name="DonationAmount" 
+               min="1" 
+               step="0.01" 
+               value="<%= (pendingDonation && pendingDonation.amount) ? pendingDonation.amount : '' %>"
+               required />
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
-            <button class="btn-submit">Submit Donation</button>
-            <a href="/donations">Cancel</a>
+        <div class="d-flex mt-2" style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+            <button class="btn-submit" type="submit">
+                <%= user ? "Confirm Donation" : "Proceed to Login/Signup" %>
+            </button>
+            <a href="/" style="color: #666; text-decoration: none;">Cancel</a>
         </div>
     </form>
 

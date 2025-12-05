@@ -2,45 +2,81 @@
 
     <h1 class="page-title">Edit Registration</h1>
 
+    <!-- Display Errors (Assuming errors and formData are passed back from the POST route) -->
+    <% if (typeof errors !== 'undefined' && Object.keys(errors).length > 0) { %>
+        <div class="alert alert-danger mb-3" style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px;">
+            <p><strong>Please correct the following issues:</strong></p>
+            <ul style="padding-left: 20px; margin-bottom: 0;">
+                <% for (const key in errors) { %>
+                    <li><%= errors[key] %></li>
+                <% } %>
+            </ul>
+        </div>
+    <% } %>
+
     <form action="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit" 
           method="POST" 
           class="form">
 
-        <!-- #TO-DO: create class for info box with background: #f8f9fa; padding: 1rem; border-radius: 4px; -->
-        <div class="mb-2">
+        <% 
+            // Determine if we are loading saved data (registration) or submitted form data (formData)
+            const data = typeof formData !== 'undefined' && Object.keys(formData).length > 0 ? formData : registration; 
+            
+            // Utility function to format date/time consistently (avoids timezone issues)
+            const formatDateTime = (key) => {
+                const dateString = data[key];
+                if (!dateString) return '';
+
+                // If data is from failed form submission, return the raw string
+                if (typeof formData !== 'undefined' && formData[key] === dateString) {
+                    return dateString;
+                }
+                
+                // If data is from DB, apply offset fix
+                const date = new Date(dateString);
+                if (isNaN(date)) return '';
+                return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            };
+        %>
+
+        <div class="mb-2" style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
             <strong>Event:</strong> <%= registration.event_name %><br>
             <strong>Participant:</strong> <%= registration.first_name %> <%= registration.last_name %>
         </div>
 
         <label for="RegistrationStatus">Status</label>
         <select id="RegistrationStatus" name="RegistrationStatus">
-            <option value="Registered" <%= registration.status === 'Registered' ? 'selected' : '' %>>Registered</option>
-            <option value="Waitlist" <%= registration.status === 'Waitlist' ? 'selected' : '' %>>Waitlist</option>
-            <option value="Cancelled" <%= registration.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-        </select>
+            <!-- Check if value matches DB status OR submitted formData -->
+            <option value="Registered" <%= data.status === 'Registered' ? 'selected' : '' %>>Registered</option>
+            <option value="Waitlist" <%= data.status === 'Waitlist' ? 'selected' : '' %>>Waitlist</option>
+            <option value="Cancelled" <%= data.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+        </select>
+        
+        <!-- FIX 1: HIDDEN FIELD TO ENSURE 'ATTENDED' IS SENT WHEN UNCHECKED -->
+        <input type="hidden" name="RegistrationAttendedFlag" value="off">
 
-        <!-- #TO-DO: create class for checkbox container with margin: 1rem 0; -->
-        <div class="my-2">
-            <!-- #TO-DO: create class for inline-flex label with align-items: center; gap: 0.5rem; -->
-            <label>
-                <!-- #TO-DO: create class for checkbox with width:auto; margin:0; -->
-                <input type="checkbox" 
-                       name="RegistrationAttendedFlag" 
-                       <%= registration.attended ? 'checked' : '' %> />
-                Attended Event?
-            </label>
-        </div>
+        <div class="my-2">
+            <label style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                <!-- FIX 2: Checkbox uses the value from the current 'data' source -->
+                <input type="checkbox" 
+                       name="RegistrationAttendedFlag" 
+                        value="on" 
+                       <%= data.attended === true || data.RegistrationAttendedFlag === 'on' ? 'checked' : '' %>
+                        style="width:auto; margin:0;" />
+                Attended Event?
+            </label>
+        </div>
 
-        <label for="RegistrationCheckInTime">Check-In Time</label>
-        <input type="datetime-local" 
-               name="RegistrationCheckInTime" 
-               value="<%= registration.check_in_time ? new Date(new Date(registration.check_in_time).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" />
+        <label for="RegistrationCheckInTime">Check-In Time</label>
+        <input type="datetime-local" 
+               name="RegistrationCheckInTime" 
+                <!-- FIX 3: Use formatDateTime utility on the correct data field -->
+               value="<%= formatDateTime('check_in_time') %>" />
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
-            <button class="btn-submit">Save Changes</button>
-            <a href="/registrations/event/<%= registration.event_occurrence_id %>">Cancel</a>
-        </div>
-    </form>
+        <div class="d-flex mt-2" style="gap: 1rem; align-items: center;">
+            <button class="btn-submit">Save Changes</button>
+            <a href="/registrations/event/<%= registration.event_occurrence_id %>">Cancel</a>
+        </div>
+    </form>
 
 </div>
