@@ -1,30 +1,45 @@
-<!-- #TO-DO: create class for max-width: 800px; margin: 0 auto; -->
-<div class="page-container">
-    <h1 class="page-title">User Maintenance Dashboard</h1>
-    <p class="text-muted">Select a category below to manage user access and program participants.</p>
+<section class="page-container">
 
-    <!-- #TO-DO: create class for flex container with gap: 2rem; margin-top: 3rem; flex-wrap: wrap; -->
-    <div class="d-flex mt-4">
-        <!-- #TO-DO: create class for flex: 1 1 300px; -->
-        <div class="card">
-            <h3>🧑‍🎓 Program Participants</h3>
-            <p>View, edit, add, and delete student/participant accounts, including their demographic data and milestones.</p>
-            
-            <a href="/participants" class="btn btn-primary btn-block w-100 text-center mt-2">
-                Go to Participants
-            </a>
+    <div class="page-card-wide" style="max-width: 800px; margin: 0 auto;">
+
+        <h1 class="page-title">User Maintenance Dashboard</h1>
+        <p class="page-subtitle">
+            Select a category below to manage user access and program participants.
+        </p>
+
+        <!-- CARD GRID -->
+        <div class="card-grid">
+
+            <!-- PARTICIPANTS -->
+            <div class="card card-tile">
+                <h3>🧑‍🎓 Program Participants</h3>
+                <p>
+                    View, edit, add, and delete participant accounts, including demographic data and milestones.
+                </p>
+
+                <div class="btn-wrapper">
+                    <a href="/participants" class="btn btn-primary btn-lg w-100">
+                        Go to Participants
+                    </a>
+                </div>
+            </div>
+
+            <!-- STAFF -->
+            <div class="card card-tile">
+                <h3>🧑‍💼 Admin Staff</h3>
+                <p>
+                    Manage administrator accounts with elevated access for security and staffing control.
+                </p>
+
+                <div class="btn-wrapper">
+                    <a href="/staff" class="btn btn-warning btn-lg w-100">
+                        Go to Admin Accounts
+                    </a>
+                </div>
+            </div>
+
         </div>
 
-        <!-- #TO-DO: create class for flex: 1 1 300px; -->
-        <div class="card">
-            <h3>🧑‍💼 Admin Staff</h3>
-            <p>Manage accounts with elevated access (Admins) for security and staffing control.</p>
-            
-            <!-- #TO-DO: create class for btn-warning with background-color: #f0ad4e; border-color: #eea236; -->
-            <a href="/staff" class="btn btn-warning btn-block w-100 text-center mt-2">
-                Go to Admin Accounts
-            </a>
-        </div>
-        
     </div>
-</div>
+
+</section>
