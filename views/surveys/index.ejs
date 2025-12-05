@@ -1,96 +1,115 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="container-inner">
 
-    <h1 class="page-title"><%= contextName || 'Post-Event' %> Surveys</h1>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title"><%= contextName || 'Post-Event Surveys' %></h1>
+            <div class="heading-underline"></div>
+        </div>
 
-    <% 
-        // 1. ROBUST MANAGER CHECK
-        const roleRaw = session.access_level || session.role || (session.user && (session.user.access_level || session.user.role)) || "";
-        const isManager = roleRaw.toLowerCase() === "manager" || roleRaw.toLowerCase() === "admin";
-    %>
-
-    <!-- #TO-DO: create class for flex container with justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; -->
-    <div class="d-flex mb-3">
-        
         <% 
-            // The occurrence variable is ONLY passed when viewing Level 3 results (/occurrence/:id)
-            const targetId = (typeof occurrence !== 'undefined' && occurrence) ? occurrence.event_occurrence_id : ''; 
+            const rawRole = session.access_level || session.role || (session.user && (session.user.access_level || session.user.role)) || "";
+            const isManager = rawRole.toLowerCase() === "manager" || rawRole.toLowerCase() === "admin";
+
+            // Level 3 (surveys for a specific occurrence):
+            const targetId = typeof occurrence !== "undefined" && occurrence ? occurrence.event_occurrence_id : null;
         %>
 
-        <% if (isManager && targetId) { %> 
-            <a href="/surveys/new?event_occurrence_id=<%= targetId %>" class="btn btn-primary btn-small">
-                + Add Survey Response
-            </a>
-        <% } else { %>
-            <div></div> <% } %>
-        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
-        <form action="" method="GET" class="d-flex">
-            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
-            <input type="text" name="search" placeholder="Search name or comments..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
-            >
-            <button type="submit" class="btn btn-secondary btn-small">Search</button>
-            
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
-                <a href="?">Clear</a>
+        <!-- TABLE CONTROLS -->
+        <div class="table-controls">
+
+            <!-- Add Survey (Managers only, only on occurrence-level page) -->
+            <% if (isManager && targetId) { %>
+                <a href="/surveys/new?event_occurrence_id=<%= targetId %>" 
+                   class="btn btn-primary btn-small">
+                    + Add Survey Response
+                </a>
+            <% } else { %>
+                <div></div>
             <% } %>
-        </form>
-    </div>
 
-    <% if (surveys.length === 0) { %>
-        <!-- #TO-DO: create class for empty state with background: #f8f9fa; padding: 2rem; text-align: center; border-radius: 8px; -->
-        <div class="text-center">
+            <!-- SEARCH -->
+            <form action="" method="GET" class="search-form">
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Search name or comments…"
+                    value="<%= q || '' %>"
+                >
+                <button class="btn btn-secondary btn-small">Search</button>
+
+                <% if (q) { %>
+                    <a href="" class="search-clear-link">Clear</a>
+                <% } %>
+            </form>
+
+        </div>
+
+        <!-- EMPTY STATE -->
+        <% if (!surveys || surveys.length === 0) { %>
+
             <p class="text-muted">No surveys found.</p>
-        </div>
-    <% } else { %>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Event</th>
-                    <th>Date</th>
-                    <th>Participant</th>
-                    <th>Overall Score</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% surveys.forEach(s => { %>
-                    <tr>
-                        <td><%= s.event_name %></td>
-                        <td><%= new Date(s.starts_at).toLocaleDateString() %></td>
-                        <td><%= s.first_name %> <%= s.last_name %></td>
-                        
-                        <td>
-                            <!-- #TO-DO: create class for star rating active color: #f0ad4e; font-weight: bold; -->
-                            <span>
-                                <%= "★".repeat(s.overall_score) %>
-                            </span>
-                            <!-- #TO-DO: create class for star rating inactive color: #ddd; -->
-                            <span>
-                                <%= "★".repeat(5 - s.overall_score) %>
-                            </span>
-                            <!-- #TO-DO: create class for small text with font-size: 0.85rem; color: #777; margin-left: 5px; -->
-                            <span>
-                                (<%= s.overall_score %>)
-                            </span>
-                        </td>
 
-                        <td class="table-actions">
-                            <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>" class="btn btn-secondary btn-small">View</a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
+        <% } else { %>
 
-    <% if (isManager && typeof occurrence !== 'undefined') { %>
-        <!-- #TO-DO: create class for section divider with margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem; -->
-        <div class="mt-4">
-            <a href="/surveys/type/<%= occurrence.event_id %>" class="btn btn-secondary">
-                &larr; Back to <%= occurrence.event_name %> Occurrences
-            </a>
-        </div>
-    <% } %>
+            <!-- SURVEY TABLE -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Participant</th>
+                            <th>Overall Score</th>
+                            <th></th>
+                        </tr>
+                    </thead>
 
-</div>
+                    <tbody>
+                        <% surveys.forEach(s => { %>
+                            <tr>
+                                <td><%= s.event_name %></td>
+
+                                <td><%= new Date(s.starts_at).toLocaleDateString() %></td>
+
+                                <td>
+                                    <%= s.first_name %> <%= s.last_name %>
+                                </td>
+
+                                <td>
+                                    <!-- Star rating (active + inactive) -->
+                                    <span class="rating-active">
+                                        <%= "★".repeat(s.overall_score) %>
+                                    </span>
+                                    <span class="rating-inactive">
+                                        <%= "★".repeat(5 - s.overall_score) %>
+                                    </span>
+                                    <span class="rating-small">(<%= s.overall_score %>)</span>
+                                </td>
+
+                                <td class="table-actions">
+                                    <a href="/surveys/<%= s.event_occurrence_id %>/<%= s.participant_id %>" 
+                                       class="btn btn-outline btn-table">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
+        <!-- BACK BUTTON FOR OCCURRENCE-LEVEL VIEW -->
+        <% if (isManager && typeof occurrence !== "undefined" && occurrence) { %>
+            <div class="btn-wrapper" style="margin-top: 2rem;">
+                <a href="/surveys/type/<%= occurrence.event_id %>" 
+                   class="btn btn-secondary btn-lg">
+                    ← Back to <%= occurrence.event_name %> Occurrences
+                </a>
+            </div>
+        <% } %>
+
+    </div>
+</section>

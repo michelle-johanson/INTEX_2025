@@ -1,81 +1,120 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="container-inner">
 
-    <h1 class="page-title"><%= contextName || 'Event' %> Registrations</h1>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title"><%= contextName || 'Event' %> Registrations</h1>
+            <div class="heading-underline"></div>
+        </div>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+        <% 
+            const isManager = session.access_level &&
+                (session.access_level.toLowerCase() === "manager" ||
+                 session.access_level.toLowerCase() === "admin");
+        %>
 
-    <% if (isManager) { %>
-        <% 
-            // CRITICAL FIX: Use parentOccurrenceId if available for the new button link
-            // If the user came from the event detail page, we link 'Add' to that occurrence ID.
-            const currentOccurrenceId = (typeof parentOccurrenceId !== 'undefined' && parentOccurrenceId) ? parentOccurrenceId : (registrations.length > 0 ? registrations[0].event_occurrence_id : ''); 
-        %>
-        <a href="/registrations/new?event_occurrence_id=<%= currentOccurrenceId %>" class="btn btn-primary btn-small mb-4">
-            + Add Registration
-        </a>
-    <% } %>
+        <!-- ADD REGISTRATION BUTTON (MANAGERS ONLY) -->
+        <% if (isManager) { %>
+            <% 
+                const currentOccurrenceId = 
+                    (typeof parentOccurrenceId !== 'undefined' && parentOccurrenceId)
+                    ? parentOccurrenceId
+                    : (registrations.length > 0 ? registrations[0].event_occurrence_id : '');
+            %>
 
-    <% if (registrations.length === 0) { %>
-        <p>No registrations found.</p>
-    <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>Event</th>
-                    <th>Date</th>
-                    <th>Participant</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <% registrations.forEach(r => { %>
-                    <tr>
-                        <td><%= r.event_name %></td>
-                        <td><%= new Date(r.starts_at).toLocaleDateString() %></td>
-                        <td><%= r.first_name %> <%= r.last_name %></td>
-                        
-                        <!-- FIX: Display 'Attended' if the flag is true, otherwise show status -->
-                        <td>
-                            <% if (r.attended) { %>
-                                <span style="font-weight: bold; color: green;">Attended</span>
-                            <% } else { %>
-                                <%= r.status %>
-                            <% } %>
-                        </td>
+            <div class="btn-wrapper" style="margin-bottom: 1.5rem;">
+                <a href="/registrations/new?event_occurrence_id=<%= currentOccurrenceId %>" 
+                   class="btn btn-primary btn-small">
+                    + Add Registration
+                </a>
+            </div>
+        <% } %>
 
-                        <td class="table-actions">
-                            <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>">View</a>
+        <!-- EMPTY STATE -->
+        <% if (!registrations || registrations.length === 0) { %>
 
-                            <% if (isManager) { %>
-                                <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/edit">Edit</a>
+            <p>No registrations found.</p>
 
-                                                                <form action="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/delete" 
-                                      method="POST">
-                                                                        <button class="btn btn-danger btn-small">
-                                        Delete
-                                    </button>
-                                </form>
-                            <% } %>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
+        <% } else { %>
 
-    <% if (isManager) { %>
-        <div class="mt-4">
-                        <% if (typeof parentOccurrenceId !== 'undefined' && parentOccurrenceId) { %>
-                <a href="/eventOccurrences/<%= parentOccurrenceId %>" class="btn btn-secondary">
-                    &larr; Back to Event Occurrence Details
-                </a>
-            <% } else { %>
-                <a href="/registrations" class="btn btn-secondary">
-                    &larr; Back to Registrations Index
-                </a>
-            <% } %>
-        </div>
-    <% } %>
+            <!-- TABLE -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Participant</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
 
-</div>
+                    <tbody>
+                        <% registrations.forEach(r => { %>
+                            <tr>
+                                <td><%= r.event_name %></td>
+
+                                <td><%= new Date(r.starts_at).toLocaleDateString() %></td>
+
+                                <td><%= r.first_name %> <%= r.last_name %></td>
+
+                                <td>
+                                    <% if (r.attended) { %>
+                                        <span class="status-attended">Attended</span>
+                                    <% } else { %>
+                                        <%= r.status %>
+                                    <% } %>
+                                </td>
+
+                                <td class="table-actions">
+
+                                    <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>"
+                                       class="btn btn-outline btn-table">
+                                        View
+                                    </a>
+
+                                    <% if (isManager) { %>
+
+                                        <a href="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/edit"
+                                           class="btn btn-edit btn-table">
+                                            Edit
+                                        </a>
+
+                                        <form action="/registrations/<%= r.event_occurrence_id %>/<%= r.participant_id %>/delete"
+                                              method="POST"
+                                        >
+                                            <button class="btn btn-delete btn-table"
+                                                    onclick="return confirm('Delete this registration?');">
+                                                Delete
+                                            </button>
+                                        </form>
+
+                                    <% } %>
+
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
+        <!-- BACK BUTTON -->
+        <div class="btn-wrapper" style="margin-top: 2rem;">
+            <% if (typeof parentOccurrenceId !== 'undefined' && parentOccurrenceId) { %>
+                <a href="/eventOccurrences/<%= parentOccurrenceId %>" 
+                   class="btn btn-secondary btn-lg">
+                    ← Back to Event Occurrence Details
+                </a>
+            <% } else { %>
+                <a href="/registrations" 
+                   class="btn btn-secondary btn-lg">
+                    ← Back to Registrations Index
+                </a>
+            <% } %>
+        </div>
+
+    </div>
+</section>

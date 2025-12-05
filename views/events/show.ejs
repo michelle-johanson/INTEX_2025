@@ -1,77 +1,48 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="page-card-wide">
 
-    <% 
-        // 1. Get the user object (it might be session.user or just session)
-        const user = session.user || session; 
-        
-        // 2. Get the role (check 'role' or 'access_level')
-        const rawRole = user.role || user.access_level || "";
-        
-        // 3. Normalize to lowercase for comparison
-        const userRole = rawRole.toLowerCase();
+        <h2><%= event.name %></h2>
 
-        // 4. Final Boolean Check
-        const isManager = userRole === "manager" || userRole === "admin"; 
-    %>
+        <p class="text-muted">
+            Type: <strong><%= event.type %></strong>
+        </p>
 
-    <div class="d-flex mb-4">
-        <div>
-            <h1 class="page-title mb-1"><%= event.name %></h1>
-            <p class="text-muted">
-                Type: <strong><%= event.type %></strong>
-            </p>
-            <% if (event.description) { %>
-                <p><%= event.description %></p>
-            <% } %>
-        </div>
-
+        <p><%= event.description %></p>
         <% if (isManager) { %>
-            <div class="d-flex">
-                <a href="/events/<%= event.event_id %>/edit" class="btn btn-warning btn-small">
+            <div class="btn-wrapper">
+                <a href="/events/<%= event.event_id %>/edit" class="btn btn-edit btn-lg">
                     Edit Event Info
                 </a>
-                
-                <form action="/events/<%= event.event_id %>/delete" 
-                      method="POST" 
-                      onsubmit="return confirm('Are you sure? This will fail if there are scheduled occurrences attached to this event.');">
-                    <button class="btn btn-danger btn-sm">Delete Event Type</button>
+        
+                <form action="/events/<%= event.event_id %>/delete" method="POST">
+                    <button class="btn btn-delete btn-lg" onclick="return confirm('Delete this event?');">
+                        Delete Event Type
+                    </button>
                 </form>
             </div>
         <% } %>
     </div>
+</section>
 
-    <hr class="my-4">
-
-    <div class="d-flex mb-3">
-        <h3>Scheduled Occurrences</h3>
-
-        <div class="d-flex">
-            <form action="/events/<%= event.event_id %>" method="GET" class="d-flex">
-                <input type="text" 
-                        name="search" 
-                        placeholder="Search location..." 
-                        value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                >
-                <button type="submit" class="btn btn-secondary btn-small">Search</button>
-                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                    <a href="/events/<%= event.event_id %>">Clear</a>
-                <% } %>
-            </form>
-
-            <% if (isManager) { %>
-                <a href="/eventOccurrences/new?event_id=<%= event.event_id %>" class="btn btn-primary btn-small">
-                    + Schedule New
-                </a>
-            <% } %>
-        </div>
+<section class="page-container">
+<div class="container-inner">
+    <div class="container-header mb-4">
+        <h2>Event Occurrences</h2>
     </div>
 
-    <% if (occurrences.length === 0) { %>
-        <div class="text-center">
-            <p class="text-muted">No occurrences scheduled for this event type.</p>
-        </div>
-    <% } else { %>
-        <table class="table">
+    <!-- SCHEDULED OCCURRENCES -->
+    <%- include("../partials/tableControls", {
+        showAddButton: isManager,
+        addHref: `/eventOccurrences/new?event_id=${event.event_id}`,
+        addLabel: "Schedule New Occurrence",
+        searchAction: `/events/${event.event_id}`,
+        searchPlaceholder: "Search location…",
+        query: query
+    }) %>
+
+        <!-- TABLE -->
+    <div class="table-container">
+        <table>
             <thead>
                 <tr>
                     <th>Date & Time</th>
@@ -80,17 +51,16 @@
                     <th>Actions</th>
                 </tr>
             </thead>
+
             <tbody>
                 <% occurrences.forEach(o => { %>
                     <tr>
-                        <td><%= new Date(o.starts_at).toLocaleString() %></td>
-                        
+                        <td><%= o.starts_at %></td>
                         <td><%= o.location %></td>
-                        
                         <td><%= o.capacity %></td>
-                        
-                        <td class="table-actions d-flex">
-                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
+                        <td>
+                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>" 
+                                class="btn btn-outline btn-table">
                                 View
                             </a>
                         </td>
@@ -98,6 +68,6 @@
                 <% }) %>
             </tbody>
         </table>
-    <% } %>
-
+    </div>
 </div>
+</section>

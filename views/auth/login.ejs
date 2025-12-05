@@ -6,34 +6,31 @@
 ===================================== -->
 
 <div class="page-card">
-    <!-- PAGE TITLE -->
-    <h2 class="page-title">Login</h2>
-    <p>Welcome back! Enter your credentials to continue.</p>
+    <!-- PAGE TITLE -->
+    <h2 class="page-title">Login</h2>
+    <p>Welcome back! Enter your credentials to continue.</p>
 
-    <!-- ERROR MESSAGE -->
-    <% if (error) { %>
-        <div class="form-error">
-            <%= error %>
-        </div>
-    <% } %>
+    <!-- ERROR MESSAGE -->
+    <% if (error) { %>
+        <div class="form-error">
+            <%= error %>
+        </div>
+    <% } %>
 
-    <!-- LOGIN FORM -->
-    <form class="form" action="/auth/login" method="POST">
-        <label for="username">Email</label>
-        <input id="username" type="text" name="username" required>
+    <!-- LOGIN FORM -->
+    <form class="form" action="/auth/login" method="POST">
+        <label for="username">Email</label>
+        <input id="username" type="text" name="username" required>
 
-        <label for="password">Password</label>
-        <input id="password" type="password" name="password" required>
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" required>
 
-        <button type="submit" class="btn-submit">
-            Login
-        </button>
-    </form>
-    
-    <!-- SIGNUP LINK -->
-    <div class="mt-3 text-center">
-        <p class="text-muted" style="margin-bottom: 0;">
-            Don't have an account? <a href="/auth/signup" style="font-weight: bold;">Sign up now!</a>
-        </p>
-    </div>
+        <div class="mt-3 btn-wrapper">
+            <button type="submit" class="btn btn-primary">Login</button>
+            <p class="text-muted">
+                Don't have an account? 
+                <a href="/auth/signup" style="font-weight: bold;">Sign up now!</a>
+            </p>
+        </div>
+    </form>
 </div>

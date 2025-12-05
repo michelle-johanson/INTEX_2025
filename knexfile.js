@@ -13,7 +13,7 @@ module.exports = {
       ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false
     },
     // Optional: useful for seeing SQL queries in your console while debugging
-    debug: true 
+    debug: false 
   },
 
   // 2. Production Environment (AWS)

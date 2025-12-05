@@ -1,62 +1,104 @@
 <div class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Edit Survey</h1>
+        <h1 class="page-title">Edit Survey</h1>
 
-    <form action="/surveys/<%= survey.event_occurrence_id %>/<%= survey.participant_id %>/edit" method="POST" class="form">
+        <form action="/surveys/<%= survey.event_occurrence_id %>/<%= survey.participant_id %>/edit" 
+              method="POST" 
+              class="form">
 
-        <!-- #TO-DO: create class for info box with background: #f8f9fa; padding: 1rem; border-radius: 4px; -->
-        <div class="mb-2">
-            <strong>Event:</strong> <%= survey.event_name %> (<%= new Date(survey.starts_at).toLocaleDateString() %>)<br>
-            <strong>Participant:</strong> <%= survey.first_name %> <%= survey.last_name %>
-        </div>
+            <!-- INFO BOX -->
+            <div class="detail-card" style="margin-bottom: 1rem;">
+                <div class="detail-row">
+                    <span class="detail-label">Event</span>
+                    <span class="detail-value">
+                        <%= survey.event_name %> 
+                        (<%= new Date(survey.starts_at).toLocaleDateString() %>)
+                    </span>
+                </div>
 
-        <label>Satisfaction Score **(1-5)**</label>
-        <input type="number" 
+                <div class="detail-row">
+                    <span class="detail-label">Participant</span>
+                    <span class="detail-value">
+                        <%= survey.first_name %> <%= survey.last_name %>
+                    </span>
+                </div>
+            </div>
+
+            <!-- SATISFACTION -->
+            <label for="SurveySatisfactionScore">Satisfaction Score (1–5)</label>
+            <input 
+                id="SurveySatisfactionScore"
+                type="number" 
                 name="SurveySatisfactionScore" 
                 min="1" max="5" 
                 value="<%= survey.satisfaction_score %>" 
-                required />
+                required
+            />
 
-        <label>Usefulness Score **(1-5)**</label>
-        <input type="number" 
+            <!-- USEFULNESS -->
+            <label for="SurveyUsefulnessScore">Usefulness Score (1–5)</label>
+            <input 
+                id="SurveyUsefulnessScore"
+                type="number" 
                 name="SurveyUsefulnessScore" 
                 min="1" max="5" 
                 value="<%= survey.usefulness_score %>" 
-                required />
+                required
+            />
 
-        <!-- NEW FIELD: Instructor Score -->
-        <label>Instructor Score **(1-5)**</label>
-        <input type="number" 
+            <!-- INSTRUCTOR SCORE -->
+            <label for="SurveyInstructorScore">Instructor Score (1–5)</label>
+            <input 
+                id="SurveyInstructorScore"
+                type="number" 
                 name="SurveyInstructorScore" 
                 min="1" max="5" 
                 value="<%= survey.instructor_score %>" 
-                required />
+                required
+            />
 
-        <label>Recommendation Score **(1-5)**</label>
-        <input type="number" 
+            <!-- RECOMMENDATION -->
+            <label for="SurveyRecommendationScore">Recommendation Score (1–5)</label>
+            <input 
+                id="SurveyRecommendationScore"
+                type="number" 
                 name="SurveyRecommendationScore" 
                 min="1" max="5" 
                 value="<%= survey.recommendation_score %>" 
-                required />
+                required
+            />
 
-        <!-- REMOVED: Overall Score input, as it is now calculated -->
+            <!-- COMMENTS -->
+            <label for="SurveyComments">Comments</label>
+            <textarea 
+                id="SurveyComments"
+                name="SurveyComments" 
+                rows="3"
+            ><%= survey.comments %></textarea>
 
-        <label>Comments</label>
-        <textarea name="SurveyComments" rows="3"><%= survey.comments %></textarea>
-
-        <label>Submission Date</label>
-        <input type="date" 
+            <!-- SUBMISSION DATE -->
+            <label for="SurveySubmissionDate">Submission Date</label>
+            <input 
+                id="SurveySubmissionDate"
+                type="date" 
                 name="SurveySubmissionDate" 
                 value="<%= survey.submission_date ? new Date(survey.submission_date).toISOString().split('T')[0] : '' %>" 
-                required />
+                required
+            />
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
-            <button class="btn-submit">Save Changes</button>
-            
-            <a href="/surveys/occurrence/<%= survey.event_occurrence_id %>">Cancel</a>
-        </div>
+            <!-- BUTTONS -->
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">
+                    Save Changes
+                </button>
 
-    </form>
+                <a href="/surveys/occurrence/<%= survey.event_occurrence_id %>" 
+                   class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
 
+        </form>
+    </div>
 </div>

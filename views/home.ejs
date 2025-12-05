@@ -1,71 +1,65 @@
-<% if (message) { %>
-    <div class="alert alert-danger text-center" style="margin: 1rem 0; font-size: 1.1rem; font-weight: bold;">
-        <%= message %>
+<!-- HERO SECTION -->
+<section class="page-container hero-section">
+    <div class="container-inner">
+        <h1 class="hero-title">Empowering the Rising Generation</h1>
+
+        <p class="hero-text">
+            Through STEAM workshops, mentoring, and leadership opportunities,
+            Ella Rises helps young women build confidence, embrace their heritage,
+            and discover their potential.
+        </p>
+
+        <a href="/donations/new" class="btn btn-primary btn-lg hero-cta">
+            Support the Mission
+        </a>
     </div>
-    <% } %>
+</section>
 
-        <!-- HERO SECTION -->
-        <section class="page-container hero-container">
-            <div class="container-inner">
-                <h1 class="hero-title">Empowering the Rising Generation</h1>
 
-                <p class="hero-text">
-                    Through STEAM workshops, mentoring, and leadership opportunities,
-                    Ella Rises helps young women build confidence, embrace their heritage,
-                    and discover their potential.
-                </p>
+<!-- IMPACT SECTION -->
+<section class="page-container impact-section">
+    <div class="container-inner">
+        <h2 class="section-title">Our Impact</h2>
+        <p class="section-description">
+            Ella Rises measures milestones, event satisfaction, and long-term STEAM outcomes
+            to understand and improve program effectiveness.
+        </p>
 
-                <a href="/donations/new" class="btn btn-primary btn-large hero-cta">
-                    Support the Mission
-                </a>
+        <div class="impact-grid">
+            <div class="impact-card">
+                <h3>Milestones</h3>
+                <p>Tracking structured achievements for long-term student growth.</p>
             </div>
-        </section>
 
-
-        <!-- IMPACT SECTION -->
-        <section class="page-container impact-container">
-            <div class="container-inner">
-                <h2 class="section-title">Our Impact</h2>
-                <p class="section-description">
-                    Ella Rises measures milestones, event satisfaction, and long-term STEAM outcomes
-                    to understand and improve program effectiveness.
-                </p>
-
-                <div class="impact-grid">
-                    <div class="impact-card">
-                        <h3>Milestones</h3>
-                        <p>Tracking structured achievements for long-term student growth.</p>
-                    </div>
-
-                    <div class="impact-card">
-                        <h3>Workshops</h3>
-                        <p>Hands-on STEAM experiences that build confidence and engagement.</p>
-                    </div>
-
-                    <div class="impact-card">
-                        <h3>Mentoring</h3>
-                        <p>Connecting young women with role models from BYU & UVU.</p>
-                    </div>
-                </div>
-
-                <% const userRole=(session && session.access_level || "" ).toLowerCase(); const
-                    isAdmin=userRole==="admin" ; %>
-
-                    <% if (isAdmin) { %>
-                        <a href="/dashboard" class="btn btn-secondary btn-large mt-3">View Dashboard</a>
-                        <% } %>
+            <div class="impact-card">
+                <h3>Workshops</h3>
+                <p>Hands-on STEAM experiences that build confidence and engagement.</p>
             </div>
-        </section>
 
-
-        <!-- DONATE SECTION -->
-        <section class="page-container donate-container">
-            <div class="container-inner">
-                <h2>Your Support Changes Lives</h2>
-                <p>
-                    Help us expand Ella Rises programs and empower even more future leaders.
-                </p>
-
-                <a href="/donations/new" class="btn btn-primary btn-large">Donate Today</a>
+            <div class="impact-card">
+                <h3>Mentoring</h3>
+                <p>Connecting young women with role models from BYU & UVU.</p>
             </div>
-        </section>
+        </div>
+
+        <% const userRole=(session && session.access_level || "" ).toLowerCase(); const
+            isAdmin=userRole==="admin" ; %>
+
+            <% if (isAdmin) { %>
+                <a href="/dashboard" class="btn btn-secondary btn-lg mt-3">View Dashboard</a>
+                <% } %>
+    </div>
+</section>
+
+
+<!-- DONATE SECTION -->
+<section class="page-container donate-section">
+    <div class="container-inner">
+        <h2>Your Support Changes Lives</h2>
+        <p>
+            Help us expand Ella Rises programs and empower even more future leaders.
+        </p>
+
+        <a href="/donations/new" class="btn btn-primary btn-lg">Donate Today</a>
+    </div>
+</section>

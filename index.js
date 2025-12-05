@@ -33,16 +33,29 @@ app.use(session({
 // Session Locals
 app.use((req, res, next) => {
     const s = req.session;
+
+    // calculate role
+    const rawRole = (s.access_level || "").toLowerCase();
+    const isManager = rawRole === "manager" || rawRole === "admin";
+
     res.locals.session = {
         isLoggedIn: s.isLoggedIn || false,
-        user_id: s.user_id || s.userID || null,
+        user_id: s.user_id || null,
         username: s.username || null,
         firstname: s.firstname || null,
         lastname: s.lastname || null,
         access_level: s.access_level || null
     };
+
+    // ADD THIS:
+    res.locals.isManager = isManager;
+
+    // default flags
+    res.locals.hideFooter = false;
+
     next();
 });
+
 
 /* ============================================================
    ROUTES (The "Switchboard")

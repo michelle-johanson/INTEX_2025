@@ -1,0 +1,82 @@
+/* ============================================================
+   FOUNDATION CSS
+   Provides: global defaults, radius, shadow, transitions
+============================================================ */
+
+/* -------------------------------
+   GLOBAL EFFECTS & VARIABLES
+-------------------------------- */
+
+:root {
+    /* Radius system */
+    --radius: 12px;
+    --radius-sm: 6px;
+    --radius-lg: 16px;
+
+    /* Shadow system */
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.1);
+
+    /* Transitions */
+    --transition: 0.25s ease;
+
+    /* Focus Ring (used by forms/buttons optionally) */
+    --focus-ring: 0 0 0 3px rgba(255, 216, 209, 0.6);
+
+    /* Card Surfaces */
+    --surface-card: #ffffff;
+    --surface-border: #e6e6e6;
+    --surface-shadow: rgba(0, 0, 0, 0.08);
+}
+
+/* -------------------------------
+   CSS RESET (safe, lightweight)
+-------------------------------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--text-dark);
+}
+
+/* Remove default button, input, textarea styling inconsistencies */
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+/* Remove anchor underline (you handle in components) */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* -------------------------------
+   GLOBAL ELEMENT ROUNDING FIX
+-------------------------------- */
+img,
+button,
+input,
+textarea,
+select,
+.card,
+.page-card,
+.page-card-detail,
+.table-container {
+    border-radius: var(--radius);
+}

@@ -1,44 +1,47 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Edit Milestone</h1>
+        <h1 class="page-title">Edit Milestone</h1>
 
-    <form action="/milestones/<%= milestone.participant_id %>/<%= milestone.milestone_no %>/edit" 
-          method="POST" 
-          class="form">
+        <form action="/milestones/<%= milestone.participant_id %>/<%= milestone.milestone_no %>/edit" method="POST"
+            class="form">
 
-        <label for="ParticipantDisplay">Participant</label>
-        <!-- #TO-DO: create class for disabled select with background-color: #e9ecef; cursor: not-allowed; -->
-        <select id="ParticipantDisplay" disabled>
-            <% participants.forEach(p => { %>
-                <option value="<%= p.participant_id %>" 
-                    <%= p.participant_id === milestone.participant_id ? "selected" : "" %>>
-                    <%= p.first_name %> <%= p.last_name %> (ID #<%= p.participant_id %>)
-                </option>
-            <% }) %>
-        </select>
+            <!-- PARTICIPANT (READ-ONLY) -->
+            <label for="ParticipantDisplay">Participant</label>
+            <div class="select-wrapper disabled-select">
+                <select id="ParticipantDisplay" disabled>
+                    <% participants.forEach(p=> { %>
+                        <option value="<%= p.participant_id %>" <%=p.participant_id===milestone.participant_id
+                            ? "selected" : "" %>>
+                            <%= p.first_name %>
+                                <%= p.last_name %> (ID #<%= p.participant_id %>)
+                        </option>
+                        <% }) %>
+                </select>
+            </div>
 
-        <label for="MilestoneTitle">Milestone Title</label>
-        <input id="MilestoneTitle" 
-               type="text" 
-               name="MilestoneTitle" 
-               value="<%= milestone.title %>" 
-               required />
+            <!-- TITLE -->
+            <label for="MilestoneTitle">Milestone Title</label>
+            <input id="MilestoneTitle" type="text" name="MilestoneTitle" value="<%= milestone.title %>" required />
 
-        <label for="MilestoneDate">Milestone Date</label>
-        <input id="MilestoneDate" 
-               type="date" 
-               name="MilestoneDate" 
-               value="<%= milestone.achieved_date ? new Date(milestone.achieved_date).toISOString().split('T')[0] : '' %>" 
-               required />
+            <!-- DATE -->
+            <label for="MilestoneDate">Milestone Date</label>
+            <input id="MilestoneDate" type="date" name="MilestoneDate"
+                value="<%= milestone.achieved_date ? new Date(milestone.achieved_date).toISOString().split('T')[0] : '' %>"
+                required />
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
-            <button class="btn-submit">Save Changes</button>
-            
-            <a href="/milestones/participant/<%= milestone.participant_id %>">
-               Cancel
-            </a>
-        </div>
-    </form>
+            <!-- ACTION BUTTONS -->
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">
+                    Save Changes
+                </button>
 
-</div>
+                <a href="/milestones/participant/<%= milestone.participant_id %>" class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</section>

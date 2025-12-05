@@ -1,61 +1,98 @@
-<div class="page-container" style="max-width: 600px; margin: 0 auto;">
+<div class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Event Feedback</h1>
-    <h3 style="margin-top: -10px; margin-bottom: 20px; font-weight: normal; color: #555;">
-        Survey for: <%= occurrence.event_name %>
-    </h3>
+        <h1 class="page-title">Event Feedback</h1>
+        <h3 class="text-muted" style="margin-top: -10px; margin-bottom: 20px;">
+            Survey for: <%= occurrence.event_name %>
+        </h3>
 
-    <!-- Display Errors/Flash Messages -->
-    <% if (typeof flashMessage !== 'undefined' && flashMessage.text) { %>
-        <div class="alert alert-danger mb-3">
-            <%= flashMessage.text %>
-        </div>
-    <% } %>
+        <!-- FLASH MESSAGE -->
+        <% if (typeof flashMessage !== 'undefined' && flashMessage.text) { %>
+            <div class="alert alert-danger">
+                <%= flashMessage.text %>
+            </div>
+        <% } %>
 
-    <!-- FIX: The form action is updated to use the direct path structure -->
-    <form action="/surveys/submit/<%= occurrence.event_occurrence_id %>" method="POST" class="form">
-        
-        <!-- HIDDEN FIELDS: Used to send IDs back to the POST route -->
-        <input type="hidden" name="EventOccurrenceID" value="<%= occurrence.event_occurrence_id %>">
-        <input type="hidden" name="ParticipantID" value="<%= participantId %>">
+        <form 
+            action="/surveys/submit/<%= occurrence.event_occurrence_id %>" 
+            method="POST"
+            class="form"
+        >
 
-        <p>Please rate the following aspects of the event on a scale of 1 (Poor) to 5 (Excellent).</p>
+            <!-- HIDDEN FIELDS -->
+            <input type="hidden" name="EventOccurrenceID" value="<%= occurrence.event_occurrence_id %>">
+            <input type="hidden" name="ParticipantID" value="<%= participantId %>">
 
-        <!-- SATISFACTION SCORE -->
-        <label for="SurveySatisfactionScore">Satisfaction Score (1-5)</label>
-        <input type="number" 
-               name="SurveySatisfactionScore" 
-               min="1" max="5" 
-               required />
+            <p class="text-muted" style="margin-bottom: 1rem;">
+                Please rate the following aspects of the event on a scale of 1 (Poor) to 5 (Excellent).
+            </p>
 
-        <!-- USEFULNESS SCORE -->
-        <label for="SurveyUsefulnessScore" class="mt-3">Usefulness Score (1-5)</label>
-        <input type="number" 
-               name="SurveyUsefulnessScore" 
-               min="1" max="5" 
-               required />
+            <!-- SATISFACTION -->
+            <label for="SurveySatisfactionScore">Satisfaction Score (1–5)</label>
+            <input 
+                id="SurveySatisfactionScore"
+                type="number"
+                name="SurveySatisfactionScore"
+                min="1" 
+                max="5"
+                required
+            />
 
-        <!-- INSTRUCTOR SCORE -->
-        <label for="SurveyInstructorScore" class="mt-3">Instructor Score (1-5)</label>
-        <input type="number" 
-               name="SurveyInstructorScore" 
-               min="1" max="5" 
-               required />
+            <!-- USEFULNESS -->
+            <label for="SurveyUsefulnessScore">Usefulness Score (1–5)</label>
+            <input 
+                id="SurveyUsefulnessScore"
+                type="number"
+                name="SurveyUsefulnessScore"
+                min="1" 
+                max="5"
+                required
+            />
 
-        <!-- RECOMMENDATION SCORE -->
-        <label for="SurveyRecommendationScore" class="mt-3">Recommendation Score (1-5)</label>
-        <input type="number" 
-               name="SurveyRecommendationScore" 
-               min="1" max="5" 
-               required />
-        
-        <!-- COMMENTS -->
-        <label for="SurveyComments" class="mt-3">Comments (Optional)</label>
-        <textarea name="SurveyComments" rows="3" placeholder="Any suggestions or positive feedback?"></textarea>
+            <!-- INSTRUCTOR -->
+            <label for="SurveyInstructorScore">Instructor Score (1–5)</label>
+            <input 
+                id="SurveyInstructorScore"
+                type="number"
+                name="SurveyInstructorScore"
+                min="1" 
+                max="5"
+                required
+            />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem;">
-            <button type="submit" class="btn btn-primary">Submit Survey</button>
-            <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
+            <!-- RECOMMENDATION -->
+            <label for="SurveyRecommendationScore">Recommendation Score (1–5)</label>
+            <input 
+                id="SurveyRecommendationScore"
+                type="number"
+                name="SurveyRecommendationScore"
+                min="1" 
+                max="5"
+                required
+            />
+
+            <!-- COMMENTS -->
+            <label for="SurveyComments">Comments (Optional)</label>
+            <textarea 
+                id="SurveyComments" 
+                name="SurveyComments"
+                rows="3"
+                placeholder="Any suggestions or positive feedback?"
+            ></textarea>
+
+            <!-- BUTTONS -->
+            <div class="btn-wrapper" style="margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Submit Survey
+                </button>
+
+                <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>" 
+                   class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
 </div>

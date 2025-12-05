@@ -1,70 +1,79 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="container-inner">
 
-    <h1 class="page-title">Participant Directory</h1>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title">Participant Directory</h1>
+            <div class="heading-underline"></div>
+        </div>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+        <% 
+            const isManager = 
+                session.access_level &&
+                (session.access_level.toLowerCase() === "manager" ||
+                 session.access_level.toLowerCase() === "admin");
+        %>
 
-    <!-- #TO-DO: create class for flex container with justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; -->
-    <div class="d-flex mb-3">
-        
-        <!-- Action Button -->
-        <% if (isManager) { %>
-            <a href="/participants/new" class="btn btn-primary btn-small">
-                + Add Participant
-            </a>
+        <!-- TABLE CONTROLS -->
+        <%- include("../partials/tableControls", {
+            showAddButton: isManager,
+            addHref: "/participants/new",
+            addLabel: "Add Participant",
+            searchAction: "/participants",
+            searchPlaceholder: "Search name or email…",
+            query: q      // <-- must be provided by the route
+        }) %>
+
+        <!-- SEARCH CLEAR MESSAGE -->
+        <% if (q) { %>
+            <p class="search-clear">
+                Showing results for "<strong><%= q %></strong>"
+                — <a href="/participants">Clear</a>
+            </p>
         <% } %>
 
-        <!-- Search Bar -->
-        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
-        <form action="/participants" method="GET" class="d-flex">
-            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
-            <input type="text" 
-                   name="search" 
-                   placeholder="Search name or email..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-            >
-            <button type="submit" class="btn btn-secondary btn-small">Search</button>
-            
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
-                <a href="/participants">Clear</a>
-            <% } %>
-        </form>
+        <!-- TABLE OR EMPTY MESSAGE -->
+        <% if (!participants || participants.length === 0) { %>
+
+            <p>No participants found.</p>
+
+        <% } else { %>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>City</th>
+                            <th>Field of Interest</th>
+                            <th>Total Donations</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% participants.forEach(p => { %>
+                            <tr>
+                                <td><%= p.first_name %> <%= p.last_name %></td>
+                                <td><%= p.email %></td>
+                                <td><%= p.city %>, <%= p.state %></td>
+                                <td><%= p.field_of_interest %></td>
+                                <td>$<%= p.total_donations || 0 %></td>
+
+                                <td class="table-actions">
+                                    <a href="/participants/<%= p.participant_id %>" 
+                                       class="btn btn-outline btn-table">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
     </div>
-
-    <% if (participants.length === 0) { %>
-        <p>No participants found.</p>
-    <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>City</th>
-                    <th>Field of Interest</th>
-                    <th>Total Donations</th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% participants.forEach(p => { %>
-                    <tr>
-                        <td><%= p.first_name %> <%= p.last_name %></td>
-                        <td><%= p.email %></td>
-                        <td><%= p.city %>, <%= p.state %></td>
-                        <td><%= p.field_of_interest %></td>
-                        <td>$<%= p.total_donations || 0 %></td>
-
-                        <td class="table-actions">
-                            <a href="/participants/<%= p.participant_id %>" class="btn btn-secondary btn-small">
-                                View
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
-
-</div>
+</section>

@@ -9,7 +9,7 @@
 
 /* FOOTER CONTAINER */
 .er-footer {
-    margin-top: 2rem;
+    margin-top: 0;
     background: var(--footer-bg);
     text-align: center;
     padding-bottom: 2rem;
