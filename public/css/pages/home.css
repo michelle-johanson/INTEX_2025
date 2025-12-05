@@ -1,5 +1,5 @@
 /* ============================================================
-   HOMEPAGE — SLIDER, MISSION, STATS, GALLERY, CTA
+   HOMEPAGE — Hero Slider, Mission, Impact Cards, Gallery, CTA
 ============================================================ */
 
 /* ------------------------------------------------------------
@@ -13,19 +13,15 @@
     align-items: center;
     justify-content: center;
     color: #ffffff;
-    --h1-underline-color: #ffffff;
 }
 
-/* darker overlay for better readability */
 .hero-overlay {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.55);
-    /* stronger */
     z-index: 2;
 }
 
-/* each slide image */
 .hero-slide {
     position: absolute;
     inset: 0;
@@ -35,7 +31,6 @@
     animation: slideShow 36s infinite;
 }
 
-/* delay sequence for 6 images */
 .hero-slide:nth-of-type(2) {
     animation-delay: 6s;
 }
@@ -78,7 +73,6 @@
     }
 }
 
-/* hero text */
 .hero-content {
     position: relative;
     text-align: center;
@@ -86,7 +80,7 @@
 }
 
 .hero-title {
-    font-family: var(--font-script);
+    font-family: var(--font-heading);
     font-size: 4rem;
     font-weight: 600;
     color: #ffffff;
@@ -96,9 +90,9 @@
 .hero-subtitle {
     font-family: var(--font-heading);
     font-size: 1.7rem;
-    color: #ffffff;
     margin-top: 0.75rem;
     margin-bottom: 2rem;
+    color: #ffffff;
     text-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
 }
 
@@ -129,38 +123,48 @@
 
 
 /* ------------------------------------------------------------
-   STATS SECTION
+   IMPACT CARDS (TEXT VERSION)
 ------------------------------------------------------------ */
-.stats-section {
+.impact-cards-section {
     background: white;
     padding: 4rem 0;
 }
 
-.stats-grid {
+.impact-cards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
-    max-width: 950px;
-    margin: 0 auto;
 }
 
-.stat-card {
-    background: var(--sage);
-    color: #ffffff;
-    padding: 2.2rem;
+@media (max-width: 900px) {
+    .impact-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.impact-info-card {
+    background: var(--light-pink);
+    padding: 2rem;
     border-radius: var(--radius-lg);
     text-align: center;
     box-shadow: var(--shadow);
 }
 
-.stat-card h3 {
+.impact-info-card h3 {
     font-family: var(--font-heading);
-    font-size: 2.6rem;
+    margin-bottom: 0.75rem;
+    color: var(--charcoal);
+    font-size: 1.8rem;
+}
+
+.impact-info-card p {
+    font-size: 1.1rem;
+    color: var(--charcoal);
 }
 
 
 /* ------------------------------------------------------------
-   IMPACT GALLERY
+   IMPACT GALLERY (PHOTOS)
 ------------------------------------------------------------ */
 .impact-gallery-section {
     background: var(--cream);
