@@ -30,9 +30,11 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-// Session Locals
+// Session Locals & Flash Messages
 app.use((req, res, next) => {
     const s = req.session;
+    
+    // 1. GLOBAL VARIABLES (Accessible in all EJS files)
     res.locals.session = {
         isLoggedIn: s.isLoggedIn || false,
         user_id: s.user_id || s.userID || null,
@@ -41,6 +43,17 @@ app.use((req, res, next) => {
         lastname: s.lastname || null,
         access_level: s.access_level || null
     };
+
+    // 2. FLASH MESSAGE LOGIC
+    // Check if there's a message in the session
+    const message = s.message;
+    
+    // Pass it to the view
+    res.locals.message = message || null;
+    
+    // CLEAR IT from the session so it doesn't show up again
+    delete s.message;
+    
     next();
 });
 
@@ -95,6 +108,7 @@ app.use('/users', usersRoutes);
 // Manage Staff
 const staffRouter = require('./routes/staff');
 app.use('/staff', staffRouter);
+
 /* ============================================================
    OTHER REQUIRED ROUTES
 ============================================================ */
