@@ -1,101 +1,135 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="container-inner">
 
-    <h1 class="page-title">Donations</h1>
+        <!-- PAGE HEADER -->
+        <div class="container-header">
+            <h1 class="page-title">Donations</h1>
+            <div class="heading-underline"></div>
+        </div>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+        <% 
+            const isManager =
+                session?.access_level &&
+                (session.access_level.toLowerCase() === "manager" ||
+                 session.access_level.toLowerCase() === "admin");
 
-    <div class="d-flex mb-3" style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-        
-        <!-- Action Button (Manager Only) -->
-        <% if (isManager) { %>
-            <a href="/donations/new" class="btn btn-primary btn-small">
-                + Add Donation
-            </a>
+            const q = typeof query !== "undefined" ? query : "";
+        %>
+
+        <!-- TABLE CONTROLS -->
+        <div class="table-controls">
+
+            <!-- LEFT SIDE (Add Donation button for managers) -->
+            <% if (isManager) { %>
+                <a href="/donations/new" class="btn btn-primary btn-small">
+                    + Add Donation
+                </a>
+            <% } else { %>
+                <div></div>
+            <% } %>
+
+            <!-- RIGHT SIDE (Search bar) -->
+            <form action="/donations" method="GET" class="search-form">
+
+                <input 
+                    type="text"
+                    name="q"
+                    placeholder="Search donor name..."
+                    value="<%= q %>"
+                    class="search-input"
+                />
+
+                <button type="submit" class="btn btn-secondary btn-small">
+                    Search
+                </button>
+
+                <% if (q) { %>
+                    <a href="/donations" class="search-clear-link">Clear</a>
+                <% } %>
+
+            </form>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <% if (!donations || donations.length === 0) { %>
+
+            <p>No donations found.</p>
+
         <% } else { %>
-            <div></div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Participant</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% donations.forEach(d => { %>
+                            <tr>
+
+                                <!-- PARTICIPANT NAME -->
+                                <td>
+                                    <% if (d.first_name) { %>
+                                        <%= d.first_name %> <%= d.last_name %> 
+                                        (ID #<%= d.participant_id %>)
+                                    <% } else { %>
+                                        Participant #<%= d.participant_id %>
+                                    <% } %>
+                                </td>
+
+                                <!-- DATE COLUMN -->
+                                <td>
+                                    <% 
+                                        let dateStr = '<span class="text-muted" style="font-style: italic;">No Date</span>';
+                                        if (d.donation_date) {
+                                            const dateObj = new Date(d.donation_date);
+                                            if (!isNaN(dateObj) && dateObj.getFullYear() > 1970) {
+                                                dateStr = dateObj.toLocaleDateString();
+                                            }
+                                        }
+                                    %>
+                                    <%- dateStr %>
+                                </td>
+
+                                <!-- AMOUNT -->
+                                <td>$<%= Number(d.amount).toFixed(2) %></td>
+
+                                <!-- ACTIONS -->
+                                <td class="table-actions">
+
+                                    <% if (isManager) { %>
+
+                                        <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>/edit"
+                                           class="btn btn-edit btn-table">
+                                            Edit
+                                        </a>
+
+                                        <form 
+                                            action="/donations/<%= d.participant_id %>/<%= d.donation_no %>/delete" 
+                                            method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete this donation?');"
+                                        >
+                                            <button class="btn btn-delete btn-table">
+                                                Delete
+                                            </button>
+                                        </form>
+
+                                    <% } %>
+
+                                </td>
+
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
         <% } %>
 
-        <!-- Search Bar -->
-        <form action="/donations" method="GET" class="d-flex" style="gap: 0.5rem; align-items: center;">
-            <input type="text" 
-                   name="search" 
-                   placeholder="Search donor name..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
-            >
-            <button type="submit" class="btn btn-secondary btn-small">Search</button>
-            
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <a href="/donations" style="font-size: 0.9rem;">Clear</a>
-            <% } %>
-        </form>
     </div>
-
-    <% if (donations.length === 0) { %>
-        <p>No donations found.</p>
-    <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>Participant</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% donations.forEach(d => { %>
-                    <tr>
-                        <td>
-                            <% if (d.first_name) { %>
-                                <%= d.first_name %> <%= d.last_name %> (ID #<%= d.participant_id %>)
-                            <% } else { %>
-                                Participant #<%= d.participant_id %>
-                            <% } %>
-                        </td>
-                        
-                        <td>
-                            <!-- 
-                                FIX: Logic to mask invalid dates (Unix Epoch 1969/1970) 
-                                If the year is too old, we show "No Date" placeholder.
-                            -->
-                            <% 
-                                let dateStr = '<span style="color:#ccc; font-style:italic;">No Date</span>';
-                                if (d.donation_date) {
-                                    const dateObj = new Date(d.donation_date);
-                                    // Check if valid AND newer than 1970
-                                    if (!isNaN(dateObj) && dateObj.getFullYear() > 1970) {
-                                        dateStr = dateObj.toLocaleDateString();
-                                    }
-                                }
-                            %>
-                            <%- dateStr %>
-                        </td>
-                        
-                        <td>
-                            $<%= Number(d.amount).toFixed(2) %>
-                        </td>
-
-                        <td class="table-actions">
-                            <% if (isManager) { %>
-                                <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>/edit">Edit</a>
-                                
-                                <form action="/donations/<%= d.participant_id %>/<%= d.donation_no %>/delete" 
-                                      method="POST" 
-                                      style="display:inline;"
-                                      onsubmit="return confirm('Are you sure you want to delete this donation?');">
-                                    
-                                    <button class="btn btn-danger btn-small">
-                                        Delete
-                                    </button>
-                                </form>
-                            <% } %>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
-
-</div>
+</section>
