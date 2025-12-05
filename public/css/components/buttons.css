@@ -45,19 +45,19 @@
     --btn-edit-hover-bg: #d49800;
     --btn-edit-hover-text: #ffffff;
 
-    /* ADD (white → green hover) */
-    --btn-add-bg: #ffffff;
-    --btn-add-text: #00a30e;
-    --btn-add-border: #00a30e;
-    --btn-add-hover-bg: #00a30e;
-    --btn-add-hover-text: #ffffff;
-
-    /* SEARCH (dark gray → black hover) */
-    --btn-search-bg: #4a4a4a;
-    --btn-search-text: #ffffff;
-    --btn-search-border: #4a4a4a;
+    /* SEARCH button tokens */
+    --btn-search-bg: var(--charcoal);
+    --btn-search-text: var(--text-light);
+    --btn-search-border: var(--charcoal);
     --btn-search-hover-bg: #000000;
     --btn-search-hover-text: #ffffff;
+
+    /* ADD button tokens */
+    --btn-add-bg: #ffffff;
+    --btn-add-text: var(--sage);
+    --btn-add-border: var(--sage);
+    --btn-add-hover-bg: var(--sage);
+    --btn-add-hover-text: #ffffff;
 }
 
 
@@ -203,39 +203,6 @@
 }
 
 /* ============================================================
-   ADD — white → green hover
-============================================================ */
-
-.btn-add {
-    background-color: var(--btn-add-bg);
-    color: var(--btn-add-text);
-    border: 1px solid var(--btn-add-border);
-}
-
-.btn-add:hover {
-    background-color: var(--btn-add-hover-bg);
-    color: var(--btn-add-hover-text);
-    border-color: var(--btn-add-hover-bg);
-}
-
-/* ============================================================
-   SEARCH — dark gray → black hover
-============================================================ */
-
-.btn-search {
-    background-color: var(--btn-search-bg);
-    color: var(--btn-search-text);
-    border: 1px solid var(--btn-search-border);
-}
-
-.btn-search:hover {
-    background-color: var(--btn-search-hover-bg);
-    color: var(--btn-search-hover-text);
-    border-color: var(--btn-search-hover-bg);
-}
-
-
-/* ============================================================
    DISABLED STATE
 ============================================================ */
 
@@ -244,4 +211,66 @@
     opacity: 0.55;
     cursor: not-allowed;
     pointer-events: none;
+}
+
+/* ============================================================
+   CONTROL BUTTONS — SEARCH + ADD
+============================================================ */
+
+/* Search button */
+.btn-search {
+    background-color: var(--btn-search-bg);
+    color: var(--btn-search-text);
+    border: 2px solid var(--btn-search-border);
+    padding: 0 1.25rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    height: var(--table-control-height);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-search:hover {
+    background-color: var(--btn-search-hover-bg);
+    color: var(--btn-search-hover-text);
+    border-color: var(--btn-search-hover-bg);
+}
+
+/* Add button */
+.btn-add {
+    width: var(--table-control-width);
+    height: var(--table-control-height);
+    padding: 0 var(--space-4);
+    /* no vertical padding */
+    font-size: 1rem;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--btn-add-border);
+    background-color: var(--btn-add-bg);
+    color: var(--btn-add-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-add:hover {
+    background-color: var(--btn-add-hover-bg);
+    color: var(--btn-add-hover-text);
+    border-color: var(--btn-add-hover-bg);
+}
+
+/* Mobile: Add button uses hover state by default */
+@media (max-width: 768px) {
+    .btn-add {
+        background-color: var(--btn-add-hover-bg);
+        color: var(--btn-add-hover-text);
+        border-color: var(--btn-add-hover-bg);
+        width: 100%;
+    }
+
+    .btn-search {
+        width: 100%;
+    }
 }

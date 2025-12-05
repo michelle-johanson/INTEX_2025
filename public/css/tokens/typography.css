@@ -90,6 +90,7 @@ h1 {
     letter-spacing: var(--letter-spacing-h1);
     position: relative;
     padding-bottom: var(--space-3);
+    margin-bottom: var(--space-6);   /* increase spacing under page title */
 }
 
 /* decorative underline */

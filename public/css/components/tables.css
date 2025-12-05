@@ -3,6 +3,15 @@
    (Matches containers/forms/buttons patterns)
 ============================================================ */
 
+:root {
+    /* Table spacing system */
+    --table-padding: 1.2rem;
+    --table-padding-compact: 0.8rem;
+
+    --table-control-width: 22.75rem;
+    --table-control-height: 2.75rem;
+}
+
 /* -------------------------------
    WRAPPER (scroll + shadow)
 -------------------------------- */
@@ -131,29 +140,36 @@ tbody tr:last-child td {
     z-index: 5;
 }
 
-/* ----------------------------------------
-   TABLE CONTROLS (outside table; global)
----------------------------------------- */
+/* ============================================================
+   TABLE CONTROLS LAYOUT
+============================================================ */
+
 .table-controls {
-    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: var(--space-4) 0;
-    gap: var(--space-3);
+    margin: var(--space-4) 0 var(--space-2);
+    gap: var(--space-4);
 }
 
-.controls-left {
+.search-form {
     display: flex;
-    gap: var(--space-2);
-}
-
-.controls-search {
-    display: flex;
-    gap: var(--space-2);
     align-items: center;
+    gap: var(--space-2);
 }
 
-.controls-search input {
-    width: 240px;
+/* Mobile layout: stack controls vertically */
+@media (max-width: 768px) {
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+    }
+
+    .search-form {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2);
+    }
 }

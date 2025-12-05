@@ -318,3 +318,83 @@ select:-webkit-autofill:focus {
     margin-bottom: 0;
     cursor: pointer;
 }
+
+/* Utility: remove dropdown arrow (for search inputs, etc.) */
+.no-arrow {
+    background-image: none !important;
+    background-position: initial !important;
+    background-repeat: initial !important;
+}
+
+/* Utility: force-remove dropdown arrow from any element and its children */
+.no-arrow,
+.no-arrow * {
+    background-image: none !important;
+    background-position: initial !important;
+    background-repeat: initial !important;
+}
+
+/* Remove select-arrow styling from all non-select inputs */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+    background-image: none !important;
+    background-position: initial !important;
+    background-repeat: initial !important;
+}
+
+
+/* ============================================================
+   SEARCH INPUT
+============================================================ */
+
+.search-input {
+    width: var(--table-control-width);
+    height: var(--table-control-height);
+    padding: 0 1rem;
+    /* horizontal only */
+    border: 2px solid var(--text-muted);
+    border-radius: var(--radius-lg);
+    background-color: var(--card-bg);
+    font-size: 1rem;
+    color: var(--text-dark);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    margin: 0 !important;
+}
+
+/* Remove dropdown arrow */
+.search-input,
+.search-input * {
+    background-image: none !important;
+}
+
+/* Prevent yellow focus state */
+.search-input:focus,
+.search-input:focus-visible,
+.search-input:active {
+    background-color: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    box-shadow: var(--shadow-sm) !important;
+    outline: none !important;
+}
+
+/* Autofill override */
+.search-input:-webkit-autofill,
+.search-input:-webkit-autofill:hover,
+.search-input:-webkit-autofill:focus,
+.search-input:-webkit-autofill:active {
+    background-color: var(--card-bg) !important;
+    box-shadow: 0 0 0 1000px var(--card-bg) inset !important;
+    -webkit-text-fill-color: var(--text-dark) !important;
+    caret-color: var(--text-dark) !important;
+    border: 2px solid var(--card-border) !important;
+}
+
+/* Mobile full width */
+@media (max-width: 768px) {
+    .search-input {
+        width: 100%;
+        max-width: 100%;
+    }
+}
