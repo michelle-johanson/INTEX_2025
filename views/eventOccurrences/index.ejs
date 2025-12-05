@@ -1,70 +1,82 @@
-<div class="page-container">
-    <h1 class="page-title">Scheduled Events</h1>
+<section class="page-container">
+    <div class="container-inner">
 
-    <% 
-        // 1. ROBUST MANAGER CHECK
-        const userRole = (session.role || (session.user && session.user.role) || "").toLowerCase();
-        const isManager = userRole === "manager" || userRole === "admin"; 
-    %>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title">Scheduled Events</h1>
+            <div class="heading-underline"></div>
+        </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        
-        <% if (isManager) { %>
-            <a href="/eventOccurrences/new" class="btn btn-primary btn-small">
-                + Schedule New Occurrence
-            </a>
-        <% } else { %>
-            <div></div>
+        <% 
+            // Standardized, robust manager check
+            const role = (session.role || (session.user && session.user.role) || "").toLowerCase();
+            const isManager = role === "manager" || role === "admin";
+        %>
+
+        <!-- TABLE CONTROLS -->
+        <%- include("../partials/tableControls", {
+            showAddButton: isManager,
+            addHref: "/eventOccurrences/new",
+            addLabel: "Schedule New Occurrence",
+            searchAction: "/eventOccurrences",
+            searchPlaceholder: "Search event, type, or location…",
+            query: q        // q should be passed from your route (req.query.q)
+        }) %>
+
+        <!-- CLEARED SEARCH INDICATOR -->
+        <% if (q) { %>
+            <p class="search-clear">
+                Showing results for "<strong><%= q %></strong>"
+                — <a href="/eventOccurrences">Clear</a>
+            </p>
         <% } %>
 
-        <form action="/eventOccurrences" method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
-            <input type="text" 
-                   name="search" 
-                   placeholder="Search event, type, or location..." 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                   style="padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px;"
-            >
-            <button type="submit" class="btn btn-secondary btn-small">Search</button>
-            
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <a href="/eventOccurrences" style="color: #666; text-decoration: none; font-size: 0.9rem;">Clear</a>
-            <% } %>
-        </form>
+        <!-- TABLE OR EMPTY MESSAGE -->
+        <% if (!occurrences || occurrences.length === 0) { %>
+
+            <p>No scheduled events found.</p>
+
+        <% } else { %>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Capacity</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% occurrences.forEach(o => { %>
+                            <tr>
+                                <td><strong><%= o.event_name %></strong></td>
+
+                                <td>
+                                    <%= new Date(o.starts_at).toLocaleString() %>
+                                </td>
+
+                                <td><%= o.event_type %></td>
+                                <td><%= o.location %></td>
+                                <td><%= o.capacity %></td>
+
+                                <td class="table-actions">
+                                    <a href="/eventOccurrences/<%= o.event_occurrence_id %>" 
+                                       class="btn btn-outline btn-table">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
     </div>
-
-    <% if (occurrences.length === 0) { %>
-        <p>No scheduled events found matching your search.</p>
-    <% } else { %>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Event</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Location</th>
-                    <th>Capacity</th>
-                    <th>Actions</th> </tr>
-            </thead>
-
-            <tbody>
-                <% occurrences.forEach(o => { %>
-                    <tr>
-                        <td><strong><%= o.event_name %></strong></td>
-                        
-                        <td><%= new Date(o.starts_at).toLocaleString() %></td>
-                        
-                        <td><%= o.event_type %></td>
-                        <td><%= o.location %></td>
-                        <td><%= o.capacity %></td>
-                        
-                        <td class="table-actions d-flex">
-                            <a href="/eventOccurrences/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
-                                View
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
-</div>
+</section>

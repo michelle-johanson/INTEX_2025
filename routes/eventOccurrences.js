@@ -10,13 +10,13 @@ const SurveyResponses = require("../models/surveys");
 /* GET /eventOccurrences — list all occurrences (supports search) */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const query = req.query.q || "";
-        const occurrences = await EventOccurrences.getAll(query);
+        const q = req.query.q || "";
+        const occurrences = await EventOccurrences.getAll(q);
 
         res.render("eventOccurrences/index", {
             title: "Event Occurrences",
             occurrences,
-            query
+            q
         });
     } catch (err) {
         console.error(err);

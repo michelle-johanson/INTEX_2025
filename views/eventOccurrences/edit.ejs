@@ -1,129 +1,142 @@
-<div class="container mt-4">
-    <h1>Edit Event Occurrence</h1>
+<div class="page-container">
+    <div class="page-card-form">
+        <h2>Edit Event Occurrence</h2>
 
-    <% if (typeof errors !== 'undefined' && Object.keys(errors).length > 0) { %>
-        <div class="alert alert-danger">
-            <p><strong>Please correct the following issues before submitting:</strong></p>
-            <ul style="padding-left: 20px; margin-bottom: 0;">
-                <% for (const key in errors) { %>
-                    <li><%= errors[key] %></li>
-                <% } %>
-            </ul>
-        </div>
-    <% } %>
+        <% if (typeof errors !== 'undefined' && Object.keys(errors).length > 0) { %>
+            <div class="alert alert-danger">
+                <p><strong>Please correct the following issues before submitting:</strong></p>
+                <ul style="padding-left: 20px; margin-bottom: 0;">
+                    <% for (const key in errors) { %>
+                        <li><%= errors[key] %></li>
+                    <% } %>
+                </ul>
+            </div>
+        <% } %>
 
-    <form action="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit" method="POST" class="mt-3">
-        
-        <% 
-            // 1. Determine if we are loading saved DB data (occurrence) or submitted form data (formData)
-            const data = typeof formData !== 'undefined' && Object.keys(formData).length > 0 ? formData : occurrence; 
-            
-            // 2. Utility function to format DATE/TIME fields.
-            const formatDateTime = (key) => {
-                const dateString = data[key];
-                if (!dateString) return '';
+        <form action="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit" method="POST" class="form">
 
-                // FIX: If data is a string (coming from failed form submission), return it directly.
-                // The browser already gave us the required YYYY-MM-DDThh:mm format.
-                if (typeof dateString === 'string' && dateString.length > 10 && dateString.includes('T')) {
-                    return dateString;
-                }
-                
-                // If the data came from the database (Date object), apply the timezone offset fix.
-                const date = new Date(dateString);
-                if (isNaN(date)) return ''; 
+            <% 
+                // 1. Determine if this request has formData from a failed submission
+                const data = typeof formData !== 'undefined' && Object.keys(formData).length > 0 
+                                ? formData 
+                                : occurrence; 
 
-                return new Date(date.getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-            };
+                // 2. Format datetime-local correctly for browser input
+                const formatDateTime = (key) => {
+                    const dateString = data[key];
+                    if (!dateString) return '';
 
-            // 3. Utility function to format DATE fields.
-            const formatDate = (key) => {
-                const dateString = data[key];
-                if (!dateString) return '';
+                    if (typeof dateString === 'string' && dateString.includes('T')) {
+                        return dateString;
+                    }
+                    const date = new Date(dateString);
+                    if (isNaN(date)) return '';
 
-                // FIX: If data is a string (coming from failed form submission), return it directly.
-                if (typeof dateString === 'string' && dateString.length === 10 && dateString.includes('-')) {
-                    return dateString;
-                }
-                
-                // If the data came from the database, convert to YYYY-MM-DD string.
-                const date = new Date(dateString);
-                if (isNaN(date)) return ''; 
-                return date.toISOString().split('T')[0];
-            };
-        %>
+                    return new Date(date.getTime() - (new Date().getTimezoneOffset() * 60000))
+                            .toISOString()
+                            .slice(0, 16);
+                };
 
-        <label for="EventID" class="form-label">Event</label>
-        <select id="EventID" name="EventID" 
-                class="form-select <%= errors.EventID ? 'is-invalid' : '' %>" required>
-            
-            <% events.forEach(e => { %>
-                <% 
-                    // Check if the current event ID matches the stored occurrence ID or the submitted form data
-                    const isSelected = String(e.event_id) === String(data.event_id); 
-                %>
-                <option value="<%= e.event_id %>" <%= isSelected ? "selected" : "" %>>
-                    <%= e.name %> — <%= e.type %>
-                </option>
-            <% }) %>
-        </select>
-        <% if (errors.EventID) { %><div class="invalid-feedback"><%= errors.EventID %></div><% } %>
+                // 3. Format date for YYYY-MM-DD input
+                const formatDate = (key) => {
+                    const dateString = data[key];
+                    if (!dateString) return '';
 
+                    if (typeof dateString === 'string' && dateString.length === 10) {
+                        return dateString;
+                    }
+                    const date = new Date(dateString);
+                    if (isNaN(date)) return '';
 
-        <label for="EventDateTimeStart" class="form-label mt-3">Start Date & Time</label>
-        <input id="EventDateTimeStart" 
-                type="datetime-local" 
-                name="EventDateTimeStart" 
-                class="form-control <%= errors.StartsAt ? 'is-invalid' : '' %>" 
-                value="<%= formatDateTime('starts_at') %>" 
-                required />
-        <% if (errors.StartsAt) { %><div class="invalid-feedback"><%= errors.StartsAt %></div><% } %>
+                    return date.toISOString().split('T')[0];
+                };
+            %>
 
+            <!-- EVENT SELECT -->
+            <label for="EventID">Event</label>
+            <select id="EventID" 
+                    name="EventID" 
+                    required 
+                    class="<%= errors.EventID ? 'input-error' : '' %>">
 
-        <label for="EventDateTimeEnd" class="form-label mt-3">End Date & Time</label>
-        <input id="EventDateTimeEnd" 
-                type="datetime-local" 
-                name="EventDateTimeEnd" 
-                class="form-control <%= errors.EndsAt ? 'is-invalid' : '' %>" 
-                value="<%= formatDateTime('ends_at') %>" 
-                />
-        <% if (errors.EndsAt) { %><div class="invalid-feedback"><%= errors.EndsAt %></div><% } %>
+                <% events.forEach(e => { %>
+                    <% const isSelected = String(e.event_id) === String(data.event_id); %>
+                    <option value="<%= e.event_id %>" <%= isSelected ? "selected" : "" %>>
+                        <%= e.name %> — <%= e.type %>
+                    </option>
+                <% }) %>
+            </select>
 
+            <% if (errors.EventID) { %>
+                <p class="error-text"><%= errors.EventID %></p>
+            <% } %>
 
-        <label for="EventLocation" class="form-label mt-3">Location</label>
-        <input id="EventLocation" 
-                type="text" 
-                name="EventLocation" 
-                class="form-control"
-                value="<%= data.location || '' %>" 
-                required />
+            <!-- START DATETIME -->
+            <label for="EventDateTimeStart">Start Date & Time</label>
+            <input id="EventDateTimeStart"
+                   type="datetime-local"
+                   name="EventDateTimeStart"
+                   value="<%= formatDateTime('starts_at') %>"
+                   required 
+                   class="<%= errors.StartsAt ? 'input-error' : '' %>" />
 
-        <label for="EventCapacity" class="form-label mt-3">Capacity</label>
-        <input id="EventCapacity" 
-                type="number" 
-                min="1" 
-                name="EventCapacity" 
-                class="form-control <%= errors.EventCapacity ? 'is-invalid' : '' %>"
-                value="<%= data.capacity || '' %>" 
-                required />
-        <% if (errors.EventCapacity) { %><div class="invalid-feedback"><%= errors.EventCapacity %></div><% } %>
+            <% if (errors.StartsAt) { %>
+                <p class="error-text"><%= errors.StartsAt %></p>
+            <% } %>
 
+            <!-- END DATETIME -->
+            <label for="EventDateTimeEnd">End Date & Time</label>
+            <input id="EventDateTimeEnd"
+                   type="datetime-local"
+                   name="EventDateTimeEnd"
+                   value="<%= formatDateTime('ends_at') %>"
+                   class="<%= errors.EndsAt ? 'input-error' : '' %>" />
 
-        <label for="EventRegistrationDeadline" class="form-label mt-3">Registration Deadline</label>
-        <input id="EventRegistrationDeadline" 
-                type="date" 
-                name="EventRegistrationDeadline" 
-                class="form-control <%= errors.RegDeadline ? 'is-invalid' : '' %>" 
-                value="<%= formatDate('registration_deadline') %>" 
-                required />
-        <% if (errors.RegDeadline) { %><div class="invalid-feedback"><%= errors.RegDeadline %></div><% } %>
+            <% if (errors.EndsAt) { %>
+                <p class="error-text"><%= errors.EndsAt %></p>
+            <% } %>
 
+            <!-- LOCATION -->
+            <label for="EventLocation">Location</label>
+            <input id="EventLocation"
+                   type="text"
+                   name="EventLocation"
+                   value="<%= data.location || '' %>"
+                   required />
 
-        <div class="d-flex gap-3 mt-4">
-            <button class="btn btn-primary">Save Changes</button>
-            
-            <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>" class="btn btn-secondary">Cancel</a>
-        </div>
+            <!-- CAPACITY -->
+            <label for="EventCapacity">Capacity</label>
+            <input id="EventCapacity"
+                   type="number"
+                   name="EventCapacity"
+                   min="1"
+                   value="<%= data.capacity || '' %>"
+                   required 
+                   class="<%= errors.EventCapacity ? 'input-error' : '' %>" />
 
-    </form>
+            <% if (errors.EventCapacity) { %>
+                <p class="error-text"><%= errors.EventCapacity %></p>
+            <% } %>
+
+            <!-- REGISTRATION DEADLINE -->
+            <label for="EventRegistrationDeadline">Registration Deadline</label>
+            <input id="EventRegistrationDeadline"
+                   type="date"
+                   name="EventRegistrationDeadline"
+                   value="<%= formatDate('registration_deadline') %>"
+                   required 
+                   class="<%= errors.RegDeadline ? 'input-error' : '' %>" />
+
+            <% if (errors.RegDeadline) { %>
+                <p class="error-text"><%= errors.RegDeadline %></p>
+            <% } %>
+
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">Save Changes</button>
+                <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>" 
+                   class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
+
+        </form>
+    </div>
 </div>
