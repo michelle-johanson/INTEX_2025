@@ -2,23 +2,21 @@ const express = require("express");
 const router = express.Router();
 
 const { requireAdmin, requireLogin } = require("../middleware/auth");
-
-// MODELS
 const EventOccurrences = require("../models/eventOccurrences");
 const Events = require("../models/events");
-const Registrations = require("../models/registrations"); 
+const Registrations = require("../models/registrations");
 const SurveyResponses = require("../models/surveys");
 
-
-/* ============================================================
-   1. LIST ROUTE (Index)
-============================================================ */
+/* GET /eventOccurrences — list all occurrences (supports search) */
 router.get("/", requireLogin, async (req, res) => {
     try {
-        const occurrences = await EventOccurrences.getAll();
+        const query = req.query.q || "";
+        const occurrences = await EventOccurrences.getAll(query);
+
         res.render("eventOccurrences/index", {
             title: "Event Occurrences",
-            occurrences
+            occurrences,
+            query
         });
     } catch (err) {
         console.error(err);
@@ -26,21 +24,16 @@ router.get("/", requireLogin, async (req, res) => {
     }
 });
 
-
-/* ============================================================
-   2. CREATE ROUTES (MUST BE BEFORE /:id)
-============================================================ */
-
-// GET Form to Create New Occurrence
+/* GET /eventOccurrences/new — new occurrence form */
 router.get("/new", requireAdmin, async (req, res) => {
     try {
-        const events = await Events.getAll(); 
-        const preSelectedEventId = req.query.event_id;
+        const events = await Events.getAll();
+        const selectedEventId = req.query.event_id || "";
 
         res.render("eventOccurrences/new", {
             title: "Schedule New Occurrence",
-            events: events,
-            selectedEventId: preSelectedEventId || "",
+            events,
+            selectedEventId,
             errors: {},
             formData: {}
         });
@@ -50,10 +43,9 @@ router.get("/new", requireAdmin, async (req, res) => {
     }
 });
 
-// POST Create New Occurrence
+/* POST /eventOccurrences/new — create occurrence */
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        // 1. Map Form Fields to DB Schema
         const dbData = {
             event_id: req.body.EventID,
             starts_at: req.body.EventDateTimeStart,
@@ -63,47 +55,43 @@ router.post("/new", requireAdmin, async (req, res) => {
             registration_deadline: req.body.EventRegistrationDeadline
         };
 
-        // --- VALIDATION LOGIC ---
         const errors = {};
         const start = new Date(dbData.starts_at);
         const end = new Date(dbData.ends_at);
-        
-        const startDateString = dbData.starts_at ? dbData.starts_at.split('T')[0] : "";
+
+        const startDateString = dbData.starts_at ? dbData.starts_at.split("T")[0] : "";
         const deadlineString = dbData.registration_deadline || "";
 
         if (dbData.ends_at && start >= end) {
             errors.EndsAt = "End time must be after the start time.";
         }
-        
+
         if (deadlineString && startDateString && deadlineString > startDateString) {
             errors.RegistrationDeadline = "Registration deadline cannot be after the event start date.";
         }
 
         if (Object.keys(errors).length > 0) {
             const events = await Events.getAll();
-            
-            // For 'new' view, we use PascalCase keys because new.ejs expects them
-            const formDataForView = {
+
+            const formData = {
                 EventID: req.body.EventID,
                 EventLocation: req.body.EventLocation,
                 EventCapacity: req.body.EventCapacity,
-                EventDateTimeStart: "", 
+                EventDateTimeStart: "",
                 EventDateTimeEnd: "",
                 EventRegistrationDeadline: ""
             };
 
             return res.render("eventOccurrences/new", {
                 title: "Schedule New Occurrence",
-                events: events,
+                events,
                 selectedEventId: req.body.EventID,
-                errors: errors,
-                formData: formDataForView
+                errors,
+                formData
             });
         }
-        // ------------------------
 
         await EventOccurrences.create(dbData);
-
         res.redirect(`/events/${dbData.event_id}`);
 
     } catch (err) {
@@ -112,50 +100,41 @@ router.post("/new", requireAdmin, async (req, res) => {
     }
 });
 
-
-/* ============================================================
-   3. SPECIFIC ID ROUTES (Show, Edit, Delete)
-   (These must come AFTER /new)
-============================================================ */
-
-// SHOW OCCURRENCE DETAILS
+/* GET /eventOccurrences/:id — view single occurrence */
 router.get("/:id", requireLogin, async (req, res) => {
     try {
-        const occurrenceId = req.params.id;
-        const participantId = req.session.userID; 
-        
+        const id = req.params.id;
+        const participantId = req.session.user_id;
+
         const flashMessage = req.session.flashMessage;
-        if (req.session.flashMessage) delete req.session.flashMessage;
+        if (flashMessage) delete req.session.flashMessage;
 
-        const occurrence = await EventOccurrences.getById(occurrenceId);
-
-        if (!occurrence) {
-            return res.status(404).send("Event occurrence not found");
-        }
+        const occurrence = await EventOccurrences.getById(id);
+        if (!occurrence) return res.status(404).send("Occurrence not found");
 
         let registrationStatus = null;
         let hasAttended = false;
         let hasSubmittedSurvey = false;
 
         if (req.session.isLoggedIn && participantId) {
-            const reg = await Registrations.getByIds(occurrenceId, participantId);
+            const reg = await Registrations.getByIds(id, participantId);
             registrationStatus = reg ? reg.status : null;
-            
-            hasAttended = await Registrations.checkIfAttended(occurrenceId, participantId);
-            hasSubmittedSurvey = await SurveyResponses.checkIfSubmitted(occurrenceId, participantId);
+
+            hasAttended = await Registrations.checkIfAttended(id, participantId);
+            hasSubmittedSurvey = await SurveyResponses.checkIfSubmitted(id, participantId);
         }
-        
+
         const showSurveyButton = hasAttended && !hasSubmittedSurvey;
 
         res.render("eventOccurrences/show", {
             title: occurrence.event_name,
             occurrence,
             session: req.session,
-            registrationStatus: registrationStatus,
-            flashMessage: flashMessage,
-            hasAttended: hasAttended, 
-            hasSubmittedSurvey: hasSubmittedSurvey,
-            showSurveyButton: showSurveyButton 
+            registrationStatus,
+            flashMessage,
+            hasAttended,
+            hasSubmittedSurvey,
+            showSurveyButton
         });
 
     } catch (err) {
@@ -164,38 +143,29 @@ router.get("/:id", requireLogin, async (req, res) => {
     }
 });
 
-/* ============================================================
-   EDIT ROUTES
-============================================================ */
-
-// GET Edit Form
+/* GET /eventOccurrences/:id/edit — edit form */
 router.get("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const occurrence = await EventOccurrences.getById(req.params.id);
+        if (!occurrence) return res.status(404).send("Occurrence not found");
+
         const events = await Events.getAll();
 
-        if (!occurrence) {
-            return res.status(404).send("Occurrence not found");
-        }
-
-        // FIX: Pass empty formData. 
-        // The View logic: `const data = formData ... ? formData : occurrence;`
-        // By sending empty formData, the View will use 'occurrence' (the DB record),
-        // which has the correct keys (starts_at, location) populated.
         res.render("eventOccurrences/edit", {
             title: "Edit Occurrence",
             occurrence,
             events,
             errors: {},
-            formData: {} 
+            formData: {}
         });
+
     } catch (err) {
         console.error("Error loading edit form:", err);
         res.status(500).send("Error loading edit form");
     }
 });
 
-// POST Update Occurrence
+/* POST /eventOccurrences/:id/edit — update occurrence */
 router.post("/:id/edit", requireAdmin, async (req, res) => {
     try {
         const dbData = {
@@ -207,18 +177,17 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
             registration_deadline: req.body.EventRegistrationDeadline
         };
 
-        // --- VALIDATION LOGIC ---
         const errors = {};
         const start = new Date(dbData.starts_at);
         const end = new Date(dbData.ends_at);
-        
-        const startDateString = dbData.starts_at ? dbData.starts_at.split('T')[0] : "";
+
+        const startDateString = dbData.starts_at ? dbData.starts_at.split("T")[0] : "";
         const deadlineString = dbData.registration_deadline || "";
 
         if (dbData.ends_at && start >= end) {
             errors.EndsAt = "End time must be after the start time.";
         }
-        
+
         if (deadlineString && startDateString && deadlineString > startDateString) {
             errors.RegistrationDeadline = "Registration deadline cannot be after the event start date.";
         }
@@ -226,15 +195,12 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
         if (Object.keys(errors).length > 0) {
             const events = await Events.getAll();
             const originalOccurrence = await EventOccurrences.getById(req.params.id);
-            
-            // FIX: Map the inputs back to snake_case keys (location, capacity, etc.)
-            // The Edit View expects these keys to match the 'occurrence' object structure.
-            const formDataForView = {
+
+            const formData = {
                 event_id: req.body.EventID,
                 location: req.body.EventLocation,
                 capacity: req.body.EventCapacity,
-                // Dates cleared as requested on error
-                starts_at: "", 
+                starts_at: "",
                 ends_at: "",
                 registration_deadline: ""
             };
@@ -242,15 +208,13 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
             return res.render("eventOccurrences/edit", {
                 title: "Edit Occurrence",
                 occurrence: originalOccurrence,
-                events: events,
-                errors: errors,
-                formData: formDataForView 
+                events,
+                errors,
+                formData
             });
         }
-        // ------------------------
 
         await EventOccurrences.update(req.params.id, dbData);
-
         res.redirect(`/eventOccurrences/${req.params.id}`);
 
     } catch (err) {
@@ -259,22 +223,22 @@ router.post("/:id/edit", requireAdmin, async (req, res) => {
     }
 });
 
-// DELETE OCCURRENCE
+/* POST /eventOccurrences/:id/delete — delete occurrence */
 router.post("/:id/delete", requireAdmin, async (req, res) => {
     try {
-        const occurrenceToDelete = await EventOccurrences.getById(req.params.id);
-        const parentEventId = occurrenceToDelete ? occurrenceToDelete.event_id : null;
-        
-        await Registrations.deleteByOccurrenceId(req.params.id); 
-        await SurveyResponses.deleteByOccurrenceId(req.params.id); 
-        
+        const occurrence = await EventOccurrences.getById(req.params.id);
+        const parentEventId = occurrence ? occurrence.event_id : null;
+
+        await Registrations.deleteByOccurrenceId(req.params.id);
+        await SurveyResponses.deleteByOccurrenceId(req.params.id);
         await EventOccurrences.delete(req.params.id);
-        
+
         if (parentEventId) {
             return res.redirect(`/events/${parentEventId}`);
-        } else {
-            return res.redirect("/eventOccurrences");
         }
+
+        res.redirect("/eventOccurrences");
+
     } catch (err) {
         console.error("ERROR DELETING OCCURRENCE:", err);
         res.status(500).send("Error deleting occurrence");

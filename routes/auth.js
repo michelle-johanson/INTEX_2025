@@ -2,45 +2,35 @@ const express = require("express");
 const router = express.Router();
 
 const Users = require("../models/users");
-const Participants = require("../models/participants"); 
+const Participants = require("../models/participants");
 
-/* ============================================================
-   LOGIN FORM
-============================================================ */
+/* GET /auth/login — login form */
 router.get("/login", (req, res) => {
-    // Retrieve and clear flash data (if any)
-    const error = req.session.loginError;
+    const error = req.session.loginError || null;
     delete req.session.loginError;
-    
+
     res.render("auth/login", {
         title: "Login",
-        error: error || null,
-        hideFooter: true  // KEEP THIS LINE (your branch)
+        error,
+        hideFooter: true
     });
 });
 
-
-/* ============================================================
-   LOGIN SUBMIT
-============================================================ */
+/* POST /auth/login — submit login */
 router.post("/login", async (req, res) => {
-    
-    const { username, password } = req.body; 
+    const { username, password } = req.body;
 
     try {
         const user = await Users.validateCredentials(username, password);
 
         if (!user) {
             req.session.loginError = "Invalid email or password.";
-            return res.redirect("/auth/login"); 
+            return res.redirect("/auth/login");
         }
 
-        // Setting session data
-        req.session.userID = user.participant_id; 
-        req.session.user_id = user.participant_id; 
-        
-        // STORE FULL USER OBJECT (Helpful for donations/profile access)
-        req.session.user = user; 
+        // Session setup
+        req.session.user_id = user.participant_id;
+        req.session.user = user;
 
         req.session.isLoggedIn = true;
         req.session.username = user.email;
@@ -48,15 +38,15 @@ router.post("/login", async (req, res) => {
         req.session.lastname = user.last_name;
         req.session.access_level = user.role;
 
-        // --- NEW: CHECK FOR PENDING DONATION ---
+        // Pending donation redirection
         if (req.session.pendingDonation) {
-            return req.session.save(() => {
-                res.redirect("/donations/new");
-            });
+            return req.session.save(() => res.redirect("/donations/new"));
         }
-        // ---------------------------------------
 
-        res.redirect("/");
+        const redirectTo = req.session.returnTo || "/";
+        delete req.session.returnTo;
+
+        res.redirect(redirectTo);
 
     } catch (err) {
         console.error(err);
@@ -65,46 +55,40 @@ router.post("/login", async (req, res) => {
     }
 });
 
-/* ============================================================
-   SIGNUP FORM (GET)
-============================================================ */
+/* GET /auth/signup — signup form */
 router.get("/signup", (req, res) => {
-    const sessionErrors = req.session.errors;
+    const errors = req.session.errors || {};
+    const formData = req.session.formData || {};
+
     delete req.session.errors;
-    const sessionFormData = req.session.formData;
     delete req.session.formData;
 
     res.render("auth/signup", {
         title: "Sign Up",
-        errors: sessionErrors || {},
-        formData: sessionFormData || {}
+        errors,
+        formData
     });
 });
 
-/* ============================================================
-   SIGNUP SUBMIT (POST)
-============================================================ */
+/* POST /auth/signup — create new user */
 router.post("/signup", async (req, res) => {
-    const { 
-        email, first_name, last_name, dob, phone, city, state, zip, 
-        school_or_employer, field_of_interest, password, confirm_password 
+    const {
+        email, first_name, last_name, dob, phone, city, state, zip,
+        school_or_employer, field_of_interest, password, confirm_password
     } = req.body;
-    
+
     const errors = {};
 
     if (!first_name) errors.first_name = "First name is required.";
     if (!last_name) errors.last_name = "Last name is required.";
-    
-    if (password.length < 6) errors.password = "Password must be at least 6 characters long.";
+    if (password.length < 6) errors.password = "Password must be at least 6 characters.";
     if (password !== confirm_password) errors.confirm_password = "Passwords do not match.";
 
     try {
-        const existingUser = await Participants.findByEmail(email); 
-        if (existingUser) {
-            errors.email = "This email is already registered.";
-        }
-    } catch (dbErr) {
-        console.error("Signup DB Check Error:", dbErr);
+        const existingUser = await Participants.findByEmail(email);
+        if (existingUser) errors.email = "This email is already registered.";
+    } catch (err) {
+        console.error("Signup check error:", err);
         errors.general = "A server error occurred during validation.";
     }
 
@@ -115,29 +99,26 @@ router.post("/signup", async (req, res) => {
     }
 
     try {
-        const newParticipant = {
-            email: email,
-            first_name: first_name,
-            last_name: last_name,
-            dob: dob || null, 
+        const newUser = {
+            email,
+            first_name,
+            last_name,
+            dob: dob || null,
             phone: phone || null,
             city: city || null,
             state: state || null,
             zip: zip || null,
             school_or_employer: school_or_employer || null,
             field_of_interest: field_of_interest || null,
-            password: password, 
-            role: 'participant' 
+            password,
+            role: "participant"
         };
 
-        const result = await Participants.create(newParticipant);
-        const user = result[0] || result; 
+        const created = await Participants.create(newUser);
+        const user = created[0] || created;
 
-        // Set session data
-        req.session.userID = user.participant_id; 
-        req.session.user_id = user.participant_id; 
-        
-        // STORE FULL USER OBJECT
+        // Session setup
+        req.session.user_id = user.participant_id;
         req.session.user = user;
 
         req.session.isLoggedIn = true;
@@ -146,27 +127,22 @@ router.post("/signup", async (req, res) => {
         req.session.lastname = user.last_name;
         req.session.access_level = user.role;
 
-        // --- NEW: CHECK FOR PENDING DONATION ---
+        // Pending donation redirection
         if (req.session.pendingDonation) {
-            return req.session.save(() => {
-                res.redirect("/donations/new");
-            });
+            return req.session.save(() => res.redirect("/donations/new"));
         }
-        // ---------------------------------------
 
-        return res.redirect("/"); 
-        
+        res.redirect("/");
+
     } catch (err) {
-        console.error("Signup Creation Error:", err);
-        req.session.errors = { general: "Failed to create account due to an internal error." };
+        console.error("Signup creation error:", err);
+        req.session.errors = { general: "Internal error creating account." };
         req.session.formData = req.body;
-        return res.redirect("/auth/signup");
+        res.redirect("/auth/signup");
     }
 });
 
-/* ============================================================
-   LOGOUT
-============================================================ */
+/* GET /auth/logout — destroy session */
 router.get("/logout", (req, res) => {
     req.session.destroy(() => {
         res.redirect("/auth/login");

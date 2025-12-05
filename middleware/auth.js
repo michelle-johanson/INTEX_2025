@@ -4,6 +4,7 @@ function requireLogin(req, res, next) {
     if (!req.session.isLoggedIn) {
         // Optional: Add a message if they are not logged in
         req.session.message = "Please log in to view that page.";
+        req.session.returnTo = req.originalUrl;
         return res.redirect("/auth/login");
     }
     next();
