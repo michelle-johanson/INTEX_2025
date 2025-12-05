@@ -28,6 +28,9 @@
                 <tr>
                     <th>Title</th>
                     <th>Date</th>
+                    <!-- <% if (isManager) { %>
+                    <th></th>
+                    <% } %> -->
                     <th></th>
                 </tr>
             </thead>
@@ -42,7 +45,7 @@
                         </td>
 
                         <td class="table-actions">
-                            <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>">View</a>
+                            <!-- <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>">View</a> -->
 
                             <% if (isManager) { %>
                                 <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/edit">Edit</a>
