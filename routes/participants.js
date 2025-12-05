@@ -3,169 +3,154 @@ const router = express.Router();
 
 const { requireAdmin, requireLogin } = require("../middleware/auth");
 const Participants = require("../models/participants");
-// We need the Registrations model to fetch the event list
-const Registrations = require("../models/registrations"); 
+const Registrations = require("../models/registrations");
 
-/* ============================================================
-   LIST PARTICIPANTS (With Search)
-============================================================ */
+/* GET /participants — list participants (supports search for managers) */
 router.get("/", requireLogin, async (req, res) => {
-    try {
-        const role = (req.session.access_level || "").toLowerCase();
-        
-        // 1. Capture the search term from the URL (e.g. ?search=Maria)
-        const searchQuery = req.query.search || "";
+    try {
+        const role = (req.session.access_level || "").toLowerCase();
+        const q = req.query.q || "";
 
-        // SCENARIO 1: MANAGER - Show Directory
-        if (role === "manager" || role === "admin") {
-            // 2. Pass search term to the Model
-            const participants = await Participants.getAll(searchQuery);
-            
-            return res.render("participants/index", {
-                title: "Participant Directory",
-                participants,
-                searchTerm: searchQuery // 3. Send it back to the View
-            });
-        }
+        // Managers/Admins see the full directory
+        if (role === "manager" || role === "admin") {
+            const participants = await Participants.getAll(q);
+            return res.render("participants/index", {
+                title: "Participant Directory",
+                participants,
+                q
+            });
+        }
 
-        // SCENARIO 2: PARTICIPANT - Redirect to Profile
-        res.redirect(`/participants/${req.session.userID}`);
+        // Participants get redirected to their own profile
+        res.redirect(`/participants/${req.session.user_id}`);
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Database Error");
-    }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 });
 
-
-/* ============================================================
-   CREATE NEW PARTICIPANT (ADMIN ONLY)
-============================================================ */
+/* GET /participants/new — new participant form (admin only) */
 router.get("/new", requireAdmin, (req, res) => {
-    res.render("participants/new", {
-        title: "Add Participant"
-    });
+    res.render("participants/new", {
+        title: "Add Participant"
+    });
 });
 
+/* POST /participants/new — create participant (admin only) */
 router.post("/new", requireAdmin, async (req, res) => {
-    try {
-        const newParticipant = {
-            email: req.body.Email,
-            password: req.body.Password,
-            first_name: req.body.FirstName,
-            last_name: req.body.LastName,
-            dob: req.body.DOB || null,
-            role: "participant",
-            phone: req.body.Phone,
-            city: req.body.City,
-            state: req.body.State,
-            zip: req.body.Zip,
-            school_or_employer: req.body.SchoolOrEmployment,
-            field_of_interest: req.body.FieldOfInterest
-        };
+    try {
+        const newParticipant = {
+            email: req.body.Email,
+            password: req.body.Password,
+            first_name: req.body.FirstName,
+            last_name: req.body.LastName,
+            dob: req.body.DOB || null,
+            role: "participant",
+            phone: req.body.Phone,
+            city: req.body.City,
+            state: req.body.State,
+            zip: req.body.Zip,
+            school_or_employer: req.body.SchoolOrEmployment,
+            field_of_interest: req.body.FieldOfInterest
+        };
 
-        await Participants.create(newParticipant);
-        res.redirect("/participants");
+        await Participants.create(newParticipant);
+        res.redirect("/participants");
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error creating participant");
-    }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error creating participant");
+    }
 });
 
-
-/* ============================================================
-   EDIT PARTICIPANT (ADMIN ONLY)
-============================================================ */
+/* GET /participants/:id/edit — edit form (admin only) */
 router.get("/:id/edit", requireAdmin, async (req, res) => {
-    try {
-        const participant = await Participants.getById(req.params.id);
-        
-        if (!participant) return res.status(404).send("Participant not found");
+    try {
+        const participant = await Participants.getById(req.params.id);
+        if (!participant) return res.status(404).send("Participant not found");
 
-        res.render("participants/edit", {
-            title: "Edit Participant",
-            participant
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error fetching participant");
-    }
+        res.render("participants/edit", {
+            title: "Edit Participant",
+            participant
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error fetching participant");
+    }
 });
 
+/* POST /participants/:id/edit — update participant (admin only) */
 router.post("/:id/edit", requireAdmin, async (req, res) => {
-    try {
-        const updates = {
-            email: req.body.Email,
-            first_name: req.body.FirstName,
-            last_name: req.body.LastName,
-            dob: req.body.DOB || null,
-            role: req.body.Role,
-            phone: req.body.Phone,
-            city: req.body.City,
-            state: req.body.State,
-            zip: req.body.Zip,
-            school_or_employer: req.body.SchoolOrEmployment,
-            field_of_interest: req.body.FieldOfInterest
-        };
+    try {
+        const updates = {
+            email: req.body.Email,
+            first_name: req.body.FirstName,
+            last_name: req.body.LastName,
+            dob: req.body.DOB || null,
+            role: req.body.Role,
+            phone: req.body.Phone,
+            city: req.body.City,
+            state: req.body.State,
+            zip: req.body.Zip,
+            school_or_employer: req.body.SchoolOrEmployment,
+            field_of_interest: req.body.FieldOfInterest
+        };
 
-        await Participants.update(req.params.id, updates);
-        res.redirect("/participants");
+        await Participants.update(req.params.id, updates);
+        res.redirect("/participants");
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error updating participant");
-    }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating participant");
+    }
 });
 
-
-/* ============================================================
-   DELETE PARTICIPANT (ADMIN ONLY)
-============================================================ */
+/* POST /participants/:id/delete — delete participant (admin only) */
 router.post("/:id/delete", requireAdmin, async (req, res) => {
-    try {
-        await Participants.delete(req.params.id);
-        res.redirect("/participants");
-    } catch (err) {
-        if (err.code === '23503') {
-            return res.status(400).send("Cannot delete participant: They have associated records.");
-        }
-        console.error(err);
-        res.status(500).send("Error deleting participant");
-    }
+    try {
+        await Participants.delete(req.params.id);
+        res.redirect("/participants");
+
+    } catch (err) {
+        if (err.code === "23503") {
+            return res.status(400).send("Cannot delete participant: They have associated records.");
+        }
+        console.error(err);
+        res.status(500).send("Error deleting participant");
+    }
 });
 
-
-/* ============================================================
-   SHOW SINGLE PARTICIPANT (PROFILE) - UPDATED TO FETCH EVENTS
-============================================================ */
+/* GET /participants/:id — view participant profile */
 router.get("/:id", requireLogin, async (req, res) => {
-    try {
-        const participantId = req.params.id;
-        const participant = await Participants.getById(participantId);
-        
-        if (!participant) return res.status(404).send("Participant not found");
+    try {
+        const participantId = req.params.id;
+        const participant = await Participants.getById(participantId);
+        if (!participant) return res.status(404).send("Participant not found");
 
-        // NEW LOGIC: Fetch all registered events for this participant (using ID from URL)
-        const registeredEvents = await Registrations.getByParticipant(participantId);
+        const registeredEvents = await Registrations.getByParticipant(participantId);
 
-        const role = (req.session.access_level || "").toLowerCase();
-        const isAuthorized = (role === 'manager' || role === 'admin') || 
-                             (String(req.session.userID) === String(participant.participant_id));
+        const role = (req.session.access_level || "").toLowerCase();
+        const isAuthorized =
+            role === "manager" ||
+            role === "admin" ||
+            String(req.session.user_id) === String(participant.participant_id);
 
-        if (!isAuthorized) {
-            return res.status(403).send("Unauthorized Access");
-        }
+        if (!isAuthorized) {
+            return res.status(403).send("Unauthorized Access");
+        }
 
-        res.render("participants/show", {
-            title: "Participant Details",
-            participant,
-            registeredEvents: registeredEvents // PASS CORRECT DATA TO VIEW
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error loading details");
-    }
+        res.render("participants/show", {
+            title: "Participant Details",
+            participant,
+            registeredEvents
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading details");
+    }
 });
 
 module.exports = router;

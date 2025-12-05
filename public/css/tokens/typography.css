@@ -1,11 +1,11 @@
-/* =====================================
-    TYPOGRAPHY TOKENS (public/css/tokens/typography.css)
-===================================== */
+/* ============================================================
+   TYPOGRAPHY TOKENS & GLOBAL TEXT STYLES
+============================================================ */
 
 /* FONT IMPORTS */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
 
-/* FONT FAMILIES */
+/* FONT FAMILIES & TOKEN SETUP */
 :root {
     --font-heading: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
     --font-body: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
@@ -15,42 +15,55 @@
     --font-size-base: 16px;
     --font-size-body: 1rem;
     --font-size-h1: 3rem;
-    --font-size-h2: 2rem;
+    --font-size-h2: 3rem;
     --font-size-h3: 1.5rem;
+    --font-size-h4: 1.25rem;
+    --font-size-h5: 1.1rem;
 
     /* RESPONSIVE SIZES */
     --font-size-h1-mobile: 2.2rem;
-    --font-size-h2-mobile: 1.75rem;
+    --font-size-h2-mobile: 2.0rem;
 
     /* LINE HEIGHTS */
     --line-height-body: 1.7;
     --line-height-heading: 1.25;
 
     /* LETTER SPACING */
-    --letter-spacing-h1: 0.3px;
+    --letter-spacing-h1: 1px;
+    --letter-spacing-uppercase: 0.8px;
     --letter-spacing-normal: 0px;
+
+    /* UNDERLINE DECORATION FOR H1 */
+    --h1-underline-width: 180px;
+    --h1-underline-height: 3px;
+    --h1-underline-color: var(--text-dark);
+
+    /* LINK COLORS (missing in original) */
+    --link-color: var(--rose);
+    --link-hover-color: var(--charcoal);
 }
 
+/* ============================================================
+   BASE HTML STYLES
+============================================================ */
 
-/* =====================================
-    GLOBAL TYPOGRAPHY
-===================================== */
-
-/* BASE HTML */
 html {
     font-size: var(--font-size-base);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* BODY */
 body {
     font-family: var(--font-body);
     color: var(--text-dark);
     line-height: var(--line-height-body);
 }
 
-/* HEADINGS */
+
+/* ============================================================
+   HEADINGS (GLOBAL)
+============================================================ */
+
 h1,
 h2,
 h3,
@@ -58,33 +71,93 @@ h4,
 h5,
 h6 {
     font-family: var(--font-heading);
-    font-weight: 400;
-    color: var(--text-dark);
     margin: 0 0 var(--space-2);
     line-height: var(--line-height-heading);
-    text-align: center;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--text-dark);
 }
 
-/* H1 */
+
+/* ============================================================
+   H1 — PAGE TITLES
+   Large, centered, uppercase, bold, decorative underline
+============================================================ */
+
 h1 {
     font-size: var(--font-size-h1);
+    font-weight: 500;
+    text-align: center;
+    text-transform: uppercase;
     letter-spacing: var(--letter-spacing-h1);
+    position: relative;
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-6);   /* increase spacing under page title */
 }
 
-/* H2 */
+/* decorative underline */
+h1::after {
+    content: "";
+    display: block;
+    width: var(--h1-underline-width);
+    height: var(--h1-underline-height);
+    background: var(--h1-underline-color);
+    margin: var(--space-3) auto 0;
+    border-radius: 999px;
+}
+
+
+/* ============================================================
+   H2 — SECTION TITLES, CARD TITLES
+   Centered, uppercase, no underline
+============================================================ */
+
 h2 {
     font-size: var(--font-size-h2);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-uppercase);
 }
 
-/* H3 */
+
+/* ============================================================
+   H3 — SUBHEADINGS
+   Medium, left-aligned, uppercase
+============================================================ */
+
 h3 {
     font-size: var(--font-size-h3);
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-uppercase);
+}
+
+
+/* ============================================================
+   H4 — Medium, centered, NO uppercase
+============================================================ */
+
+h4 {
+    font-size: var(--font-size-h4);
+    text-align: center;
     text-transform: none;
 }
 
-/* PARAGRAPHS */
+
+/* ============================================================
+   H5 — Medium, left-aligned, NO uppercase
+============================================================ */
+
+h5 {
+    font-size: var(--font-size-h5);
+    text-align: left;
+    text-transform: none;
+}
+
+
+/* ============================================================
+   PARAGRAPHS
+============================================================ */
+
 p {
     font-size: var(--font-size-body);
     line-height: var(--line-height-body);
@@ -92,10 +165,13 @@ p {
     text-align: center;
 }
 
-/* LINKS */
+
+/* ============================================================
+   LINKS
+============================================================ */
+
 a {
     color: var(--link-color);
-    /* #TO-DO: define link-color */
     text-decoration: none;
     font-weight: 500;
     transition: var(--transition);
@@ -103,11 +179,14 @@ a {
 
 a:hover {
     color: var(--link-hover-color);
-    /* #TO-DO: define link-hover-color */
     text-decoration: underline;
 }
 
-/* RESPONSIVE TYPOGRAPHY */
+
+/* ============================================================
+   RESPONSIVE TYPOGRAPHY
+============================================================ */
+
 @media (max-width: 768px) {
     h1 {
         font-size: var(--font-size-h1-mobile);

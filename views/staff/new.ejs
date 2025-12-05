@@ -1,24 +1,28 @@
 <div class="page-container">
-    <h1 class="page-title">Create New Admin Account</h1>
+    <div class="page-card-form">
 
-    <form action="/staff/new" method="POST" class="form">
-        
-        <label for="first_name">First Name (Required)</label>
-        <input type="text" id="first_name" name="first_name" required>
+        <h1 class="page-title">Create New Admin Account</h1>
 
-        <label for="last_name">Last Name (Required)</label>
-        <input type="text" id="last_name" name="last_name" required>
+        <form action="/staff/new" method="POST" class="form">
 
-        <label for="email">Email (Required)</label>
-        <input type="email" id="email" name="email" required>
-        
-        <label for="password">Initial Password (Required)</label>
-        <input type="password" id="password" name="password" required>
+            <label for="first_name">First Name (Required)</label>
+            <input type="text" id="first_name" name="first_name" required>
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; -->
-        <div class="d-flex mt-3">
-            <button type="submit" class="btn btn-primary">Create Account</button>
-            <a href="/staff" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
+            <label for="last_name">Last Name (Required)</label>
+            <input type="text" id="last_name" name="last_name" required>
+
+            <label for="email">Email (Required)</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Initial Password (Required)</label>
+            <input type="password" id="password" name="password" required>
+
+            <div class="btn-wrapper">
+                <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+                <a href="/staff" class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
 </div>

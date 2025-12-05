@@ -116,7 +116,7 @@
             <!-- IF LOGGED IN, Show First Name or Username -->
             <div class="nav-item dropdown er-account-dropdown">
                 <a class="er-nav-link dropdown-toggle" href="#">
-                    <%= session.firstname || session.username %>
+                    <%= (session.firstname && session.lastname) ? `${session.firstname} ${session.lastname}`.trim() : session.username %>
                 </a>
                 <!-- DROPDOWN MENU -->
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -135,7 +135,7 @@
                 </ul>
             </div>
         <% } %>
-    </div> <!-- END OF er-navbar-left -->
+    </div> <!-- END OF er-navbar-right -->
 
     <!-- MOBILE HAMBURGER ICON -->
     <div class="er-navbar-hamburger" id="hamburger">

@@ -1,0 +1,175 @@
+/* ============================================================
+   TABLE SYSTEM — Clean, Token-Driven, Consistent
+   (Matches containers/forms/buttons patterns)
+============================================================ */
+
+:root {
+    /* Table spacing system */
+    --table-padding: 1.2rem;
+    --table-padding-compact: 0.8rem;
+
+    --table-control-width: 22.75rem;
+    --table-control-height: 2.75rem;
+}
+
+/* -------------------------------
+   WRAPPER (scroll + shadow)
+-------------------------------- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: var(--space-6) 0;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: white;
+}
+
+
+/* -------------------------------
+   BASE TABLE STRUCTURE
+-------------------------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 0.95rem;
+}
+
+
+/* -------------------------------
+   HEADER
+-------------------------------- */
+thead {
+    background: var(--blue);
+    /* pulled from your global palette */
+    color: white;
+}
+
+thead th {
+    padding: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* rounded corners on first/last */
+thead th:first-child {
+    border-top-left-radius: var(--radius);
+}
+
+thead th:last-child {
+    border-top-right-radius: var(--radius);
+}
+
+
+/* -------------------------------
+   CELL STYLING
+-------------------------------- */
+th,
+td {
+    padding: 0.85rem 1.2rem;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+
+/* -------------------------------
+   ZEBRA STRIPING
+-------------------------------- */
+tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+
+/* -------------------------------
+   ROW HOVER HIGHLIGHT
+-------------------------------- */
+tbody tr:hover {
+    background: var(--cream);
+    cursor: pointer;
+}
+
+
+/* -------------------------------
+   REMOVE BORDER ON LAST ROW
+-------------------------------- */
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* -------------------------------
+   ACTIONS INSIDE TABLE CELLS
+-------------------------------- */
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+
+/* -------------------------------
+   EMPTY STATE
+-------------------------------- */
+.table-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--charcoal);
+    font-style: italic;
+    opacity: 0.7;
+}
+
+
+/* -------------------------------
+   COMPACT MODE
+-------------------------------- */
+.table-compact th,
+.table-compact td {
+    padding: 0.55rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+
+/* -------------------------------
+   STICKY HEADER
+-------------------------------- */
+.table-sticky thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+/* ============================================================
+   TABLE CONTROLS LAYOUT
+============================================================ */
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: var(--space-4) 0 var(--space-2);
+    gap: var(--space-4);
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+/* Mobile layout: stack controls vertically */
+@media (max-width: 768px) {
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+    }
+
+    .search-form {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2);
+    }
+}

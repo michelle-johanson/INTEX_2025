@@ -1,78 +1,111 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Edit Registration</h1>
+        <h2 class="page-title">Edit Registration</h2>
 
-    <!-- Display Errors -->
-    <% if (typeof errors !== 'undefined' && Object.keys(errors).length > 0) { %>
-        <div class="alert alert-danger mb-3">
-            <p><strong>Please correct the following issues:</strong></p>
-            <ul style="padding-left: 20px; margin-bottom: 0;">
-                <% for (const key in errors) { %>
-                    <li><%= errors[key] %></li>
-                <% } %>
-            </ul>
-        </div>
-    <% } %>
+        <!-- ERROR DISPLAY -->
+        <% if (typeof errors !== 'undefined' && Object.keys(errors).length > 0) { %>
+            <div class="alert alert-danger mb-3">
+                <p><strong>Please correct the following issues:</strong></p>
+                <ul style="padding-left: 20px; margin-bottom: 0;">
+                    <% for (const key in errors) { %>
+                        <li><%= errors[key] %></li>
+                    <% } %>
+                </ul>
+            </div>
+        <% } %>
 
-    <form action="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit" 
-          method="POST" 
-          class="form">
+        <form action="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit"
+              method="POST"
+              class="form">
 
-        <% 
-            const data = typeof formData !== 'undefined' && Object.keys(formData).length > 0 ? formData : registration; 
-            
-            const formatDateTime = (key) => {
-                const dateString = data[key];
-                if (!dateString) return '';
+            <% 
+                const data =
+                    (typeof formData !== 'undefined' && Object.keys(formData).length > 0)
+                        ? formData
+                        : registration;
 
-                if (typeof formData !== 'undefined' && formData[key] === dateString) {
-                    return dateString;
-                }
-                
-                const date = new Date(dateString);
-                if (isNaN(date)) return '';
-                return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-            };
-        %>
+                // Convert DB datetime → input[type=datetime-local]
+                const formatDateTime = (key) => {
+                    const raw = data[key];
+                    if (!raw) return "";
 
-        <div class="mb-2" style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-            <strong>Event:</strong> <%= registration.event_name %><br>
-            <strong>Participant:</strong> <%= registration.first_name %> <%= registration.last_name %>
-        </div>
+                    // If the user already submitted a value, keep as-is
+                    if (typeof formData !== 'undefined' && formData[key] === raw) {
+                        return raw;
+                    }
 
-        <label for="RegistrationStatus">Status</label>
-        <div class="select-wrapper">
+                    const date = new Date(raw);
+                    if (isNaN(date)) return "";
+
+                    return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                        .toISOString()
+                        .slice(0, 16);
+                };
+            %>
+
+            <!-- META INFORMATION -->
+            <div class="detail-card mb-3">
+                <div class="detail-row">
+                    <span class="detail-label">Event</span>
+                    <span class="detail-value"><%= registration.event_name %></span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Participant</span>
+                    <span class="detail-value">
+                        <%= registration.first_name %> <%= registration.last_name %>
+                    </span>
+                </div>
+            </div>
+
+            <!-- STATUS FIELD -->
+            <label for="RegistrationStatus">Status</label>
             <select id="RegistrationStatus" name="RegistrationStatus">
-                <option value="Registered" <%= data.status === 'Registered' ? 'selected' : '' %>>Registered</option>
-                <option value="Waitlist" <%= data.status === 'Waitlist' ? 'selected' : '' %>>Waitlist</option>
-                <option value="Cancelled" <%= data.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                <option value="Registered" <%= data.status === 'Registered' ? 'selected' : '' %>>
+                    Registered
+                </option>
+                <option value="Waitlist" <%= data.status === 'Waitlist' ? 'selected' : '' %>>
+                    Waitlist
+                </option>
+                <option value="Cancelled" <%= data.status === 'Cancelled' ? 'selected' : '' %>>
+                    Cancelled
+                </option>
             </select>
-        </div>
-        
-        <!-- FIX 1: Removed hidden 'off' input to prevent array conflict ['off', 'on'] on server -->
 
-        <div class="my-3">
+            <!-- Hidden field ensures value on unchecked -->
+            <input type="hidden" name="RegistrationAttendedFlag" value="off">
+
+            <!-- ATTENDED CHECKBOX -->
             <div class="checkbox-row">
-                <input type="checkbox" 
+                <input type="checkbox"
                        id="RegistrationAttendedFlag"
-                       name="RegistrationAttendedFlag" 
-                       value="on" 
-                       <%= data.attended === true || data.RegistrationAttendedFlag === 'on' ? 'checked' : '' %>>
+                       name="RegistrationAttendedFlag"
+                       value="on"
+                       <%= data.attended === true || data.RegistrationAttendedFlag === 'on' ? "checked" : "" %> />
                 <label for="RegistrationAttendedFlag">Attended Event?</label>
             </div>
-        </div>
 
-        <label for="RegistrationCheckInTime">Check-In Time</label>
-        <!-- FIX 2: Removed comment from inside input tag to fix visual glitch -->
-        <input type="datetime-local" 
-               id="RegistrationCheckInTime"
-               name="RegistrationCheckInTime" 
-               value="<%= formatDateTime('check_in_time') %>" />
+            <!-- CHECK-IN TIME -->
+            <label for="RegistrationCheckInTime">Check-In Time</label>
+            <input 
+                id="RegistrationCheckInTime"
+                type="datetime-local" 
+                name="RegistrationCheckInTime"
+                value="<%= formatDateTime('check_in_time') %>"
+            />
 
-        <div class="d-flex mt-4" style="gap: 1rem; align-items: center;">
-            <button class="btn-submit">Save Changes</button>
-            <a href="/registrations/event/<%= registration.event_occurrence_id %>" style="color: #666; text-decoration: none;">Cancel</a>
-        </div>
-    </form>
+            <!-- ACTION BUTTONS -->
+            <div class="btn-wrapper" style="margin-top: 1.75rem;">
+                <button class="btn btn-primary btn-lg">Save Changes</button>
 
-</div>
+                <a href="/registrations/event/<%= registration.event_occurrence_id %>"
+                   class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</section>

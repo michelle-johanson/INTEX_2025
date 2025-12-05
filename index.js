@@ -33,29 +33,35 @@ app.use(session({
 // Session Locals & Flash Messages
 app.use((req, res, next) => {
     const s = req.session;
-    
-    // 1. GLOBAL VARIABLES (Accessible in all EJS files)
+
+    // --- TEAMMATE'S ROLE LOGIC (KEEP) ---
+    const rawRole = (s.access_level || "").toLowerCase();
+    const isManager = rawRole === "manager" || rawRole === "admin";
+
+    // --- SHARED SESSION VARIABLES (KEEP YOUR VERSION) ---
     res.locals.session = {
         isLoggedIn: s.isLoggedIn || false,
-        user_id: s.user_id || s.userID || null,
+        user_id: s.user_id || null,
         username: s.username || null,
         firstname: s.firstname || null,
         lastname: s.lastname || null,
-        access_level: s.access_level || null
+        access_level: s.access_level || null,
     };
 
-    // 2. FLASH MESSAGE LOGIC
-    // Check if there's a message in the session
+    // Provide role/manager flag to EJS globally
+    res.locals.isManager = isManager;
+
+    // Default EJS flag
+    res.locals.hideFooter = false;
+
+    // --- YOUR FLASH MESSAGE LOGIC (KEEP) ---
     const message = s.message;
-    
-    // Pass it to the view
     res.locals.message = message || null;
-    
-    // CLEAR IT from the session so it doesn't show up again
     delete s.message;
-    
+
     next();
 });
+
 
 /* ============================================================
    ROUTES (The "Switchboard")

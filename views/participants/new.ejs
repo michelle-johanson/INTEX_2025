@@ -1,69 +1,49 @@
 <div class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Add Participant</h1>
+        <h2>Add Participant</h2>
 
-    <form action="/participants/new" method="POST" class="form">
+        <form action="/participants/new" method="POST" class="form">
 
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="Email" required />
-        </div>
+            <label for="Email">Email</label>
+            <input id="Email" type="email" name="Email" required />
 
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="Password" placeholder="Create a login password" required />
-        </div>
+            <label for="Password">Password</label>
+            <input id="Password" type="password" name="Password" placeholder="Create a login password" required />
 
-        <div class="form-group">
-            <label>First Name</label>
-            <input type="text" name="FirstName" required />
-        </div>
+            <label for="FirstName">First Name</label>
+            <input id="FirstName" type="text" name="FirstName" required />
 
-        <div class="form-group">
-            <label>Last Name</label>
-            <input type="text" name="LastName" required />
-        </div>
+            <label for="LastName">Last Name</label>
+            <input id="LastName" type="text" name="LastName" required />
 
-        <div class="form-group">
-            <label>Date of Birth</label>
-            <input type="date" name="DOB" required />
-        </div>
+            <label for="DOB">Date of Birth</label>
+            <input id="DOB" type="date" name="DOB" required />
 
-        <div class="form-group">
-            <label>Phone</label>
-            <input type="text" name="Phone" />
-        </div>
+            <label for="Phone">Phone</label>
+            <input id="Phone" type="text" name="Phone" />
 
-        <div class="form-group">
-            <label>City</label>
-            <input type="text" name="City" />
-        </div>
+            <label for="City">City</label>
+            <input id="City" type="text" name="City" />
 
-        <div class="form-group">
-            <label>State</label>
-            <input type="text" name="State" />
-        </div>
+            <label for="State">State</label>
+            <input id="State" type="text" name="State" />
 
-        <div class="form-group">
-            <label>Zip Code</label>
-            <input type="text" name="Zip" />
-        </div>
+            <label for="Zip">Zip Code</label>
+            <input id="Zip" type="text" name="Zip" />
 
-        <div class="form-group">
-            <label>School or Employment</label>
-            <input type="text" name="SchoolOrEmployment" />
-        </div>
+            <label for="SchoolOrEmployment">School or Employment</label>
+            <input id="SchoolOrEmployment" type="text" name="SchoolOrEmployment" />
 
-        <div class="form-group">
-            <label>Field of Interest</label>
-            <input type="text" name="FieldOfInterest" />
-        </div>
+            <label for="FieldOfInterest">Field of Interest</label>
+            <input id="FieldOfInterest" type="text" name="FieldOfInterest" />
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
-            <button class="btn-submit">Create Participant</button>
-            <a href="/participants">Cancel</a>
-        </div>
-    </form>
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">Create Participant</button>
+                <a href="/participants" class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
 
+        </form>
+
+    </div>
 </div>

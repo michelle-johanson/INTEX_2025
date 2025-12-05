@@ -19,60 +19,11 @@
     /* TEXT */
     --text-dark: var(--charcoal);
     --text-light: #ffffff;
+    --text-muted: #999999;
 
     /* CARDS */
     --card-bg: #ffffff;
     --card-border: #e6e6e6;
-
-    /* =====================================
-        FORM SEMANTIC COLORS
-        All form colors must reference these,
-        not raw hex values.
-    ===================================== */
-
-    /* Default / idle */
-    --form-bg: #ffffff;
-    --form-border: var(--blue);
-    --form-text: var(--text-dark);
-
-    /* Focus (active typing) */
-    --form-focus-bg: #fff6d9;
-    --form-focus-border: #e8c46a;
-    --form-focus-shadow: rgba(232, 196, 106, 0.35);
-
-    /* Error (required + invalid) */
-    --form-error-bg: #fde8e8;
-    --form-error-border: #e49a9a;
-    --form-error-text: #8a1f1f;
-
-    /* Valid */
-    --form-valid-bg: #e7f7ea;
-    --form-valid-border: #9dd9a7;
-    --form-valid-text: #1f6b2e;
-
-    /* Checkboxes */
-    --checkmark-bg-color: black;
-    --checkmark-color: #ffffff;
-
-    /* =====================================
-        BUTTONS
-    ===================================== */
-    --btn-primary-bg: var(--rose);
-    --btn-primary-text: #ffffff;
-    --btn-primary-border: var(--rose);
-
-    --btn-primary-hover-bg: #b82b50;
-    --btn-primary-hover-text: #ffffff;
-    --btn-primary-hover-border: #b82b50;
-
-    /* TABLE DETAILS BUTTON */
-    --btn-details-bg: var(--lavender);
-    --btn-details-text: #ffffff;
-    --btn-details-border: var(--lavender);
-
-    --btn-details-hover-bg: #7aa9d7;
-    --btn-details-hover-text: #ffffff;
-    --btn-details-hover-border: #7aa9d7;
 
     /* ALERTS */
     --success-bg: #e7f7ea;

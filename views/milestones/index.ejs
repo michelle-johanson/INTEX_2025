@@ -1,75 +1,121 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="container-inner">
 
-    <h1 class="page-title"><%= typeof participantName !== 'undefined' ? participantName : 'My' %> Milestones</h1>
-
-    <% 
-        // 1. Robust Role Check
-        const isManager = typeof session !== 'undefined' && session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin");
-        
-        // 2. Determine Participant ID from the ROUTE's context variables.
-        // We assume the route passes a 'participant' object (if coming from /participant/:id)
-        // If not, we use the first item in the milestone list (old way).
-        const contextParticipant = (typeof participant !== 'undefined') ? participant : null;
-        
-        const currentParticipantId = contextParticipant ? contextParticipant.participant_id : (typeof milestones !== 'undefined' && milestones.length > 0 ? milestones[0].participant_id : '');
-    %>
-
-    <% if (isManager && currentParticipantId) { %>
-        <a href="/milestones/new?participant_id=<%= currentParticipantId %>" class="btn btn-primary btn-small mb-4">
-            + Add Milestone
-        </a>
-    <% } %>
-
-    <% if (typeof milestones === 'undefined' || milestones.length === 0) { %>
-        <p>No milestones recorded yet.</p>
-    <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Date</th>
-                    <!-- <% if (isManager) { %>
-                    <th></th>
-                    <% } %> -->
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% milestones.forEach(m => { %>
-                    <tr>
-                        <td><%= m.title %></td>
-                        
-                        <td>
-                            <%= m.achieved_date ? new Date(m.achieved_date).toLocaleDateString() : '' %>
-                        </td>
-
-                        <td class="table-actions">
-                            <!-- <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>">View</a> -->
-
-                            <% if (isManager) { %>
-                                <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/edit">Edit</a>
-
-                                <form action="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/delete" 
-                                      method="POST" 
-                                      style="display:inline;">
-                                    <button class="btn btn-danger btn-small">
-                                        Delete
-                                    </button>
-                                </form>
-                            <% } %>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
-
-    <% if (isManager) { %>
-        <div class="mt-4" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
-            <!-- LINK FIXED: Now points to /participants instead of /milestones -->
-            <a href="/participants" class="btn btn-secondary">← Back to Participant Directory</a>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title">
+                <%= typeof participantName !== 'undefined' ? participantName : 'My' %> Milestones
+            </h1>
+            <div class="heading-underline"></div>
         </div>
-    <% } %>
 
-</div>
+        <% 
+            // Role check
+            const isManager =
+                session?.access_level &&
+                (session.access_level.toLowerCase() === "manager" ||
+                 session.access_level.toLowerCase() === "admin");
+
+            // Participant context
+            const contextParticipant =
+                typeof participant !== 'undefined' ? participant : null;
+
+            const currentParticipantId =
+                contextParticipant
+                    ? contextParticipant.participant_id
+                    : (milestones?.length > 0 ? milestones[0].participant_id : null);
+        %>
+
+        <!-- ADD BUTTON (Managers Only) -->
+        <% if (isManager && currentParticipantId) { %>
+            <div class="btn-wrapper" style="margin-bottom: 1.5rem;">
+                <a href="/milestones/new?participant_id=<%= currentParticipantId %>"
+                   class="btn btn-primary btn-small">
+                    + Add Milestone
+                </a>
+            </div>
+        <% } %>
+
+        <!-- EMPTY STATE -->
+        <% if (!milestones || milestones.length === 0) { %>
+
+            <p>No milestones recorded yet.</p>
+
+        <% } else { %>
+
+            <!-- TABLE -->
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th style="width: 200px;"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% milestones.forEach(m => { %>
+                            <tr>
+
+                                <!-- Title -->
+                                <td><%= m.title %></td>
+
+                                <!-- Date -->
+                                <td>
+                                    <%= m.achieved_date 
+                                            ? new Date(m.achieved_date).toLocaleDateString() 
+                                            : '' %>
+                                </td>
+
+                                <!-- ACTIONS -->
+                                <td class="table-actions">
+
+                                    <!-- Always show VIEW -->
+                                    <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>"
+                                       class="btn btn-outline btn-table">
+                                        View
+                                    </a>
+
+                                    <% if (isManager) { %>
+
+                                        <!-- EDIT -->
+                                        <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/edit"
+                                           class="btn btn-edit btn-table">
+                                            Edit
+                                        </a>
+
+                                        <!-- DELETE -->
+                                        <form action="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/delete"
+                                              method="POST"
+                                              style="display:inline;">
+                                            <button class="btn btn-delete btn-table"
+                                                    onclick="return confirm('Delete this milestone?');">
+                                                Delete
+                                            </button>
+                                        </form>
+
+                                    <% } %>
+
+                                </td>
+
+                            </tr>
+                        <% }) %>
+                    </tbody>
+
+                </table>
+            </div>
+
+        <% } %>
+
+        <!-- BACK BUTTON (Manager Only) -->
+        <% if (isManager) { %>
+            <div class="btn-wrapper" style="margin-top: 2rem;">
+                <a href="/participants" class="btn btn-secondary btn-lg">
+                    ← Back to Participant Directory
+                </a>
+            </div>
+        <% } %>
+
+    </div>
+</section>

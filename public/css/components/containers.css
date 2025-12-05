@@ -1,0 +1,159 @@
+/* ============================================================
+   GLOBAL PAGE WRAPPER (layout.ejs)
+============================================================ */
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.page-wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-content {
+    flex: 1;
+}
+
+/* ============================================================
+   PAGE SECTIONS (FULL-WIDTH)
+============================================================ */
+
+/* STRUCTURAL FULL-WIDTH SECTION */
+.page-container {
+    width: 100%;
+    margin: 0;
+    padding: var(--space-8) 0;     /* padding stays INSIDE the section */
+    display: block;
+    box-sizing: border-box;
+}
+
+/* CENTERED INNER CONTENT */
+.container-inner {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 2rem;               /* prevent content from touching screen edges */
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+
+/* ============================================================
+   CARDS (unchanged styles)
+============================================================ */
+
+.page-card,
+.page-card-wide,
+.page-card-form {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    margin: var(--space-6) auto;
+    box-shadow: var(--shadow);
+}
+
+.page-card .btn,
+.page-card-wide .btn,
+.page-card-form .btn {
+    width: 50%;
+    display: block;
+    text-align: center;
+}
+
+.btn-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-wrapper form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.page-card {
+    max-width: 480px;
+}
+
+.page-card-form {
+    max-width: 600px;
+}
+
+.page-card-wide {
+    max-width: 900px;
+}
+
+
+/* ============================================================
+   SECTION HEADER (for pages w/ title + action row)
+============================================================ */
+
+.section-header {
+    width: 100%;
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
+    background: transparent;
+    text-align: center;
+}
+
+.section-header .heading-underline {
+    width: 192px;
+    height: 3px;
+    margin: var(--space-3) auto var(--space-6);
+    background: var(--text-dark);
+    border-radius: 999px;
+}
+
+.section-header .section-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.section-header .search-bar {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+
+/* ============================================================
+   EVENT DETAILS CARD (unchanged)
+============================================================ */
+
+.page-card-detail {
+    background: white;
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 2rem auto;
+}
+
+.page-card-detail h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.page-card-detail p {
+    font-size: 1rem;
+    text-align: left;
+    margin-bottom: 0.5rem;
+}
+

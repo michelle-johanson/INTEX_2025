@@ -1,28 +1,28 @@
 <div class="page-container">
+    <div class="page-card-form">
+        <h2>Create New Event Type</h2>
 
-    <h1 class="page-title">Create New Event Type</h1>
+        <form action="/events/new" method="POST" class="form">
 
-    <form action="/events/new" method="POST" class="form">
+            <label for="EventName">Event Name (Required)</label>
+            <input id="EventName" type="text" name="EventName" required />
 
-        <label for="EventName">Event Name (Required)</label>
-        <input id="EventName" type="text" name="EventName" required />
+            <label for="EventType">Event Type (e.g., Workshop, Mentoring)</label>
+            <input id="EventType" type="text" name="EventType" required />
 
-        <label for="EventType">Event Type (e.g., Workshop, Mentoring)</label>
-        <input id="EventType" type="text" name="EventType" required />
+            <label for="EventRecurrencePattern">Recurrence Pattern (e.g., Weekly, Monthly)</label>
+            <input id="EventRecurrencePattern" type="text" name="EventRecurrencePattern" />
 
-        <label for="EventRecurrencePattern">Recurrence Pattern (e.g., Weekly, Monthly)</label>
-        <input id="EventRecurrencePattern" type="text" name="EventRecurrencePattern" />
+            <label for="EventDescription">Description</label>
+            <textarea id="EventDescription" name="EventDescription" rows="3"></textarea>
 
-        <label for="EventDescription">Description</label>
-        <textarea id="EventDescription" name="EventDescription" rows="3"></textarea>
-        
-        <label for="EventDefaultCapacity">Default Capacity</label>
-        <input id="EventDefaultCapacity" type="number" name="EventDefaultCapacity" min="1" required />
+            <label for="EventDefaultCapacity">Default Capacity</label>
+            <input id="EventDefaultCapacity" type="number" name="EventDefaultCapacity" min="1" required />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
-            <button class="btn-submit">Create Event Type</button>
-            <a href="/events" style="text-decoration: none; color: #666;">Cancel</a>
-        </div>
-    </form>
-
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">Create Event Type</button>
+                <a href="/events" class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
 </div>

@@ -1,50 +1,65 @@
 <div class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Add Milestone</h1>
+        <h1 class="page-title">Add Milestone</h1>
 
-    <form action="/milestones/new" method="POST" class="form">
-        
-        <% 
-            // We assume 'participants' is passed but will only use the selected ID's info if it exists.
-            // Find the full participant object for display purposes
-            const selectedParticipant = participants.find(p => String(p.participant_id) === String(selectedId)) || {};
-        %>
+        <form action="/milestones/new" method="POST" class="form">
 
-        <% if (selectedId && selectedParticipant.first_name) { %>
-            <div style="background: #e9ecef; padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem;">
-                <span style="font-weight: bold;">Adding Milestone for:</span> 
-                <%= selectedParticipant.first_name %> <%= selectedParticipant.last_name %>
-                (ID #<%= selectedId %>)
-            </div>
-        <% } %>
+            <% 
+                const selectedParticipant =
+                    participants.find(p => String(p.participant_id) === String(selectedId)) || null;
+            %>
 
-        <input type="hidden" name="ParticipantID" value="<%= selectedId %>" required>
-
-
-        <label for="MilestoneTitle">Milestone Title</label>
-        <input id="MilestoneTitle" 
-               type="text" 
-               name="MilestoneTitle" 
-               placeholder="e.g. Completed Python Workshop"
-               required />
-
-        <label for="MilestoneDate">Milestone Date</label>
-        <input id="MilestoneDate" 
-               type="date" 
-               name="MilestoneDate" 
-               required />
-
-        <div class="d-flex mt-2" style="gap: 1rem; align-items: center;">
-            <button class="btn-submit">Create Milestone</button>
-            
-            <% if (selectedId) { %>
-                <a href="/milestones/participant/<%= selectedId %>" style="text-decoration: none; color: #666;">
-                    Cancel
-                </a>
-            <% } else { %>
-                <a href="/milestones" style="text-decoration: none; color: #666;">Cancel (Back to Directory)</a>
+            <% if (selectedId && selectedParticipant) { %>
+                <div class="detail-card" style="margin-bottom: 1.25rem;">
+                    <div class="detail-row">
+                        <span class="detail-label">Participant</span>
+                        <span class="detail-value">
+                            <%= selectedParticipant.first_name %> <%= selectedParticipant.last_name %>
+                            (ID #<%= selectedId %>)
+                        </span>
+                    </div>
+                </div>
             <% } %>
-        </div>
-    </form>
 
+            <input type="hidden" name="ParticipantID" value="<%= selectedId %>" required>
+
+            <label for="MilestoneTitle">Milestone Title</label>
+            <input 
+                id="MilestoneTitle"
+                type="text"
+                name="MilestoneTitle"
+                placeholder="e.g. Completed Python Workshop"
+                required
+            />
+
+            <label for="MilestoneDate">Milestone Date</label>
+            <input 
+                id="MilestoneDate"
+                type="date"
+                name="MilestoneDate"
+                required
+            />
+
+            <!-- BUTTONS -->
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">
+                    Create Milestone
+                </button>
+
+                <% if (selectedId) { %>
+                    <a href="/milestones/participant/<%= selectedId %>" 
+                       class="btn btn-secondary btn-lg">
+                        Cancel
+                    </a>
+                <% } else { %>
+                    <a href="/milestones" class="btn btn-secondary btn-lg">
+                        Cancel
+                    </a>
+                <% } %>
+            </div>
+
+        </form>
+
+    </div>
 </div>

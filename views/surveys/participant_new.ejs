@@ -1,87 +1,132 @@
-<div class="page-container" style="max-width: 600px; margin: 0 auto;">
+<section class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Event Feedback</h1>
-    <h3 style="margin-top: -10px; margin-bottom: 20px; font-weight: normal; color: #555;">
-        Survey for: <%= occurrence.event_name %>
-    </h3>
+        <!-- HEADER -->
+        <h1 class="page-title">Event Feedback</h1>
+        <h3 class="text-muted" style="margin-top: -10px; margin-bottom: 20px;">
+            Survey for: <%= occurrence.event_name %>
+        </h3>
 
-    <% if (typeof flashMessage !== 'undefined' && flashMessage && flashMessage.text) { %>
-        <div class="alert alert-<%= flashMessage.type === 'error' ? 'danger' : 'success' %> mb-3">
-            <%= flashMessage.text %>
-        </div>
-    <% } %>
+        <!-- FLASH MESSAGE -->
+        <% if (typeof flashMessage !== "undefined" && flashMessage?.text) { %>
+            <div class="alert alert-<%= flashMessage.type === 'error' ? 'danger' : 'success' %> mb-3">
+                <%= flashMessage.text %>
+            </div>
+        <% } %>
 
-    <% if (typeof errors !== 'undefined' && Object.keys(errors).length > 0) { %>
-        <div class="alert alert-danger mb-3">
-            <strong>Please fix the following:</strong>
-            <ul style="margin-bottom: 0; padding-left: 20px;">
-                <% for (let field in errors) { %>
-                    <li><%= errors[field] %></li>
-                <% } %>
-            </ul>
-        </div>
-    <% } %>
+        <!-- VALIDATION ERRORS -->
+        <% if (errors && Object.keys(errors).length > 0) { %>
+            <div class="alert alert-danger mb-3">
+                <strong>Please fix the following:</strong>
+                <ul style="padding-left: 20px; margin-bottom: 0;">
+                    <% for (let field in errors) { %>
+                        <li><%= errors[field] %></li>
+                    <% } %>
+                </ul>
+            </div>
+        <% } %>
 
-    <form action="/surveys/submit/<%= occurrence.event_occurrence_id %>" method="POST" class="form">
-        
-        <input type="hidden" name="EventOccurrenceID" value="<%= occurrence.event_occurrence_id %>">
-        <input type="hidden" name="ParticipantID" value="<%= participantId %>">
-        
-        <!-- FIX: HIDDEN RETURN PATH -->
-        <!-- This ensures the return path persists even if the form reloads due to validation errors -->
-        <input type="hidden" name="returnTo" value="<%= (typeof returnTo !== 'undefined') ? returnTo : '' %>">
+        <form 
+            action="/surveys/submit/<%= occurrence.event_occurrence_id %>" 
+            method="POST"
+            class="form"
+        >
 
-        <p>Please rate the following aspects of the event on a scale of 1 (Poor) to 5 (Excellent).</p>
+            <!-- HIDDEN FIELDS -->
+            <input type="hidden" name="EventOccurrenceID" value="<%= occurrence.event_occurrence_id %>">
+            <input type="hidden" name="ParticipantID" value="<%= participantId %>">
 
-        <!-- SATISFACTION SCORE -->
-        <label for="SurveySatisfactionScore">Satisfaction Score (1-5)</label>
-        <input type="number" 
-               name="SurveySatisfactionScore" 
-               min="1" max="5" 
-               class="form-control <%= (typeof errors !== 'undefined' && errors.SurveySatisfactionScore) ? 'is-invalid' : '' %>"
-               value="<%= (typeof formData !== 'undefined' && formData.SurveySatisfactionScore) ? formData.SurveySatisfactionScore : '' %>"
-               required />
+            <input 
+                type="hidden" 
+                name="returnTo" 
+                value="<%= typeof returnTo !== 'undefined' ? returnTo : '' %>"
+            >
 
-        <!-- USEFULNESS SCORE -->
-        <label for="SurveyUsefulnessScore" class="mt-3">Usefulness Score (1-5)</label>
-        <input type="number" 
-               name="SurveyUsefulnessScore" 
-               min="1" max="5" 
-               class="form-control <%= (typeof errors !== 'undefined' && errors.SurveyUsefulnessScore) ? 'is-invalid' : '' %>"
-               value="<%= (typeof formData !== 'undefined' && formData.SurveyUsefulnessScore) ? formData.SurveyUsefulnessScore : '' %>"
-               required />
+            <p class="text-muted" style="margin-bottom: 1rem;">
+                Please rate the event on a scale of 1 (Poor) to 5 (Excellent).
+            </p>
 
-        <!-- INSTRUCTOR SCORE -->
-        <label for="SurveyInstructorScore" class="mt-3">Instructor Score (1-5)</label>
-        <input type="number" 
-               name="SurveyInstructorScore" 
-               min="1" max="5" 
-               class="form-control <%= (typeof errors !== 'undefined' && errors.SurveyInstructorScore) ? 'is-invalid' : '' %>"
-               value="<%= (typeof formData !== 'undefined' && formData.SurveyInstructorScore) ? formData.SurveyInstructorScore : '' %>"
-               required />
+            <!-- Helper function to load formData or blank -->
+            <% 
+                const val = (field) => {
+                    return (formData && formData[field]) ? formData[field] : "";
+                };
+            %>
 
-        <!-- RECOMMENDATION SCORE -->
-        <label for="SurveyRecommendationScore" class="mt-3">Recommendation Score (1-5)</label>
-        <input type="number" 
-               name="SurveyRecommendationScore" 
-               min="1" max="5" 
-               class="form-control <%= (typeof errors !== 'undefined' && errors.SurveyRecommendationScore) ? 'is-invalid' : '' %>"
-               value="<%= (typeof formData !== 'undefined' && formData.SurveyRecommendationScore) ? formData.SurveyRecommendationScore : '' %>"
-               required />
-        
-        <!-- COMMENTS -->
-        <label for="SurveyComments" class="mt-3">Comments (Optional)</label>
-        <textarea name="SurveyComments" 
-                  rows="3" 
-                  class="form-control"
-                  placeholder="Any suggestions or positive feedback?"><%= (typeof formData !== 'undefined' && formData.SurveyComments) ? formData.SurveyComments : '' %></textarea>
+            <!-- SATISFACTION -->
+            <label for="SurveySatisfactionScore">Satisfaction Score (1–5)</label>
+            <input 
+                type="number"
+                id="SurveySatisfactionScore"
+                name="SurveySatisfactionScore"
+                min="1" max="5"
+                class="<%= errors?.SurveySatisfactionScore ? 'is-invalid' : '' %>"
+                value="<%= val('SurveySatisfactionScore') %>"
+                required
+            />
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem;">
-            <button type="submit" class="btn btn-primary">Submit Survey</button>
-            
-            <!-- Cancel Button goes back to returnTo if available -->
-            <% const cancelLink = (typeof returnTo !== 'undefined' && returnTo) ? returnTo : `/eventOccurrences/${occurrence.event_occurrence_id}`; %>
-            <a href="<%= cancelLink %>" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
-</div>
+            <!-- USEFULNESS -->
+            <label for="SurveyUsefulnessScore" class="mt-3">Usefulness Score (1–5)</label>
+            <input 
+                type="number"
+                id="SurveyUsefulnessScore"
+                name="SurveyUsefulnessScore"
+                min="1" max="5"
+                class="<%= errors?.SurveyUsefulnessScore ? 'is-invalid' : '' %>"
+                value="<%= val('SurveyUsefulnessScore') %>"
+                required
+            />
+
+            <!-- INSTRUCTOR -->
+            <label for="SurveyInstructorScore" class="mt-3">Instructor Score (1–5)</label>
+            <input 
+                type="number"
+                id="SurveyInstructorScore"
+                name="SurveyInstructorScore"
+                min="1" max="5"
+                class="<%= errors?.SurveyInstructorScore ? 'is-invalid' : '' %>"
+                value="<%= val('SurveyInstructorScore') %>"
+                required
+            />
+
+            <!-- RECOMMENDATION -->
+            <label for="SurveyRecommendationScore" class="mt-3">Recommendation Score (1–5)</label>
+            <input 
+                type="number"
+                id="SurveyRecommendationScore"
+                name="SurveyRecommendationScore"
+                min="1" max="5"
+                class="<%= errors?.SurveyRecommendationScore ? 'is-invalid' : '' %>"
+                value="<%= val('SurveyRecommendationScore') %>"
+                required
+            />
+
+            <!-- COMMENTS -->
+            <label for="SurveyComments" class="mt-3">Comments (Optional)</label>
+            <textarea 
+                id="SurveyComments"
+                name="SurveyComments"
+                rows="3"
+                placeholder="Any suggestions or positive feedback?"
+            ><%= val('SurveyComments') %></textarea>
+
+            <!-- ACTION BUTTONS -->
+            <div class="btn-wrapper" style="margin-top: 2rem;">
+
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Submit Survey
+                </button>
+
+                <% const cancelLink = returnTo || `/eventOccurrences/${occurrence.event_occurrence_id}`; %>
+
+                <a href="<%= cancelLink %>" 
+                   class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+</section>

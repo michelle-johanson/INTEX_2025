@@ -1,67 +1,95 @@
-<div class="page-container">
-    
-    <h1 class="page-title">Participants with: <%= milestoneTitle %></h1>
-    <p class="text-muted">Below is a list of all participants who have achieved this specific milestone.</p>
-    
-    <% 
-        // Robust Role Check
-        const role = session && session.access_level ? session.access_level.toLowerCase() : '';
-        const isAdmin = role === "admin" || role === "manager"; 
-    %>
+<section class="page-container">
+    <div class="container-inner">
 
-    <% if (isAdmin) { %>
-        <div style="display: flex; gap: 10px; margin-bottom: 1.5rem;">
-            
-            <a href="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>/edit" class="btn btn-warning btn-small">
-                Edit Milestone Title
-            </a>
-
-            <form action="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>/delete" 
-                  method="POST" 
-                  style="display:inline;"
-                  onsubmit="return confirm('WARNING: This will permanently delete the milestone titled \'<%= milestoneTitle %>\' from ALL participant records. Are you absolutely sure?');">
-                <button type="submit" class="btn btn-danger btn-small">
-                    Delete Milestone Type
-                </button>
-            </form>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title">Participants with: <%= milestoneTitle %></h1>
+            <div class="heading-underline"></div>
         </div>
-    <% } %>
 
-    <% if (participants.length === 0) { %>
-        <p>No participants have achieved the milestone "<%= milestoneTitle %>" yet.</p>
-    <% } else { %>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Participant Name</th>
-                    <th>Email</th>
-                    <th>Achieved Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% participants.forEach(p => { %>
-                    <tr>
-                        <td><strong><%= p.first_name %> <%= p.last_name %></strong></td>
-                        <td><%= p.email %></td>
-                        
-                        <td>
-                            <%= p.achieved_date ? new Date(p.achieved_date).toLocaleDateString() : 'N/A' %>
-                        </td>
-                        
-                        <td class="table-actions">
-                            <a href="/participants/<%= p.participant_id %>" class="btn btn-secondary btn-small">
-                                View Profile
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    <% } %>
+        <p class="text-muted">
+            Below is a list of all participants who have achieved this milestone.
+        </p>
 
-    <div style="margin-top: 2rem;">
-        <a href="/milestones" class="btn btn-secondary">&larr; Back to Milestone Types Directory</a>
+        <% 
+            const role = session && session.access_level ? session.access_level.toLowerCase() : '';
+            const isAdmin = role === "admin" || role === "manager";
+        %>
+
+        <!-- ADMIN ACTIONS -->
+        <% if (isAdmin) { %>
+            <div class="btn-wrapper" style="margin-bottom: 1.5rem;">
+
+                <a href="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>/edit"
+                   class="btn btn-primary btn-small">
+                    Edit Milestone Title
+                </a>
+
+                <form action="/milestones/type/<%= encodeURIComponent(milestoneTitle) %>/delete"
+                      method="POST"
+                      onsubmit="return confirm('WARNING: This will permanently delete the milestone \<%= milestoneTitle %>\ from ALL participant records. Are you absolutely sure?');">
+                    <button type="submit" class="btn btn-delete btn-small">
+                        Delete Milestone Type
+                    </button>
+                </form>
+
+            </div>
+        <% } %>
+
+        <!-- EMPTY MESSAGE -->
+        <% if (participants.length === 0) { %>
+
+            <p>No participants have achieved the milestone "<%= milestoneTitle %>" yet.</p>
+
+        <% } else { %>
+
+            <!-- TABLE -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Participant Name</th>
+                            <th>Email</th>
+                            <th>Achieved Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% participants.forEach(p => { %>
+                            <tr>
+                                <td>
+                                    <strong><%= p.first_name %> <%= p.last_name %></strong>
+                                </td>
+
+                                <td><%= p.email %></td>
+
+                                <td>
+                                    <%= p.achieved_date 
+                                            ? new Date(p.achieved_date).toLocaleDateString()
+                                            : 'N/A' %>
+                                </td>
+
+                                <td class="table-actions">
+                                    <a href="/participants/<%= p.participant_id %>"
+                                       class="btn btn-outline btn-table">
+                                        View Profile
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
+        <!-- BACK BUTTON -->
+        <div class="btn-wrapper" style="margin-top: 2rem;">
+            <a href="/milestones" class="btn btn-secondary btn-lg">
+                ← Back to Milestone Types Directory
+            </a>
+        </div>
+
     </div>
-
-</div>
+</section>

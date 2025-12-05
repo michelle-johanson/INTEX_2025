@@ -1,36 +1,70 @@
-<div class="page-container">
-    <h1 class="page-title">Manage Registrations</h1>
-    <p class="mb-4">Select an event below to view who is registered.</p>
+<section class="page-container">
+    <div class="container-inner">
 
-    <a href="/registrations/new" class="btn btn-primary btn-small mb-4">
-        + Add Registration
-    </a>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title">Manage Registrations</h1>
+            <div class="heading-underline"></div>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Event Name</th>
-                <th>Date & Time</th>
-                <th>Location</th>
-                <th>Capacity</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% occurrences.forEach(o => { %>
-                <tr>
-                    <td><strong><%= o.event_name %></strong></td>
-                    <td><%= new Date(o.starts_at).toLocaleString() %></td>
-                    <td><%= o.location %></td>
-                    <td><%= o.capacity %></td>
-                    
-                    <td class="table-actions">
-                        <a href="/registrations/event/<%= o.event_occurrence_id %>" class="btn btn-secondary btn-small">
-                            View Registrants
-                        </a>
-                    </td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
-</div>
+        <p class="text-muted">
+            Select an event below to view or update participant registrations.
+        </p>
+
+        <!-- ADMIN ACTIONS -->
+        <div class="btn-wrapper" style="margin-bottom: 2rem;">
+            <a href="/registrations/new" class="btn btn-primary btn-small">
+                + Add Registration
+            </a>
+        </div>
+
+        <!-- EMPTY MESSAGE -->
+        <% if (!occurrences || occurrences.length === 0) { %>
+            <p>No event occurrences found.</p>
+
+        <% } else { %>
+
+            <!-- TABLE -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event Name</th>
+                            <th>Date & Time</th>
+                            <th>Location</th>
+                            <th>Capacity</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% occurrences.forEach(o => { %>
+                            <tr>
+                                <td><strong><%= o.event_name %></strong></td>
+                                <td><%= new Date(o.starts_at).toLocaleString() %></td>
+                                <td><%= o.location %></td>
+                                <td><%= o.capacity %></td>
+
+                                <td class="table-actions">
+                                    <a href="/registrations/event/<%= o.event_occurrence_id %>"
+                                       class="btn btn-outline btn-table">
+                                        View Registrants
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
+        <!-- BACK BUTTON -->
+        <div class="btn-wrapper" style="margin-top: 2rem;">
+            <a href="/dashboard" class="btn btn-secondary btn-lg">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+</section>

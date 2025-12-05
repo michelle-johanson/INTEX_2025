@@ -4,6 +4,7 @@ function requireLogin(req, res, next) {
         req.session.returnTo = req.originalUrl;
         
         req.session.message = "Please log in to view that page.";
+        req.session.returnTo = req.originalUrl;
         return res.redirect("/auth/login");
     }
     next();

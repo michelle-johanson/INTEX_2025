@@ -6,19 +6,17 @@ const Donations = require("../models/donations");
 const Participants = require("../models/participants");
 
 /* ============================================================
-   PUBLIC DONATION FORM (NO LOGIN REQUIRED)
+   PUBLIC DONATION FORM
 ============================================================ */
-
-// Show donation form
 router.get("/new", async (req, res) => {
     try {
         const pendingDonation = req.session.pendingDonation || null;
         const user = req.session.user || null;
-        
+
         res.render("donations/new", {
             title: "Make a Donation",
-            user: user,
-            pendingDonation: pendingDonation
+            user,
+            pendingDonation
         });
     } catch (err) {
         console.error(err);
@@ -26,38 +24,42 @@ router.get("/new", async (req, res) => {
     }
 });
 
-// Submit new donation
+/* ============================================================
+   SUBMIT DONATION
+============================================================ */
 router.post("/new", async (req, res) => {
     try {
         const { DonationAmount, DonationDate } = req.body;
 
+        // Guest users must login — store donation intent
         if (!req.session.user) {
             req.session.pendingDonation = {
                 amount: DonationAmount,
                 date: DonationDate
             };
-            
+
             return req.session.save(err => {
                 if (err) console.error(err);
-                res.redirect("/auth/login");
+                return res.redirect("/auth/login");
             });
         }
 
+        // Logged-in participant
         const participantId = req.session.user.participant_id;
 
-        const newDonation = {
+        const donation = {
             participant_id: participantId,
             donation_date: DonationDate,
             amount: Number(DonationAmount)
         };
 
-        await Donations.create(newDonation);
+        await Donations.create(donation);
 
         if (req.session.pendingDonation) {
             delete req.session.pendingDonation;
         }
 
-        res.redirect("/donations/thanks");
+        return res.redirect("/donations/thanks");
 
     } catch (err) {
         console.error(err);
@@ -65,27 +67,25 @@ router.post("/new", async (req, res) => {
     }
 });
 
-// Thank-you page
+/* ============================================================
+   THANK-YOU PAGE
+============================================================ */
 router.get("/thanks", (req, res) => {
     res.render("donations/thanks", { title: "Thank You!" });
 });
 
-
 /* ============================================================
-   INTERNAL PAGES (Restricted Access)
+   DONATION LIST (ADMIN ONLY)
 ============================================================ */
-
-// FIX: Changed from requireLogin to requireAdmin
-// Only Admins/Managers should see the full list of ALL donations.
 router.get("/", requireAdmin, async (req, res) => {
     try {
-        const searchTerm = req.query.search || "";
-        const donations = await Donations.getAll(searchTerm);
-        
+        const query = req.query.q || "";
+        const donations = await Donations.getAll(query);
+
         res.render("donations/index", {
             title: "Donations",
             donations,
-            searchTerm 
+            query
         });
     } catch (err) {
         console.error(err);
@@ -93,25 +93,22 @@ router.get("/", requireAdmin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
-   SHOW DONATION (LOGIN REQUIRED + OWNER CHECK)
-   URL: /donations/:pid/:dno
+   SHOW DONATION (OWNER OR ADMIN ONLY)
 ============================================================ */
 router.get("/:pid/:dno", requireLogin, async (req, res) => {
     try {
-        // FIX: Security Check
-        // Ensure user is Admin OR the owner of the donation record
         const role = (req.session.access_level || "").toLowerCase();
-        const isManager = role === 'manager' || role === 'admin';
-        const isOwner = String(req.session.userID) === String(req.params.pid);
+        const isManager = role === "manager" || role === "admin";
+
+        // FIXED BUG: must use user_id, not userID
+        const isOwner = String(req.session.user_id) === String(req.params.pid);
 
         if (!isManager && !isOwner) {
             return res.status(403).send("Unauthorized Access: You can only view your own donations.");
         }
 
         const donation = await Donations.getById(req.params.pid, req.params.dno);
-
         if (!donation) return res.status(404).send("Donation not found");
 
         res.render("donations/show", {
@@ -124,19 +121,15 @@ router.get("/:pid/:dno", requireLogin, async (req, res) => {
     }
 });
 
-
 /* ============================================================
-   MANAGER-ONLY ACTIONS
-   URL: /donations/:pid/:dno/edit
+   EDIT DONATION (ADMIN ONLY)
 ============================================================ */
-
-// Show edit form
 router.get("/:pid/:dno/edit", requireAdmin, async (req, res) => {
     try {
         const donation = await Donations.getById(req.params.pid, req.params.dno);
-        const participants = await Participants.getAll();
-
         if (!donation) return res.status(404).send("Donation not found");
+
+        const participants = await Participants.getAll();
 
         res.render("donations/edit", {
             title: "Edit Donation",
@@ -149,7 +142,9 @@ router.get("/:pid/:dno/edit", requireAdmin, async (req, res) => {
     }
 });
 
-// Submit edits
+/* ============================================================
+   UPDATE DONATION (ADMIN)
+============================================================ */
 router.post("/:pid/:dno/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
@@ -158,23 +153,21 @@ router.post("/:pid/:dno/edit", requireAdmin, async (req, res) => {
         };
 
         await Donations.update(req.params.pid, req.params.dno, updates);
-        
-        // FIX: Redirect logic based on role
-        // Admins go to list; Participants (if we allowed them to edit, which we don't here) go to profile.
-        // Since this is requireAdmin, sending to /donations list is correct.
-        res.redirect("/donations");
 
+        return res.redirect("/donations");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error updating donation");
     }
 });
 
-// Delete a donation
+/* ============================================================
+   DELETE DONATION (ADMIN)
+============================================================ */
 router.post("/:pid/:dno/delete", requireAdmin, async (req, res) => {
     try {
         await Donations.delete(req.params.pid, req.params.dno);
-        res.redirect("/donations");
+        return res.redirect("/donations");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error deleting donation");

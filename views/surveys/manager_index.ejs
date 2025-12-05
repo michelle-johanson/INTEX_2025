@@ -1,83 +1,137 @@
-<div class="page-container">
-    <h1 class="page-title"><%= title %></h1>
-    
-    <% if (mode === 'types') { %>
-        <p class="mb-4">Select an event type below to view scheduled occurrences.</p>
-    <% } else { %>
-        <p class="mb-4">Select a specific date below to view survey results.</p>
-        <a href="/surveys" class="btn btn-secondary btn-small mb-3">&larr; Back to Event Types</a>
-    <% } %>
+<section class="page-container">
+    <div class="container-inner">
 
-    <!-- #TO-DO: create class for flex container with justify-content: flex-end; -->
-    <div class="d-flex mb-3">
-        <!-- #TO-DO: create class for flex container with gap: 0.5rem; align-items: center; -->
-        <form action="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" method="GET" class="d-flex">
-            <!-- #TO-DO: create class for search input with padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 250px; -->
-            <input type="text" 
-                   name="search" 
-                   placeholder="<%= mode === 'types' ? 'Search event types...' : 'Search location...' %>" 
-                   value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title"><%= title %></h1>
+            <div class="heading-underline"></div>
+        </div>
+
+        <!-- CONTEXT PARAGRAPH -->
+        <% if (mode === "types") { %>
+            <p class="text-muted">
+                Select an event type below to view scheduled occurrences.
+            </p>
+        <% } else { %>
+            <p class="text-muted">
+                Select a specific event occurrence below to view its survey results.
+            </p>
+
+            <div class="btn-wrapper" style="margin-bottom: 1rem;">
+                <a href="/surveys" class="btn btn-secondary btn-small">← Back to Event Types</a>
+            </div>
+        <% } %>
+
+        <!-- SEARCH + CONTROLS -->
+        <div class="table-controls">
+
+            <div></div> <!-- keeps layout aligned -->
+
+            <form 
+                action="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" 
+                method="GET" 
+                class="search-form"
             >
-            <button type="submit" class="btn btn-secondary btn-small">Search</button>
-            <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                <!-- #TO-DO: create class for small link text with font-size: 0.9rem; -->
-                <a href="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>">Clear</a>
-            <% } %>
-        </form>
-    </div>
+                <input 
+                    type="text"
+                    name="q"
+                    placeholder="<%= mode === 'types' ? 'Search event types…' : 'Search location…' %>"
+                    value="<%= typeof q !== 'undefined' ? q : '' %>"
+                >
 
-    <% if (data.length === 0) { %>
-        <p>No records found.</p>
-    <% } else { %>
-        
-        <% if (mode === 'types') { %>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Event Name</th>
-                        <th>Type</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% data.forEach(item => { %>
-                        <tr>
-                            <td><strong><%= item.name %></strong></td>
-                            <td><%= item.type %></td>
-                            <td class="table-actions">
-                                <a href="/surveys/type/<%= item.event_id %>" class="btn btn-secondary btn-small">
-                                    View Occurrences
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+                <button type="submit" class="btn btn-secondary btn-small">Search</button>
+
+                <% if (q) { %>
+                    <a href="<%= mode === 'types' ? '/surveys' : '/surveys/type/' + event.event_id %>" 
+                       class="search-clear-link">
+                        Clear
+                    </a>
+                <% } %>
+            </form>
+        </div>
+
+        <!-- DATA TABLE OR EMPTY STATE -->
+        <% if (data.length === 0) { %>
+
+            <p>No records found.</p>
 
         <% } else { %>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Date & Time</th>
-                        <th>Location</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% data.forEach(item => { %>
-                        <tr>
-                            <td><%= new Date(item.starts_at).toLocaleString() %></td>
-                            <td><%= item.location %></td>
-                            <td class="table-actions">
-                                <a href="/surveys/occurrence/<%= item.event_occurrence_id %>" class="btn btn-secondary btn-small">
-                                    View Results
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+
+            <div class="table-container">
+
+                <% if (mode === 'types') { %>
+
+                    <!-- TABLE: EVENT TYPES -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Type</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% data.forEach(item => { %>
+                                <tr>
+                                    <td><strong><%= item.name %></strong></td>
+                                    <td><%= item.type %></td>
+
+                                    <td class="table-actions">
+                                        <a href="/surveys/type/<%= item.event_id %>"
+                                           class="btn btn-outline btn-table">
+                                            View Occurrences
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+
+                <% } else { %>
+
+                    <!-- TABLE: OCCURRENCES -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Location</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% data.forEach(item => { %>
+                                <tr>
+                                    <td><%= new Date(item.starts_at).toLocaleString() %></td>
+                                    <td><%= item.location %></td>
+
+                                    <td class="table-actions">
+                                        <a href="/surveys/occurrence/<%= item.event_occurrence_id %>"
+                                           class="btn btn-outline btn-table">
+                                            View Results
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+
+                <% } %>
+
+            </div>
+
         <% } %>
-        
-    <% } %>
-</div>
+
+        <!-- OPTIONAL BACK BUTTON (bottom spacing) -->
+        <% if (mode === "occurrences") { %>
+            <div class="btn-wrapper" style="margin-top: 2rem;">
+                <a href="/surveys/type/<%= event.event_id %>" 
+                   class="btn btn-secondary btn-lg">
+                    ← Back to Occurrences
+                </a>
+            </div>
+        <% } %>
+
+    </div>
+</section>

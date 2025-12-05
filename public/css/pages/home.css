@@ -1,12 +1,11 @@
 /* =====================================
-   HOMEPAGE SECTIONS
+   HOMEPAGE SECTIONS (now using .page-container)
 ===================================== */
 
-.hero-full {
-    width: 100%;
-    background: var(--light-pink);
-    text-align: center;
-    padding: 5rem 0 6rem;
+/* HERO */
+.hero-container {
+    padding-top: 5rem;
+    padding-bottom: 6rem;
 }
 
 .hero-title {
@@ -20,16 +19,17 @@
     font-size: 1.2rem;
 }
 
-.impact-full {
-    width: 100%;
-    background: var(--cream);
-    padding: 4rem 0;
+/* IMPACT */
+.impact-container {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
 }
 
 .impact-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2.2rem;
+    margin-top: 2rem;
 }
 
 .impact-card {
@@ -39,9 +39,36 @@
     box-shadow: var(--shadow);
 }
 
-.donate-full {
-    width: 100%;
+/* DONATE */
+.donate-container {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+.donate-container h2 {
+    margin-bottom: 1rem;
+}
+
+.donate-container p {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+/* ============================================================
+   SECTION VARIANTS
+   These define ONLY background color & text alignment.
+============================================================ */
+
+.hero-section {
+    background: var(--light-pink);
+    text-align: center;
+}
+
+.impact-section {
+    background: var(--cream);
+}
+
+.donate-section {
     background: var(--pink);
     text-align: center;
-    padding: 4rem 0;
 }
