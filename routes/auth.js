@@ -91,7 +91,7 @@ router.post("/signup", async (req, res) => {
     } = req.body;
     
     const errors = {};
-    
+
     if (!first_name) errors.first_name = "First name is required.";
     if (!last_name) errors.last_name = "Last name is required.";
     
@@ -118,7 +118,7 @@ router.post("/signup", async (req, res) => {
         const newParticipant = {
             email: email,
             first_name: first_name,
-            last.last_name: last_name,
+            last_name: last_name,
             dob: dob || null, 
             phone: phone || null,
             city: city || null,
