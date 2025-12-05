@@ -47,14 +47,21 @@ router.post("/login", async (req, res) => {
         req.session.lastname = user.last_name;
         req.session.access_level = user.role;
 
-        // --- NEW: CHECK FOR PENDING DONATION ---
+        // --- 1. CHECK FOR PENDING DONATION (Highest Priority) ---
         if (req.session.pendingDonation) {
             return req.session.save(() => {
                 res.redirect("/donations/new");
             });
         }
-        // ---------------------------------------
 
+        // --- 2. CHECK FOR RETURN URL (Redirect back to where they were) ---
+        const returnUrl = req.session.returnTo;
+        if (returnUrl) {
+            delete req.session.returnTo; // Clear it so it doesn't persist
+            return res.redirect(returnUrl);
+        }
+
+        // --- 3. DEFAULT REDIRECT ---
         res.redirect("/");
 
     } catch (err) {
@@ -145,14 +152,21 @@ router.post("/signup", async (req, res) => {
         req.session.lastname = user.last_name;
         req.session.access_level = user.role;
 
-        // --- NEW: CHECK FOR PENDING DONATION ---
+        // --- 1. CHECK FOR PENDING DONATION ---
         if (req.session.pendingDonation) {
             return req.session.save(() => {
                 res.redirect("/donations/new");
             });
         }
-        // ---------------------------------------
 
+        // --- 2. CHECK FOR RETURN URL ---
+        const returnUrl = req.session.returnTo;
+        if (returnUrl) {
+            delete req.session.returnTo;
+            return res.redirect(returnUrl);
+        }
+
+        // --- 3. DEFAULT REDIRECT ---
         return res.redirect("/"); 
         
     } catch (err) {
