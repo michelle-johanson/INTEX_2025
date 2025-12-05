@@ -1,73 +1,45 @@
-<section class="container">
+<section class="page-container">
+    <div class="page-card-wide">
 
-    <% 
-        const s = session || {};
-        const user = s.user || s;
-        const rawRole = (user.access_level || user.role || "").toLowerCase();
-        const isManager = ["manager", "admin"].includes(rawRole);
-    %>
-
-    <!-- EVENT INFO CARD -->
-    <div class="page-card-detail">
-
-        <div class="page-card-header">
-            <h2><%= event.name %></h2>
-
-            <% if (isManager) { %>
-            <div class="page-card-actions">
-                <a href="/events/<%= event.event_id %>/edit" 
-                   class="btn btn-edit btn-lg">
-                    Edit Event Info
-                </a>
-
-                <form action="/events/<%= event.event_id %>?_method=DELETE" method="POST">
-                    <button class="btn btn-delete btn-lg">
-                        Delete Event Type
-                    </button>
-                </form>
-            </div>
-            <% } %>
-        </div>
+        <h2><%= event.name %></h2>
 
         <p class="text-muted">
             Type: <strong><%= event.type %></strong>
         </p>
 
         <p><%= event.description %></p>
-
+        <% if (isManager) { %>
+            <div class="btn-wrapper">
+                <a href="/events/<%= event.event_id %>/edit" class="btn btn-edit btn-lg">
+                    Edit Event Info
+                </a>
+        
+                <form action="/events/<%= event.event_id %>?_method=DELETE" method="POST">
+                    <button class="btn btn-delete btn-lg">
+                        Delete Event Type
+                    </button>
+                </form>
+            </div>
+        <% } %>
     </div>
+</section>
 
+<section class="page-container">
+<div class="container-inner">
+    <div class="container-header mb-4">
+        <h2>Event Occurrences</h2>
+    </div>
 
     <!-- SCHEDULED OCCURRENCES -->
-    <div class="page-card-wide" style="margin-top: 2rem;">
-
-        <div class="page-card-header">
-            <h2>Scheduled Occurrences</h2>
-
-            <div class="page-card-actions">
-
-                <!-- DO NOT TOUCH SEARCH BAR — RESTORED EXACTLY -->
-                <form action="/events/<%= event.event_id %>" method="GET" class="search-bar">
-                    <input 
-                        type="text" 
-                        name="location" 
-                        placeholder="Search location…" 
-                        value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                        class="search-input"
-                    >
-                    <button type="submit" class="btn btn-secondary">Search</button>
-                </form>
-                <!-- end search bar -->
-
-                <% if (isManager) { %>
-                <a href="/eventOccurrences/new/<%= event.event_id %>" class="btn btn-primary">
-                    + Schedule New
-                </a>
-                <% } %>
-
-            </div>
-        </div>
-    </div>
+    <%- include("../partials/tableControls", {
+        showAddButton: isManager,
+        addHref: `/eventOccurrences/new?event_id=1`,
+        addLabel: "Schedule New Occurrence",
+        searchAction: `/events/${event.event_id}`,
+        searchPlaceholder: "Search location…",
+        searchParamName: "location",
+        query: query   // your route must pass this
+    }) %>
 
         <!-- TABLE -->
     <div class="table-container">
@@ -98,5 +70,5 @@
             </tbody>
         </table>
     </div>
-
+</div>
 </section>
