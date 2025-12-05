@@ -1,12 +1,3 @@
-<%
-    let qValue = (typeof q !== "undefined") ? q : "";
-    // Normalize session user role safely
-    const s = session || {};
-    const user = s.user || s;
-    const rawRole = (user.access_level || user.role || "").toLowerCase();
-    const isManager = rawRole === "manager" || rawRole === "admin";
-%>
-
 <section class="page-container">
 <div class="container-inner">
 
@@ -19,6 +10,7 @@
     <%- include("../partials/tableControls", {
         showAddButton: isManager,
         addHref: "/events/new",
+        addLabel: "Add Event Type",
         searchAction: "/events",
         searchPlaceholder: "Search events...",
         query: query,       // ✔ matches the variable your route provides

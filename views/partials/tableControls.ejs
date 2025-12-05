@@ -2,16 +2,16 @@
 
     <% if (showAddButton) { %>
         <a href="<%= addHref %>" class="btn btn-add">
-            + Add New
+            <%= addLabel || "Add New" %>
         </a>
-        <% } %>
+    <% } %>
 
-            <form method="GET" action="<%= searchAction %>" class="search-form">
-                <input type="text" name="<%= searchParamName %>" value="<%= query || "" %>"
-                    placeholder="<%= searchPlaceholder %>" class="search-input" />
-                <button type="submit" class="btn-search">
-                    Search
-                </button>
-            </form>
+    <form method="GET" action="<%= searchAction %>" class="search-form">
+        <input type="text" name="<%= searchParamName %>" value="<%= query || "" %>"
+            placeholder="<%= searchPlaceholder %>" class="search-input" />
+        <button type="submit" class="btn-search">
+            Search
+        </button>
+    </form>
 
 </div>

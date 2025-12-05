@@ -15,14 +15,14 @@
     --font-size-base: 16px;
     --font-size-body: 1rem;
     --font-size-h1: 3rem;
-    --font-size-h2: 2rem;
+    --font-size-h2: 3rem;
     --font-size-h3: 1.5rem;
     --font-size-h4: 1.25rem;
     --font-size-h5: 1.1rem;
 
     /* RESPONSIVE SIZES */
     --font-size-h1-mobile: 2.2rem;
-    --font-size-h2-mobile: 1.75rem;
+    --font-size-h2-mobile: 2.0rem;
 
     /* LINE HEIGHTS */
     --line-height-body: 1.7;
@@ -73,7 +73,7 @@ h6 {
     font-family: var(--font-heading);
     margin: 0 0 var(--space-2);
     line-height: var(--line-height-heading);
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-dark);
 }
 
@@ -85,6 +85,7 @@ h6 {
 
 h1 {
     font-size: var(--font-size-h1);
+    font-weight: 500;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: var(--letter-spacing-h1);
