@@ -2,7 +2,23 @@
 <div class="page-card-wide">
     <h1 class="page-title">New Registration</h1>
 
+    <!-- Assuming source IDs are passed via the GET route's query parameters -->
+    <% 
+        const sourceParticipantId = (typeof query !== 'undefined' && query.participant_id) ? query.participant_id : null;
+        const sourceEventId = (typeof query !== 'undefined' && query.event_id) ? query.event_id : null;
+    %>
+
     <form action="/registrations/new" method="POST" class="form">
+        
+        <!-- HIDDEN FIELDS TO CAPTURE SOURCE OF NAVIGATION -->
+        <!-- These fields are critical for the POST route to redirect correctly -->
+        <% if (sourceParticipantId) { %>
+            <input type="hidden" name="SourceParticipantId" value="<%= sourceParticipantId %>">
+        <% } %>
+        <% if (sourceEventId) { %>
+            <input type="hidden" name="SourceEventId" value="<%= sourceEventId %>">
+        <% } %>
+
 
         <label for="EventOccurrenceID">Event Occurrence</label>
         <div class="select-wrapper">
@@ -22,7 +38,7 @@
             <select id="ParticipantID" name="ParticipantID" required>
                 <option value="">Select a participant...</option>
                 <% participants.forEach(p=> { %>
-                    <option value="<%= p.participant_id %>">
+                    <option value="<%= p.participant_id %>" <%= sourceParticipantId && String(p.participant_id) === String(sourceParticipantId) ? 'selected' : '' %>>
                         <%= p.first_name %>
                             <%= p.last_name %> (<%= p.email %>)
                     </option>
@@ -50,7 +66,19 @@
 
         <div class="form-actions">
             <button class="btn-submit">Create Registration</button>
-            <a href="/registrations">Cancel</a>
+            
+            <!-- FIX: Dynamic Cancel Link -->
+            <% 
+                let cancelHref = '/registrations';
+                if (sourceParticipantId) {
+                    // Came from Participant list, go back there
+                    cancelHref = `/registrations/participant/${sourceParticipantId}`;
+                } else if (sourceEventId) {
+                    // Came from Event detail page, go back there (View Registrants)
+                    cancelHref = `/events/${sourceEventId}`; 
+                }
+            %>
+            <a href="<%= cancelHref %>">Cancel</a>
         </div>
 
     </form>

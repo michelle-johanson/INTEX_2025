@@ -49,14 +49,28 @@
             <span class="detail-value">$<%= participant.total_donations || 0 %></span>
         </div>
 
+        <!-- ============================================== -->
+        <!-- ALWAYS VISIBLE BUTTON: REGISTERED EVENTS -->
+        <!-- This link is the same for both participant (self-view) and admin (audit view) -->
+        <% if (!isManager) { %>
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd;">
+            <a href="/registrations/participant/<%= participant.participant_id %>" class="btn btn-info btn-large">
+                View Registered Events
+            </a>
+            <a href="/milestones/participant/<%= participant.participant_id %>" class="btn btn-primary btn-small">
+                View Milestones
+            </a>
+        </div>
+        <% } %>
+        <!-- ============================================== -->
+
         <% if (isManager) { %>
-            <!-- #TO-DO: create class for manager actions section with margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #ddd; -->
-            <div class="mt-4">
-                <!-- #TO-DO: create class for section heading with font-size: 1.1rem; margin-bottom: 1rem; color: #555; -->
-                <h3 class="mb-2">Manager Actions</h3>
+            <!-- Manager Actions Section (visible only to Admins/Managers) -->
+            <div class="mt-4" style="padding-top: 1.5rem; border-top: 1px solid #ddd;">
+                <h3 class="mb-2" style="font-size: 1.1rem; margin-bottom: 1rem; color: #555;">Management & Actions</h3>
                 
-                <!-- #TO-DO: create class for flex container with gap: 10px; flex-wrap: wrap; -->
-                <div class="d-flex">
+                <div class="d-flex" style="gap: 10px; flex-wrap: wrap;">
+                    
                     <a href="/milestones/participant/<%= participant.participant_id %>" class="btn btn-primary btn-small">
                         View Milestones
                     </a>
@@ -65,10 +79,10 @@
                         Edit Profile
                     </a>
 
-                    <!-- #TO-DO: create class for inline form display -->
+                    <!-- Delete Form -->
                     <form action="/participants/<%= participant.participant_id %>/delete" 
-                          method="POST"
-                          onsubmit="return confirm('Are you sure you want to delete this participant?');">
+                            method="POST"
+                            onsubmit="return confirm('Are you sure you want to delete this participant?');">
                         <button class="btn btn-danger btn-small">Delete Participant</button>
                     </form>
                 </div>

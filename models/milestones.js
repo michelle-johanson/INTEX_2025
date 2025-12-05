@@ -1,10 +1,10 @@
 const knex = require("../db");
 
 module.exports = {
-    // Get all milestones (Keep this for administrative exports if needed)
+    // Get all milestones
     getAll: () => {
         return knex("milestones")
-            .join("participants", "milestones.participant_id", "=", "participants.participant_id")
+            .leftJoin("participants", "milestones.participant_id", "=", "participants.participant_id")
             .select(
                 "milestones.*",
                 "participants.first_name",
@@ -13,18 +13,16 @@ module.exports = {
             .orderBy("milestones.achieved_date", "desc");
     },
     
-    // --- NEW FUNCTION: Get list of unique milestone types (Level 1 View) ---
+    // Get list of unique milestone types
     getUniqueTitles: () => {
-        // Uses SELECT DISTINCT to get a list of all unique milestone titles
         return knex("milestones")
             .distinct('title')
             .pluck('title')
             .orderBy('title', 'asc');
     },
 
-    // --- NEW FUNCTION: Get participants who achieved a specific milestone title (Level 2 View) ---
+    // Get participants who achieved a specific milestone title
     getParticipantsByTitle: (milestoneTitle) => {
-        // Selects participant details based on the milestone title
         return knex("participants")
             .join('milestones', 'participants.participant_id', '=', 'milestones.participant_id')
             .select(
@@ -37,29 +35,12 @@ module.exports = {
             .where('milestones.title', milestoneTitle)
             .orderBy('milestones.achieved_date', 'desc');
     },
-    // ------------------------------------------------------------------------------------------
 
-    // --- NEW FUNCTION: Update Title Across All Participants ---
-    updateByTitle: (oldTitle, newTitle) => {
-        // Updates the title field for ALL milestone records matching the old title
-        return knex('milestones')
-            .where({ title: oldTitle })
-            .update({ title: newTitle });
-    },
-
-    // --- NEW FUNCTION: Delete Milestone Type Across All Participants ---
-    deleteByTitle: (titleToDelete) => {
-        // Deletes ALL milestone records that match the given title
-        return knex('milestones')
-            .where({ title: titleToDelete })
-            .del();
-    },
-    // ------------------------------------------------------------------------------------------
-
+    // --- FIX: Use LEFT JOIN to ensure visibility ---
     // Get all milestones for a SPECIFIC participant
     getByParticipant: (participantId) => {
         return knex("milestones")
-            .join("participants", "milestones.participant_id", "=", "participants.participant_id")
+            .leftJoin("participants", "milestones.participant_id", "=", "participants.participant_id")
             .select(
                 "milestones.*",
                 "participants.first_name",
@@ -68,12 +49,12 @@ module.exports = {
             .where({ "milestones.participant_id": participantId })
             .orderBy("milestones.achieved_date", "desc");
     },
-    // --------------------
+    // -----------------------------------------------
 
-    // Get specific milestone (Needs TWO IDs)
+    // Get specific milestone
     getById: (participantId, milestoneNo) => {
         return knex("milestones")
-            .join("participants", "milestones.participant_id", "=", "participants.participant_id")
+            .leftJoin("participants", "milestones.participant_id", "=", "participants.participant_id")
             .select(
                 "milestones.*",
                 "participants.first_name",
@@ -86,7 +67,6 @@ module.exports = {
             .first();
     },
 
-    // Create new milestone (Auto-increments milestone_no per user)
     create: async (data) => {
         const result = await knex("milestones")
             .max("milestone_no as max_no")
@@ -103,7 +83,6 @@ module.exports = {
         });
     },
 
-    // Update
     update: (participantId, milestoneNo, data) => {
         return knex("milestones")
             .where({ 
@@ -113,13 +92,24 @@ module.exports = {
             .update(data);
     },
 
-    // Delete
     delete: (participantId, milestoneNo) => {
         return knex("milestones")
             .where({ 
                 participant_id: participantId,
                 milestone_no: milestoneNo 
             })
+            .del();
+    },
+
+    updateByTitle: (oldTitle, newTitle) => {
+        return knex('milestones')
+            .where({ title: oldTitle })
+            .update({ title: newTitle });
+    },
+
+    deleteByTitle: (titleToDelete) => {
+        return knex('milestones')
+            .where({ title: titleToDelete })
             .del();
     }
 };
