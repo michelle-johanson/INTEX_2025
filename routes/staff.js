@@ -1,3 +1,5 @@
+// routes/staff.js
+
 const express = require("express");
 const router = express.Router();
 
@@ -7,13 +9,13 @@ const Staff = require("../models/staff");
 /* GET /staff — list all admin users */
 router.get("/", requireAdmin, async (req, res) => {
     try {
-        const query = req.query.q || "";
-        const staffList = await Staff.getAll(query);
+        const searchTerm = req.query.q || "";
+        const staffList = await Staff.getAll(searchTerm);
 
         res.render("staff/index", {
             title: "Admin Accounts",
             staffList,
-            query,
+            q: searchTerm, // <--- THIS LINE WAS MISSING OR INCORRECT
             session: req.session
         });
     } catch (err) {
@@ -99,9 +101,7 @@ router.post("/:id/delete", requireAdmin, async (req, res) => {
     } catch (err) {
         console.error(err);
         if (err.code === "23503") {
-            return res.status(400).send(
-                "Cannot delete admin: account is tied to existing records."
-            );
+            return res.status(400).send("Cannot delete admin: account is tied to existing records.");
         }
         res.status(500).send("Error deleting admin account");
     }
