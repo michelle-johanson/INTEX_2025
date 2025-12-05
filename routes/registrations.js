@@ -1,5 +1,3 @@
-// routes/registrations.js
-
 const express = require("express");
 const router = express.Router();
 
@@ -17,7 +15,6 @@ router.get("/", requireLogin, async (req, res) => {
         const role = (req.session.access_level || "").toLowerCase();
 
         // SCENARIO 1: MANAGER LOGGED IN
-        // Show a Directory of EVENTS (Occurrences)
         if (role === "manager" || role === "admin") {
             const occurrences = await EventOccurrences.getAll();
             
@@ -28,7 +25,6 @@ router.get("/", requireLogin, async (req, res) => {
         }
 
         // SCENARIO 2: PARTICIPANT LOGGED IN
-        // Redirect to their profile which has the link to their registrations
         res.redirect(`/participants/${req.session.userID}`);
 
     } catch (err) {
@@ -67,7 +63,6 @@ router.get("/participant/:id", requireLogin, async (req, res) => {
             title: `${participant.first_name}'s Event Registrations`,
             registrations: participantRegistrations,
             contextName: `${participant.first_name}'s`,
-            // Pass participant ID for the 'Add Registration' button functionality
             targetParticipantId: requestedParticipantId,
             isManager: isManager 
         });
@@ -87,17 +82,13 @@ router.get("/event/:id", requireAdmin, async (req, res) => {
     try {
         const occurrenceId = req.params.id;
 
-        // Fetch all registrations for this specific event
         const eventRegistrations = await Registrations.getByOccurrence(occurrenceId);
-        
-        // Fetch event details for the title and parent ID (event_id)
         const occurrence = await EventOccurrences.getById(occurrenceId);
 
         res.render("registrations/index", {
             title: `Registrations for ${occurrence.event_name}`,
             registrations: eventRegistrations,
             contextName: occurrence.event_name,
-            // CRITICAL FIX: Pass parent IDs to enable the back button
             parentOccurrenceId: occurrenceId, 
             parentEventId: occurrence.event_id 
         });
@@ -105,6 +96,55 @@ router.get("/event/:id", requireAdmin, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading event registrations");
+    }
+});
+
+/* ============================================================
+   SELF-SERVICE REGISTRATION (PARTICIPANT)
+   URL: POST /registrations/register/:id
+============================================================ */
+router.post("/register/:id", requireLogin, async (req, res) => {
+    try {
+        const eventOccurrenceId = req.params.id;
+        const participantId = req.session.userID; // Get ID from session
+
+        const newRegistration = {
+            event_occurrence_id: eventOccurrenceId,
+            participant_id: participantId,
+            status: 'Registered', // Default status
+            attended: false,
+            created_at: new Date()
+        };
+
+        // Create the registration
+        await Registrations.create(newRegistration);
+
+        // Fetch occurrence details to get the parent event_id for redirection
+        const occurrence = await EventOccurrences.getById(eventOccurrenceId);
+
+        // Redirect back to the event page
+        if (occurrence && occurrence.event_id) {
+            res.redirect(`/events/${occurrence.event_id}`);
+        } else {
+            // Fallback if event_id lookup fails
+            res.redirect(`/participants/${participantId}`);
+        }
+
+    } catch (err) {
+        // Handle duplicate key error (already registered)
+        if (err.code === '23505') { 
+             try {
+                const occurrence = await EventOccurrences.getById(req.params.id);
+                if (occurrence && occurrence.event_id) {
+                    return res.redirect(`/events/${occurrence.event_id}`);
+                }
+             } catch (lookupErr) {
+                 console.error("Error looking up event during error handling:", lookupErr);
+             }
+             return res.redirect(`/participants/${req.session.userID}`);
+        }
+        console.error("Self-registration error:", err);
+        res.status(500).send("Error registering for event");
     }
 });
 
@@ -117,16 +157,12 @@ router.get("/new", requireAdmin, async (req, res) => {
         const participants = await Participants.getAll();
         const occurrences = await EventOccurrences.getAll();
         
-        // FIX: Capture source IDs from URL query (for pre-selection and redirect)
-        const sourceEventId = req.query.event_id;
-        const sourceParticipantId = req.query.participant_id;
-
+        // FIX: We must pass req.query to the view so it can see 'event_occurrence_id'
         res.render("registrations/new", {
             title: "New Registration",
             participants,
             occurrences,
-            sourceEventId: sourceEventId,
-            sourceParticipantId: sourceParticipantId
+            query: req.query // <--- This enables the dropdown pre-selection logic
         });
     } catch (err) {
         console.error(err);
@@ -136,32 +172,32 @@ router.get("/new", requireAdmin, async (req, res) => {
 
 router.post("/new", requireAdmin, async (req, res) => {
     try {
-        const newRegistration = {
+        // 1. Extract Redirection Helpers (DO NOT SEND TO DB)
+        const sourceEventId = req.body.SourceEventId;
+        const sourceParticipantId = req.body.SourceParticipantId;
+
+        // 2. Create Clean DB Object (Only columns that exist in the table)
+        const dbRegistration = {
             event_occurrence_id: Number(req.body.EventOccurrenceID),
             participant_id: Number(req.body.ParticipantID),
             status: req.body.RegistrationStatus,
             attended: req.body.RegistrationAttendedFlag === "on",
             check_in_time: req.body.RegistrationCheckInTime || null,
-            created_at: req.body.RegistrationCreatedAt || new Date(),
-            
-            // Capture source IDs from hidden fields (passed from form)
-            sourceEventId: req.body.SourceEventId,
-            sourceParticipantId: req.body.SourceParticipantId
+            created_at: req.body.RegistrationCreatedAt || new Date()
         };
 
-        await Registrations.create(newRegistration);
+        // 3. Save to Database
+        await Registrations.create(dbRegistration);
         
-        // FIX: Determine redirect based on source of navigation
+        // 4. Handle Redirection using extracted variables
         let redirectPath;
-        if (newRegistration.sourceParticipantId) {
-            // Came from a specific participant's profile (View Registrations)
-            redirectPath = `/registrations/participant/${newRegistration.sourceParticipantId}`;
-        } else if (newRegistration.sourceEventId) {
-            // Came from a specific event's page (View Registrants)
-            redirectPath = `/events/${newRegistration.sourceEventId}`;
+        if (sourceParticipantId) {
+            redirectPath = `/registrations/participant/${sourceParticipantId}`;
+        } else if (sourceEventId) {
+            redirectPath = `/events/${sourceEventId}`;
         } else {
-            // Default: Redirect back to the event registrants list
-            redirectPath = `/registrations/event/${newRegistration.event_occurrence_id}`;
+            // If we registered directly for an occurrence, go back to that occurrence's list
+            redirectPath = `/registrations/event/${dbRegistration.event_occurrence_id}`;
         }
         
         res.redirect(redirectPath);
@@ -207,7 +243,6 @@ router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
 
         await Registrations.update(req.params.oid, req.params.pid, updates);
         
-        // Redirect back to that event's list
         res.redirect(`/registrations/event/${req.params.oid}`);
 
     } catch (err) {
@@ -223,8 +258,6 @@ router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
 router.post("/:oid/:pid/delete", requireAdmin, async (req, res) => {
     try {
         await Registrations.delete(req.params.oid, req.params.pid);
-        
-        // Redirect back to that event's list
         res.redirect(`/registrations/event/${req.params.oid}`);
     } catch (err) {
         console.error(err);
@@ -261,5 +294,4 @@ router.get("/:oid/:pid", requireLogin, async (req, res) => {
     }
 });
 
-// CRITICAL: Export the router function, NOT an object
 module.exports = router;

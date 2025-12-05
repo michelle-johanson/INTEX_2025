@@ -79,6 +79,10 @@
                         Edit Profile
                     </a>
 
+                    <a href="/registrations/participant/<%= participant.participant_id %>" class="btn btn-info btn-large">
+                        View Registered Events
+                    </a>
+
                     <!-- Delete Form -->
                     <form action="/participants/<%= participant.participant_id %>/delete" 
                             method="POST"

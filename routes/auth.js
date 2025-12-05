@@ -1,123 +1,123 @@
-// routes/auth.js
-
 const express = require("express");
 const router = express.Router();
 
 const Users = require("../models/users");
 const Participants = require("../models/participants"); 
-const { render } = require("ejs");
 
 /* ============================================================
-   LOGIN FORM
+   LOGIN FORM
 ============================================================ */
 router.get("/login", (req, res) => {
-    // Retrieve and clear flash data (if any)
-    const error = req.session.loginError;
-    delete req.session.loginError;
-    
-    res.render("auth/login", {
-        title: "Login",
-        error: error || null
-    });
+    // Retrieve and clear flash data (if any)
+    const error = req.session.loginError;
+    delete req.session.loginError;
+    
+    res.render("auth/login", {
+        title: "Login",
+        error: error || null
+    });
 });
 
 
 /* ============================================================
-   LOGIN SUBMIT
+   LOGIN SUBMIT
 ============================================================ */
 router.post("/login", async (req, res) => {
-    
-    const { username, password } = req.body; 
+    
+    const { username, password } = req.body; 
 
-    try {
-        const user = await Users.validateCredentials(username, password);
+    try {
+        const user = await Users.validateCredentials(username, password);
 
-        if (!user) {
-            req.session.loginError = "Invalid email or password.";
-            return res.redirect("/auth/login"); // Redirect instead of render for cleaner UX
-        }
+        if (!user) {
+            req.session.loginError = "Invalid email or password.";
+            return res.redirect("/auth/login"); 
+        }
 
-        // Setting session data
-        req.session.userID = user.participant_id; 
-        req.session.user_id = user.participant_id; 
+        // Setting session data
+        req.session.userID = user.participant_id; 
+        req.session.user_id = user.participant_id; 
+        
+        // STORE FULL USER OBJECT (Helpful for donations/profile access)
+        req.session.user = user; 
 
-        req.session.isLoggedIn = true;
-        req.session.username = user.email;
-        req.session.firstname = user.first_name;
-        req.session.lastname = user.last_name;
-        req.session.access_level = user.role;
+        req.session.isLoggedIn = true;
+        req.session.username = user.email;
+        req.session.firstname = user.first_name;
+        req.session.lastname = user.last_name;
+        req.session.access_level = user.role;
 
-        res.redirect("/");
+        // --- NEW: CHECK FOR PENDING DONATION ---
+        if (req.session.pendingDonation) {
+            return req.session.save(() => {
+                res.redirect("/donations/new");
+            });
+        }
+        // ---------------------------------------
 
-    } catch (err) {
-        console.error(err);
-        req.session.loginError = "An internal error occurred during login.";
-        res.redirect("/auth/login");
-    }
+        res.redirect("/");
+
+    } catch (err) {
+        console.error(err);
+        req.session.loginError = "An internal error occurred during login.";
+        res.redirect("/auth/login");
+    }
 });
 
 /* ============================================================
-   SIGNUP FORM (GET)
+   SIGNUP FORM (GET)
 ============================================================ */
 router.get("/signup", (req, res) => {
-    // Retrieve and clear flash data (errors and previous form data)
-    const sessionErrors = req.session.errors;
-    delete req.session.errors;
-    const sessionFormData = req.session.formData;
-    delete req.session.formData;
+    const sessionErrors = req.session.errors;
+    delete req.session.errors;
+    const sessionFormData = req.session.formData;
+    delete req.session.formData;
 
-    res.render("auth/signup", {
-        title: "Sign Up",
-        errors: sessionErrors || {},
-        formData: sessionFormData || {}
-    });
+    res.render("auth/signup", {
+        title: "Sign Up",
+        errors: sessionErrors || {},
+        formData: sessionFormData || {}
+    });
 });
 
 /* ============================================================
-   SIGNUP SUBMIT (POST) - UPDATED FOR NEW FIELDS
+   SIGNUP SUBMIT (POST)
 ============================================================ */
 router.post("/signup", async (req, res) => {
-    // 1. Destructure all fields from req.body
-    const { 
+    const { 
         email, first_name, last_name, dob, phone, city, state, zip, 
         school_or_employer, field_of_interest, password, confirm_password 
     } = req.body;
     
-    const errors = {};
+    const errors = {};
 
-    // Basic required field check (in addition to NOT NULL constraints)
     if (!first_name) errors.first_name = "First name is required.";
     if (!last_name) errors.last_name = "Last name is required.";
     
-    // 2. Password Validation
-    if (password.length < 6) errors.password = "Password must be at least 6 characters long.";
-    if (password !== confirm_password) errors.confirm_password = "Passwords do not match.";
+    if (password.length < 6) errors.password = "Password must be at least 6 characters long.";
+    if (password !== confirm_password) errors.confirm_password = "Passwords do not match.";
 
-    // 3. Email Existence Check
-    try {
-        const existingUser = await Participants.findByEmail(email); 
-        if (existingUser) {
-            errors.email = "This email is already registered.";
-        }
-    } catch (dbErr) {
-        console.error("Signup DB Check Error:", dbErr);
-        errors.general = "A server error occurred during validation.";
-    }
+    try {
+        const existingUser = await Participants.findByEmail(email); 
+        if (existingUser) {
+            errors.email = "This email is already registered.";
+        }
+    } catch (dbErr) {
+        console.error("Signup DB Check Error:", dbErr);
+        errors.general = "A server error occurred during validation.";
+    }
 
-    // 4. Handle Validation Failure
-    if (Object.keys(errors).length > 0) {
-        req.session.errors = errors;
-        req.session.formData = req.body;
-        return res.redirect("/auth/signup");
-    }
+    if (Object.keys(errors).length > 0) {
+        req.session.errors = errors;
+        req.session.formData = req.body;
+        return res.redirect("/auth/signup");
+    }
 
-    // 5. Create New Participant (Success)
-    try {
-        const newParticipant = {
-            email: email,
-            first_name: first_name,
-            last_name: last_name,
-            // Include all new fields
+    try {
+        const newParticipant = {
+            email: email,
+            first_name: first_name,
+            last_name: last_name,
             dob: dob || null, 
             phone: phone || null,
             city: city || null,
@@ -125,43 +125,51 @@ router.post("/signup", async (req, res) => {
             zip: zip || null,
             school_or_employer: school_or_employer || null,
             field_of_interest: field_of_interest || null,
-            
-            password: password, // WARNING: Saved as plain text
-            role: 'participant' // Hardcoded default role
-        };
+            password: password, 
+            role: 'participant' 
+        };
 
-        const result = await Participants.create(newParticipant);
+        const result = await Participants.create(newParticipant);
+        const user = result[0] || result; 
 
-        // Optional: Automatically log the user in after successful creation
-        const user = result[0] || result; 
+        // Set session data
+        req.session.userID = user.participant_id; 
+        req.session.user_id = user.participant_id; 
+        
+        // STORE FULL USER OBJECT
+        req.session.user = user;
 
-        req.session.userID = user.participant_id; 
-        req.session.user_id = user.participant_id; 
-        req.session.isLoggedIn = true;
-        req.session.username = user.email;
-        req.session.firstname = user.first_name;
-        req.session.lastname = user.last_name;
-        req.session.access_level = user.role;
+        req.session.isLoggedIn = true;
+        req.session.username = user.email;
+        req.session.firstname = user.first_name;
+        req.session.lastname = user.last_name;
+        req.session.access_level = user.role;
 
-        // Redirect to the root path (/) 
-        return res.redirect("/"); 
-        
-    } catch (err) {
-        console.error("Signup Creation Error:", err);
-        req.session.errors = { general: "Failed to create account due to an internal error." };
-        req.session.formData = req.body;
-        return res.redirect("/auth/signup");
-    }
+        // --- NEW: CHECK FOR PENDING DONATION ---
+        if (req.session.pendingDonation) {
+            return req.session.save(() => {
+                res.redirect("/donations/new");
+            });
+        }
+        // ---------------------------------------
+
+        return res.redirect("/"); 
+        
+    } catch (err) {
+        console.error("Signup Creation Error:", err);
+        req.session.errors = { general: "Failed to create account due to an internal error." };
+        req.session.formData = req.body;
+        return res.redirect("/auth/signup");
+    }
 });
 
-
 /* ============================================================
-   LOGOUT
+   LOGOUT
 ============================================================ */
 router.get("/logout", (req, res) => {
-    req.session.destroy(() => {
-        res.redirect("/auth/login");
-    });
+    req.session.destroy(() => {
+        res.redirect("/auth/login");
+    });
 });
 
 module.exports = router;
