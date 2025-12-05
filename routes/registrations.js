@@ -5,13 +5,16 @@ const { requireAdmin, requireLogin } = require("../middleware/auth");
 const Registrations = require("../models/registrations");
 const Participants = require("../models/participants");
 const EventOccurrences = require("../models/eventOccurrences");
+const Surveys = require("../models/surveys");
 
-/* GET /registrations — index view */
+/* ============================================================
+   MAIN INDEX ROUTE
+============================================================ */
 router.get("/", requireLogin, async (req, res) => {
     try {
         const role = (req.session.access_level || "").toLowerCase();
 
-        // Managers/Admins see occurrences for drill-down
+        // Manager/Admin view
         if (role === "manager" || role === "admin") {
             const occurrences = await EventOccurrences.getAll();
             return res.render("registrations/manager_index", {
@@ -20,8 +23,8 @@ router.get("/", requireLogin, async (req, res) => {
             });
         }
 
-        // Participants go to their own page
-        res.redirect(`/participants/${req.session.user_id}`);
+        // Participant → go to their page
+        return res.redirect(`/participants/${req.session.user_id}`);
 
     } catch (err) {
         console.error(err);
@@ -29,29 +32,32 @@ router.get("/", requireLogin, async (req, res) => {
     }
 });
 
-/* GET /registrations/participant/:id — registrations for one participant */
+/* ============================================================
+   PARTICIPANT VIEW
+============================================================ */
 router.get("/participant/:id", requireLogin, async (req, res) => {
     try {
-        const targetId = req.params.id;
+        const targetParticipantId = req.params.id;
         const loggedInId = req.session.user_id;
 
         const role = (req.session.access_level || "").toLowerCase();
         const isManager = role === "manager" || role === "admin";
-        const isOwner = String(loggedInId) === String(targetId);
+        const isOwner = String(loggedInId) === String(targetParticipantId);
 
         if (!isManager && !isOwner) {
             return res.status(403).send("Unauthorized Access");
         }
 
-        const registrations = await Registrations.getByParticipant(targetId);
-        const participant = await Participants.getById(targetId);
+        const registrations = await Registrations.getByParticipant(targetParticipantId);
+        const participant = await Participants.getById(targetParticipantId);
+
         if (!participant) return res.status(404).send("Participant not found");
 
         res.render("registrations/index", {
             title: `${participant.first_name}'s Event Registrations`,
             registrations,
             contextName: `${participant.first_name}'s`,
-            targetParticipantId: targetId,
+            targetParticipantId,
             isManager
         });
 
@@ -61,7 +67,9 @@ router.get("/participant/:id", requireLogin, async (req, res) => {
     }
 });
 
-/* GET /registrations/event/:id — registrations for one event occurrence (admin) */
+/* ============================================================
+   MANAGER EVENT VIEW
+============================================================ */
 router.get("/event/:id", requireAdmin, async (req, res) => {
     try {
         const occurrenceId = req.params.id;
@@ -83,7 +91,9 @@ router.get("/event/:id", requireAdmin, async (req, res) => {
     }
 });
 
-/* POST /registrations/register/:id — participant self-registration */
+/* ============================================================
+   SELF-SERVICE REGISTRATION
+============================================================ */
 router.post("/register/:id", requireLogin, async (req, res) => {
     try {
         const occurrenceId = req.params.id;
@@ -100,13 +110,15 @@ router.post("/register/:id", requireLogin, async (req, res) => {
         await Registrations.create(newRegistration);
 
         const occurrence = await EventOccurrences.getById(occurrenceId);
+
         if (occurrence?.event_id) {
             return res.redirect(`/events/${occurrence.event_id}`);
         }
 
-        res.redirect(`/participants/${participantId}`);
+        return res.redirect(`/participants/${participantId}`);
 
     } catch (err) {
+        // Duplicate registration error
         if (err.code === "23505") {
             try {
                 const occurrence = await EventOccurrences.getById(req.params.id);
@@ -124,7 +136,37 @@ router.post("/register/:id", requireLogin, async (req, res) => {
     }
 });
 
-/* GET /registrations/new — admin form */
+/* ============================================================
+   SELF-SERVICE UNREGISTRATION
+============================================================ */
+router.post("/unregister/:id", requireLogin, async (req, res) => {
+    try {
+        const occurrenceId = req.params.id;
+        const participantId = req.session.user_id;
+
+        await Registrations.delete(occurrenceId, participantId);
+
+        if (req.body.returnTo) {
+            return res.redirect(req.body.returnTo);
+        }
+
+        const occurrence = await EventOccurrences.getById(occurrenceId);
+
+        if (occurrence?.event_id) {
+            return res.redirect(`/events/${occurrence.event_id}`);
+        }
+
+        return res.redirect(`/participants/${participantId}`);
+
+    } catch (err) {
+        console.error("Self-unregister error:", err);
+        res.status(500).send("Error unregistering from event");
+    }
+});
+
+/* ============================================================
+   ADMIN: NEW REGISTRATION FORM
+============================================================ */
 router.get("/new", requireAdmin, async (req, res) => {
     try {
         const participants = await Participants.getAll();
@@ -134,7 +176,7 @@ router.get("/new", requireAdmin, async (req, res) => {
             title: "New Registration",
             participants,
             occurrences,
-            query: req.query // used for dropdown preselection
+            query: req.query
         });
 
     } catch (err) {
@@ -143,7 +185,9 @@ router.get("/new", requireAdmin, async (req, res) => {
     }
 });
 
-/* POST /registrations/new — admin creation */
+/* ============================================================
+   ADMIN: CREATE REGISTRATION
+============================================================ */
 router.post("/new", requireAdmin, async (req, res) => {
     try {
         const sourceEventId = req.body.SourceEventId;
@@ -167,7 +211,7 @@ router.post("/new", requireAdmin, async (req, res) => {
             return res.redirect(`/events/${sourceEventId}`);
         }
 
-        res.redirect(`/registrations/event/${newRegistration.event_occurrence_id}`);
+        return res.redirect(`/registrations/event/${newRegistration.event_occurrence_id}`);
 
     } catch (err) {
         console.error(err);
@@ -175,7 +219,9 @@ router.post("/new", requireAdmin, async (req, res) => {
     }
 });
 
-/* GET /registrations/:oid/:pid/edit — edit form (admin) */
+/* ============================================================
+   ADMIN: EDIT REGISTRATION
+============================================================ */
 router.get("/:oid/:pid/edit", requireAdmin, async (req, res) => {
     try {
         const registration = await Registrations.getByIds(req.params.oid, req.params.pid);
@@ -197,7 +243,9 @@ router.get("/:oid/:pid/edit", requireAdmin, async (req, res) => {
     }
 });
 
-/* POST /registrations/:oid/:pid/edit — update (admin) */
+/* ============================================================
+   ADMIN: UPDATE REGISTRATION
+============================================================ */
 router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
@@ -208,7 +256,8 @@ router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
         };
 
         await Registrations.update(req.params.oid, req.params.pid, updates);
-        res.redirect(`/registrations/event/${req.params.oid}`);
+
+        return res.redirect(`/registrations/event/${req.params.oid}`);
 
     } catch (err) {
         console.error(err);
@@ -216,21 +265,34 @@ router.post("/:oid/:pid/edit", requireAdmin, async (req, res) => {
     }
 });
 
-/* POST /registrations/:oid/:pid/delete — delete (admin) */
+/* ============================================================
+   ADMIN: DELETE REGISTRATION
+============================================================ */
 router.post("/:oid/:pid/delete", requireAdmin, async (req, res) => {
     try {
         await Registrations.delete(req.params.oid, req.params.pid);
-        res.redirect(`/registrations/event/${req.params.oid}`);
+
+        if (req.body.returnTo) {
+            return res.redirect(req.body.returnTo);
+        }
+
+        return res.redirect(`/registrations/event/${req.params.oid}`);
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Error deleting registration");
     }
 });
 
-/* GET /registrations/:oid/:pid — show single registration */
+/* ============================================================
+   SHOW SINGLE REGISTRATION (AUTHORIZED ONLY)
+============================================================ */
 router.get("/:oid/:pid", requireLogin, async (req, res) => {
     try {
-        const registration = await Registrations.getByIds(req.params.oid, req.params.pid);
+        const occurrenceId = req.params.oid;
+        const participantId = req.params.pid;
+
+        const registration = await Registrations.getByIds(occurrenceId, participantId);
         if (!registration) return res.status(404).send("Registration not found");
 
         const role = (req.session.access_level || "").toLowerCase();
@@ -243,9 +305,17 @@ router.get("/:oid/:pid", requireLogin, async (req, res) => {
             return res.status(403).send("Unauthorized Access");
         }
 
+        const hasAttended = await Registrations.checkIfAttended(occurrenceId, participantId);
+        const hasSubmittedSurvey = await Surveys.checkIfSubmitted(occurrenceId, participantId);
+        const showSurveyButton = hasAttended && !hasSubmittedSurvey;
+
         res.render("registrations/show", {
             title: "Registration Details",
-            registration
+            registration,
+            hasAttended,
+            hasSubmittedSurvey,
+            showSurveyButton,
+            session: req.session
         });
 
     } catch (err) {

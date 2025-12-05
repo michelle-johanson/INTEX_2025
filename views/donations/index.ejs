@@ -12,7 +12,6 @@
                 + Add Donation
             </a>
         <% } else { %>
-            <!-- Optional: Empty div to keep search bar aligned right if user is not manager -->
             <div></div>
         <% } %>
 
@@ -57,7 +56,21 @@
                         </td>
                         
                         <td>
-                            <%= new Date(d.donation_date).toLocaleDateString() %>
+                            <!-- 
+                                FIX: Logic to mask invalid dates (Unix Epoch 1969/1970) 
+                                If the year is too old, we show "No Date" placeholder.
+                            -->
+                            <% 
+                                let dateStr = '<span style="color:#ccc; font-style:italic;">No Date</span>';
+                                if (d.donation_date) {
+                                    const dateObj = new Date(d.donation_date);
+                                    // Check if valid AND newer than 1970
+                                    if (!isNaN(dateObj) && dateObj.getFullYear() > 1970) {
+                                        dateStr = dateObj.toLocaleDateString();
+                                    }
+                                }
+                            %>
+                            <%- dateStr %>
                         </td>
                         
                         <td>
@@ -68,8 +81,6 @@
                             <% if (isManager) { %>
                                 <a href="/donations/<%= d.participant_id %>/<%= d.donation_no %>/edit">Edit</a>
                                 
-                                <!-- Added style display:inline to keep buttons next to each other -->
-                                <!-- Added onsubmit return confirm for the safety check -->
                                 <form action="/donations/<%= d.participant_id %>/<%= d.donation_no %>/delete" 
                                       method="POST" 
                                       style="display:inline;"

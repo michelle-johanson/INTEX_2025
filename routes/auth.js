@@ -4,7 +4,9 @@ const router = express.Router();
 const Users = require("../models/users");
 const Participants = require("../models/participants");
 
-/* GET /auth/login — login form */
+/* ============================================================
+   GET /auth/login — Login Form
+============================================================ */
 router.get("/login", (req, res) => {
     const error = req.session.loginError || null;
     delete req.session.loginError;
@@ -16,7 +18,9 @@ router.get("/login", (req, res) => {
     });
 });
 
-/* POST /auth/login — submit login */
+/* ============================================================
+   POST /auth/login — Process Login
+============================================================ */
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
@@ -38,24 +42,28 @@ router.post("/login", async (req, res) => {
         req.session.lastname = user.last_name;
         req.session.access_level = user.role;
 
-        // Pending donation redirection
+        /* --- 1. PENDING DONATION (highest priority) --- */
         if (req.session.pendingDonation) {
             return req.session.save(() => res.redirect("/donations/new"));
         }
 
+        /* --- 2. RETURN TO PREVIOUS PAGE --- */
         const redirectTo = req.session.returnTo || "/";
         delete req.session.returnTo;
 
-        res.redirect(redirectTo);
+        /* --- 3. DEFAULT REDIRECT --- */
+        return res.redirect(redirectTo);
 
     } catch (err) {
         console.error(err);
         req.session.loginError = "An internal error occurred during login.";
-        res.redirect("/auth/login");
+        return res.redirect("/auth/login");
     }
 });
 
-/* GET /auth/signup — signup form */
+/* ============================================================
+   GET /auth/signup — Signup Form
+============================================================ */
 router.get("/signup", (req, res) => {
     const errors = req.session.errors || {};
     const formData = req.session.formData || {};
@@ -70,7 +78,9 @@ router.get("/signup", (req, res) => {
     });
 });
 
-/* POST /auth/signup — create new user */
+/* ============================================================
+   POST /auth/signup — Create Account
+============================================================ */
 router.post("/signup", async (req, res) => {
     const {
         email, first_name, last_name, dob, phone, city, state, zip,
@@ -127,22 +137,29 @@ router.post("/signup", async (req, res) => {
         req.session.lastname = user.last_name;
         req.session.access_level = user.role;
 
-        // Pending donation redirection
+        /* --- 1. PENDING DONATION PRIORITY --- */
         if (req.session.pendingDonation) {
             return req.session.save(() => res.redirect("/donations/new"));
         }
 
-        res.redirect("/");
+        /* --- 2. RETURN TO PREVIOUS PAGE --- */
+        const redirectTo = req.session.returnTo || "/";
+        delete req.session.returnTo;
+
+        /* --- 3. DEFAULT --- */
+        return res.redirect(redirectTo);
 
     } catch (err) {
         console.error("Signup creation error:", err);
         req.session.errors = { general: "Internal error creating account." };
         req.session.formData = req.body;
-        res.redirect("/auth/signup");
+        return res.redirect("/auth/signup");
     }
 });
 
-/* GET /auth/logout — destroy session */
+/* ============================================================
+   GET /auth/logout — Destroy Session
+============================================================ */
 router.get("/logout", (req, res) => {
     req.session.destroy(() => {
         res.redirect("/auth/login");

@@ -15,14 +15,15 @@ module.exports = {
         if (searchTerm) {
             query.where(builder => {
                 builder.where("participants.first_name", "ilike", `%${searchTerm}%`)
-                       .orWhere("participants.last_name", "ilike", `%${searchTerm}%`)
-                       // NEW: Concatenate First + Space + Last to search full name
-                       .orWhereRaw("CONCAT(participants.first_name, ' ', participants.last_name) ILIKE ?", [`%${searchTerm}%`]);
+                        .orWhere("participants.last_name", "ilike", `%${searchTerm}%`)
+                        // NEW: Concatenate First + Space + Last to search full name
+                        .orWhereRaw("CONCAT(participants.first_name, ' ', participants.last_name) ILIKE ?", [`%${searchTerm}%`]);
             });
         }
         // ---------------------
 
-        return query.orderBy("donations.donation_date", "desc");
+        // FIX: Sort by date descending (Newest first), but force NULLs to the bottom
+        return query.orderByRaw("donations.donation_date DESC NULLS LAST");
     },
 
     // Get specific donation

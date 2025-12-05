@@ -30,28 +30,34 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-// Session Locals
+// Session Locals & Flash Messages
 app.use((req, res, next) => {
     const s = req.session;
 
-    // calculate role
+    // --- TEAMMATE'S ROLE LOGIC (KEEP) ---
     const rawRole = (s.access_level || "").toLowerCase();
     const isManager = rawRole === "manager" || rawRole === "admin";
 
+    // --- SHARED SESSION VARIABLES (KEEP YOUR VERSION) ---
     res.locals.session = {
         isLoggedIn: s.isLoggedIn || false,
         user_id: s.user_id || null,
         username: s.username || null,
         firstname: s.firstname || null,
         lastname: s.lastname || null,
-        access_level: s.access_level || null
+        access_level: s.access_level || null,
     };
 
-    // ADD THIS:
+    // Provide role/manager flag to EJS globally
     res.locals.isManager = isManager;
 
-    // default flags
+    // Default EJS flag
     res.locals.hideFooter = false;
+
+    // --- YOUR FLASH MESSAGE LOGIC (KEEP) ---
+    const message = s.message;
+    res.locals.message = message || null;
+    delete s.message;
 
     next();
 });
@@ -108,6 +114,7 @@ app.use('/users', usersRoutes);
 // Manage Staff
 const staffRouter = require('./routes/staff');
 app.use('/staff', staffRouter);
+
 /* ============================================================
    OTHER REQUIRED ROUTES
 ============================================================ */

@@ -1,41 +1,43 @@
 <section class="page-container">
-
-    <!-- FLASH MESSAGE -->
-    <% if (typeof flashMessage !== 'undefined' && flashMessage) { %>
-        <% 
-            let alertClass = 'alert-info';
-            if (flashMessage.type === 'success') alertClass = 'alert-success';
-            if (flashMessage.type === 'warning') alertClass = 'alert-warning';
-            if (flashMessage.type === 'error') alertClass = 'alert-danger';
-        %>
-        <div class="alert <%= alertClass %> mb-3">
-            <%= flashMessage.text %>
-        </div>
-    <% } %>
-
     <div class="page-card-wide">
 
-        <!-- TOP HEADER + ACTIONS -->
+        <!-- FLASH MESSAGE -->
+        <% if (typeof flashMessage !== 'undefined' && flashMessage) { %>
+            <% 
+                let alertClass = 'alert-info';
+                if (flashMessage.type === 'success') alertClass = 'alert-success';
+                if (flashMessage.type === 'warning') alertClass = 'alert-warning';
+                if (flashMessage.type === 'error') alertClass = 'alert-danger';
+            %>
+            <div class="alert <%= alertClass %> mb-3">
+                <%= flashMessage.text %>
+            </div>
+        <% } %>
+
+        <!-- HEADER + ACTIONS -->
         <div class="header-row">
             <h2><%= occurrence.event_name %></h2>
 
             <% 
-                const rawRole = session && session.access_level || (session && session.user && session.user.role) || "";
-                const isAdmin = rawRole.toLowerCase() === "admin" || rawRole.toLowerCase() === "manager"; 
-                const isParticipant = session && session.isLoggedIn && !isAdmin;
-                const isRegistered = registrationStatus === 'registered' || registrationStatus === 'waitlist';
+                const rawRole = session?.access_level || session?.user?.role || "";
+                const isAdmin = rawRole.toLowerCase() === "admin" || rawRole.toLowerCase() === "manager";
+                const isParticipant = session?.isLoggedIn && !isAdmin;
+
+                const status = (registrationStatus || "").toLowerCase();
+                const isRegistered = status === "registered" || status === "waitlist";
             %>
 
             <% if (isAdmin) { %>
+
                 <div class="btn-wrapper">
 
-                    <a class="btn btn-outline btn-lg" 
-                       href="/registrations/event/<%= occurrence.event_occurrence_id %>">
+                    <a href="/registrations/event/<%= occurrence.event_occurrence_id %>"
+                       class="btn btn-outline btn-lg">
                         View Registrants
                     </a>
 
-                    <a class="btn btn-edit btn-lg"
-                       href="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit">
+                    <a href="/eventOccurrences/<%= occurrence.event_occurrence_id %>/edit"
+                       class="btn btn-edit btn-lg">
                         Edit Occurrence
                     </a>
 
@@ -58,18 +60,14 @@
                         </a>
 
                     <% } else if (hasSubmittedSurvey) { %>
-                        <button class="btn btn-primary btn-lg" disabled>
-                            Survey Submitted
-                        </button>
+                        <button class="btn btn-primary btn-lg" disabled>Survey Submitted</button>
 
                     <% } else if (isRegistered) { %>
 
                         <form action="/registrations/unregister/<%= occurrence.event_occurrence_id %>"
                               method="POST"
                               onsubmit="return confirm('Are you sure you want to unregister from this event?');">
-                            <button type="submit" class="btn btn-delete btn-lg">
-                                Unregister
-                            </button>
+                            <button class="btn btn-delete btn-lg">Unregister</button>
                         </form>
 
                     <% } else { %>
@@ -77,9 +75,7 @@
                         <form action="/registrations/register/<%= occurrence.event_occurrence_id %>"
                               method="POST"
                               onsubmit="return confirm('Confirm registration?');">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                Register Now
-                            </button>
+                            <button class="btn btn-primary btn-lg">Register Now</button>
                         </form>
 
                     <% } %>
@@ -96,40 +92,41 @@
 
         <div class="detail-card">
 
-            <!-- REGISTRATION STATUS DISPLAY -->
+            <!-- STATUS BLOCK -->
             <% if (isRegistered) { %>
                 <% 
-                    let statusText = registrationStatus.toUpperCase();
-                    let statusClass = 'alert-info';
+                    let statusText = status.toUpperCase();
+                    let statusClass = "alert-info";
 
                     if (hasAttended && !hasSubmittedSurvey) {
-                        statusText = 'ELIGIBLE TO SUBMIT SURVEY';
-                        statusClass = 'alert-success';
+                        statusText = "ELIGIBLE TO SUBMIT SURVEY";
+                        statusClass = "alert-success";
                     } else if (hasAttended && hasSubmittedSurvey) {
-                        statusText = 'ATTENDED (Survey Complete)';
-                        statusClass = 'alert-success';
-                    } else if (registrationStatus === 'registered') {
-                        statusText = 'REGISTERED';
-                        statusClass = 'alert-info';
-                    } else if (registrationStatus === 'waitlist') {
-                        statusText = 'WAITLIST';
-                        statusClass = 'alert-warning';
+                        statusText = "ATTENDED (Survey Complete)";
+                        statusClass = "alert-success";
+                    } else if (status === "registered") {
+                        statusText = "REGISTERED";
+                        statusClass = "alert-info";
+                    } else if (status === "waitlist") {
+                        statusText = "WAITLIST";
+                        statusClass = "alert-warning";
                     }
                 %>
 
                 <div class="alert <%= statusClass %> mb-3 p-2 text-center" style="font-weight: bold;">
                     You are currently <%= statusText %> for this event.
                 </div>
-
             <% } %>
 
-
-            <p><strong>Date:</strong>
+            <!-- DATE + TIME -->
+            <p>
+                <strong>Date:</strong>
                 <%= new Date(occurrence.starts_at).toLocaleString() %>
             </p>
 
             <% if (occurrence.ends_at) { %>
-                <p><strong>Ends:</strong>
+                <p>
+                    <strong>Ends:</strong>
                     <%= new Date(occurrence.ends_at).toLocaleString() %>
                 </p>
             <% } %>
@@ -141,7 +138,8 @@
             <% } %>
 
             <% if (occurrence.registration_deadline) { %>
-                <p><strong>Registration Deadline:</strong>
+                <p>
+                    <strong>Registration Deadline:</strong>
                     <%= new Date(occurrence.registration_deadline).toLocaleDateString() %>
                 </p>
             <% } %>

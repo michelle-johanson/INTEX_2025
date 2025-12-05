@@ -17,6 +17,9 @@
                 );
 
             const isLoggedIn = session && session.isLoggedIn;
+            
+            // FIX: Use 'user_id' because index.js maps it as res.locals.session.user_id
+            const currentUserId = session && session.user_id;
 
             const menus = [
                 {
@@ -25,7 +28,8 @@
                 },
                 {
                     label: "PROFILE",
-                    href: "/participants"
+                    // FIX: Direct link to specific user ID if logged in, otherwise default route
+                    href: currentUserId ? `/participants/${currentUserId}` : "/participants"
                 }
             ];
 

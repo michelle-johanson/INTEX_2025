@@ -12,20 +12,21 @@
         <% 
             // Role check
             const isManager =
-                typeof session !== 'undefined' &&
-                session.access_level &&
+                session?.access_level &&
                 (session.access_level.toLowerCase() === "manager" ||
                  session.access_level.toLowerCase() === "admin");
 
             // Participant context
-            const contextParticipant = typeof participant !== 'undefined' ? participant : null;
+            const contextParticipant =
+                typeof participant !== 'undefined' ? participant : null;
+
             const currentParticipantId =
                 contextParticipant
                     ? contextParticipant.participant_id
-                    : (milestones && milestones.length > 0 ? milestones[0].participant_id : null);
+                    : (milestones?.length > 0 ? milestones[0].participant_id : null);
         %>
 
-        <!-- ADD BUTTON (managers only) -->
+        <!-- ADD BUTTON (Managers Only) -->
         <% if (isManager && currentParticipantId) { %>
             <div class="btn-wrapper" style="margin-bottom: 1.5rem;">
                 <a href="/milestones/new?participant_id=<%= currentParticipantId %>"
@@ -44,49 +45,60 @@
 
             <!-- TABLE -->
             <div class="table-container">
-                <table>
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Title</th>
                             <th>Date</th>
-                            <th></th>
+                            <th style="width: 200px;"></th>
                         </tr>
                     </thead>
 
                     <tbody>
                         <% milestones.forEach(m => { %>
                             <tr>
+
+                                <!-- Title -->
                                 <td><%= m.title %></td>
 
+                                <!-- Date -->
                                 <td>
                                     <%= m.achieved_date 
                                             ? new Date(m.achieved_date).toLocaleDateString() 
                                             : '' %>
                                 </td>
 
+                                <!-- ACTIONS -->
                                 <td class="table-actions">
 
+                                    <!-- Always show VIEW -->
                                     <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>"
                                        class="btn btn-outline btn-table">
                                         View
                                     </a>
 
                                     <% if (isManager) { %>
+
+                                        <!-- EDIT -->
                                         <a href="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/edit"
                                            class="btn btn-edit btn-table">
                                             Edit
                                         </a>
 
+                                        <!-- DELETE -->
                                         <form action="/milestones/<%= m.participant_id %>/<%= m.milestone_no %>/delete"
-                                              method="POST">
+                                              method="POST"
+                                              style="display:inline;">
                                             <button class="btn btn-delete btn-table"
                                                     onclick="return confirm('Delete this milestone?');">
                                                 Delete
                                             </button>
                                         </form>
+
                                     <% } %>
 
                                 </td>
+
                             </tr>
                         <% }) %>
                     </tbody>
@@ -96,7 +108,7 @@
 
         <% } %>
 
-        <!-- BACK BUTTON (manager view only) -->
+        <!-- BACK BUTTON (Manager Only) -->
         <% if (isManager) { %>
             <div class="btn-wrapper" style="margin-top: 2rem;">
                 <a href="/participants" class="btn btn-secondary btn-lg">

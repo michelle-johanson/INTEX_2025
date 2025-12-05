@@ -5,7 +5,9 @@ const { requireAdmin, requireLogin } = require("../middleware/auth");
 const Donations = require("../models/donations");
 const Participants = require("../models/participants");
 
-/* GET /donations/new — public donation form */
+/* ============================================================
+   PUBLIC DONATION FORM
+============================================================ */
 router.get("/new", async (req, res) => {
     try {
         const pendingDonation = req.session.pendingDonation || null;
@@ -22,12 +24,14 @@ router.get("/new", async (req, res) => {
     }
 });
 
-/* POST /donations/new — submit donation */
+/* ============================================================
+   SUBMIT DONATION
+============================================================ */
 router.post("/new", async (req, res) => {
     try {
         const { DonationAmount, DonationDate } = req.body;
 
-        // Guest users are redirected to login
+        // Guest users must login — store donation intent
         if (!req.session.user) {
             req.session.pendingDonation = {
                 amount: DonationAmount,
@@ -36,7 +40,7 @@ router.post("/new", async (req, res) => {
 
             return req.session.save(err => {
                 if (err) console.error(err);
-                res.redirect("/auth/login");
+                return res.redirect("/auth/login");
             });
         }
 
@@ -55,7 +59,7 @@ router.post("/new", async (req, res) => {
             delete req.session.pendingDonation;
         }
 
-        res.redirect("/donations/thanks");
+        return res.redirect("/donations/thanks");
 
     } catch (err) {
         console.error(err);
@@ -63,15 +67,19 @@ router.post("/new", async (req, res) => {
     }
 });
 
-/* GET /donations/thanks — thank-you page */
+/* ============================================================
+   THANK-YOU PAGE
+============================================================ */
 router.get("/thanks", (req, res) => {
     res.render("donations/thanks", { title: "Thank You!" });
 });
 
-/* GET /donations — list donations (search supported) */
-router.get("/", requireLogin, async (req, res) => {
+/* ============================================================
+   DONATION LIST (ADMIN ONLY)
+============================================================ */
+router.get("/", requireAdmin, async (req, res) => {
     try {
-        const query = req.query.q || "";  // unified search param
+        const query = req.query.q || "";
         const donations = await Donations.getAll(query);
 
         res.render("donations/index", {
@@ -85,9 +93,21 @@ router.get("/", requireLogin, async (req, res) => {
     }
 });
 
-/* GET /donations/:pid/:dno — show a donation */
+/* ============================================================
+   SHOW DONATION (OWNER OR ADMIN ONLY)
+============================================================ */
 router.get("/:pid/:dno", requireLogin, async (req, res) => {
     try {
+        const role = (req.session.access_level || "").toLowerCase();
+        const isManager = role === "manager" || role === "admin";
+
+        // FIXED BUG: must use user_id, not userID
+        const isOwner = String(req.session.user_id) === String(req.params.pid);
+
+        if (!isManager && !isOwner) {
+            return res.status(403).send("Unauthorized Access: You can only view your own donations.");
+        }
+
         const donation = await Donations.getById(req.params.pid, req.params.dno);
         if (!donation) return res.status(404).send("Donation not found");
 
@@ -101,7 +121,9 @@ router.get("/:pid/:dno", requireLogin, async (req, res) => {
     }
 });
 
-/* GET /donations/:pid/:dno/edit — manager edit form */
+/* ============================================================
+   EDIT DONATION (ADMIN ONLY)
+============================================================ */
 router.get("/:pid/:dno/edit", requireAdmin, async (req, res) => {
     try {
         const donation = await Donations.getById(req.params.pid, req.params.dno);
@@ -120,7 +142,9 @@ router.get("/:pid/:dno/edit", requireAdmin, async (req, res) => {
     }
 });
 
-/* POST /donations/:pid/:dno/edit — update donation */
+/* ============================================================
+   UPDATE DONATION (ADMIN)
+============================================================ */
 router.post("/:pid/:dno/edit", requireAdmin, async (req, res) => {
     try {
         const updates = {
@@ -130,18 +154,20 @@ router.post("/:pid/:dno/edit", requireAdmin, async (req, res) => {
 
         await Donations.update(req.params.pid, req.params.dno, updates);
 
-        res.redirect("/donations");
+        return res.redirect("/donations");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error updating donation");
     }
 });
 
-/* POST /donations/:pid/:dno/delete — delete donation */
+/* ============================================================
+   DELETE DONATION (ADMIN)
+============================================================ */
 router.post("/:pid/:dno/delete", requireAdmin, async (req, res) => {
     try {
         await Donations.delete(req.params.pid, req.params.dno);
-        res.redirect("/donations");
+        return res.redirect("/donations");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error deleting donation");
