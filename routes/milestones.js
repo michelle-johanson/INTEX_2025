@@ -8,70 +8,87 @@ const Milestones = require("../models/milestones");
 const Participants = require("../models/participants");
 
 /* ============================================================
-   LEVEL 1: MAIN INDEX ROUTE
-   - If Manager: Shows List of Milestone Titles (With Search)
-   - If User: Shows their OWN milestones
+   LEVEL 1: MAIN INDEX ROUTE
+   - If Manager: Shows List of Milestone Titles (With Search)
+   - If User: Shows their OWN milestones
 ============================================================ */
 router.get("/", requireLogin, async (req, res) => {
-    try {
-        // NORMALIZE THE CHECK: 
-        const role = (req.session.access_level || "").toLowerCase();
+    try {
+        const role = (req.session.access_level || "").toLowerCase();
 
-        // SCENARIO 1: MANAGER LOGGED IN
-        if (role === "manager" || role === "admin") {
-            // 1. Capture Search Term
+        // SCENARIO 1: MANAGER LOGGED IN
+        if (role === "manager" || role === "admin") {
             const searchTerm = req.query.search || "";
-            
-            // 2. Fetch unique milestone titles (Pass search term to model)
-            const milestoneTypes = await Milestones.getUniqueTitles(searchTerm);
-            
-            // Render the new Directory View for Milestone Types
-            return res.render("milestones/types_index", { 
-                title: "Milestone Achievements Directory",
-                milestoneTypes: milestoneTypes,
-                searchTerm: searchTerm, // 3. Pass back to view
+            const milestoneTypes = await Milestones.getUniqueTitles(searchTerm);
+            
+            return res.render("milestones/types_index", { 
+                title: "Milestone Achievements Directory",
+                milestoneTypes: milestoneTypes,
+                searchTerm: searchTerm,
                 session: req.session
-            });
-        }
+            });
+        }
 
-        // SCENARIO 2: PARTICIPANT LOGGED IN
-        // Robust ID Check
-        const myId = (req.session.user && req.session.user.participant_id) || 
-                     req.session.participant_id || 
-                     req.session.userID;
+        // SCENARIO 2: PARTICIPANT LOGGED IN
+        // Robust ID Check
+        const myId = (req.session.user && req.session.user.participant_id) || 
+                     req.session.participant_id || 
+                     req.session.userID;
 
-        if (!myId) {
-            return res.redirect('/auth/login');
-        }
+        if (!myId) {
+            return res.redirect('/auth/login');
+        }
 
-        const myMilestones = await Milestones.getByParticipant(myId);
-        
-        res.render("milestones/index", {
-            title: "My Milestones",
-            milestones: myMilestones,
-            participantName: "My",
+        const myMilestones = await Milestones.getByParticipant(myId);
+        
+        res.render("milestones/index", {
+            title: "My Milestones",
+            milestones: myMilestones,
+            participantName: "My",
             session: req.session
-        });
+        });
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Database Error");
-    }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database Error");
+    }
 });
 
 /* ============================================================
-   LEVEL 2: DRILL-DOWN (View people who earned a specific Milestone Type)
-   URL: /milestones/type/Python%20Coding%20Certificate
+   ADMIN: MANAGE ALL PARTICIPANTS (Directory)
+   URL: /milestones/manage
+============================================================ */
+router.get("/manage", requireAdmin, async (req, res) => {
+    try {
+        const searchTerm = req.query.search || null; 
+        
+        // Fetch participants using the search logic in the model
+        const participants = await Participants.getAll(searchTerm);
+
+        res.render("milestones/manage", { 
+            title: "Manage Milestones",
+            participants: participants,
+            searchTerm: searchTerm || "",
+            session: req.session
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading participant directory");
+    }
+});
+
+/* ============================================================
+   LEVEL 2: DRILL-DOWN (View people who earned a specific Milestone Type)
+   URL: /milestones/type/Python%20Coding%20Certificate
 ============================================================ */
 router.get("/type/:title", requireAdmin, async (req, res) => {
     try {
         const milestoneTitle = req.params.title;
-        const searchTerm = req.query.search || ""; // 1. Capture search term
+        const searchTerm = req.query.search || ""; 
         
-        // Fetch all participants who have achieved this milestone
         let participants = await Milestones.getParticipantsByTitle(milestoneTitle);
 
-        // 2. Filter the results if a search term exists
         if (searchTerm) {
             const lowerSearch = searchTerm.toLowerCase();
             participants = participants.filter(p => 
@@ -85,7 +102,7 @@ router.get("/type/:title", requireAdmin, async (req, res) => {
             title: `Participants with: ${milestoneTitle}`,
             participants: participants,
             milestoneTitle: milestoneTitle,
-            searchTerm: searchTerm, // 3. Pass search term back to keep it in the box
+            searchTerm: searchTerm,
             session: req.session
         });
 
@@ -96,244 +113,216 @@ router.get("/type/:title", requireAdmin, async (req, res) => {
 });
 
 /* ============================================================
-   EDIT MILESTONE TYPE (ADMIN ONLY) - NEW ROUTE
-   URL: /milestones/type/:title/edit
+   EDIT MILESTONE TYPE (ADMIN ONLY)
+   URL: /milestones/type/:title/edit
 ============================================================ */
-
-// Show edit form for a Milestone Type (Title)
 router.get("/type/:title/edit", requireAdmin, async (req, res) => {
-    try {
-        const oldTitle = req.params.title;
-
-        res.render("milestones/type_edit", {
-            title: `Rename Milestone Type`,
-            oldTitle: oldTitle,
-            session: req.session
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error loading edit form");
-    }
+    try {
+        const oldTitle = req.params.title;
+        res.render("milestones/type_edit", {
+            title: `Rename Milestone Type`,
+            oldTitle: oldTitle,
+            session: req.session
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading edit form");
+    }
 });
 
-// Submit edit for a Milestone Type (Updates all records)
 router.post("/type/:title/edit", requireAdmin, async (req, res) => {
-    try {
-        const oldTitle = req.params.title;
-        const newTitle = req.body.MilestoneTitle;
-
-        // NEW MODEL FUNCTION NEEDED: updateByTitle
-        await Milestones.updateByTitle(oldTitle, newTitle);
-
-        // Redirect to the new list view using the new title
-        res.redirect(`/milestones/type/${encodeURIComponent(newTitle)}`);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error updating milestone type");
-    }
+    try {
+        const oldTitle = req.params.title;
+        const newTitle = req.body.MilestoneTitle;
+        await Milestones.updateByTitle(oldTitle, newTitle);
+        res.redirect(`/milestones/type/${encodeURIComponent(newTitle)}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating milestone type");
+    }
 });
 
 /* ============================================================
-   DELETE MILESTONE TYPE (ADMIN ONLY) - NEW ROUTE
-   URL: /milestones/type/:title/delete
+   DELETE MILESTONE TYPE (ADMIN ONLY)
+   URL: /milestones/type/:title/delete
 ============================================================ */
 router.post("/type/:title/delete", requireAdmin, async (req, res) => {
-    try {
-        const titleToDelete = req.params.title;
-
-        // NEW MODEL FUNCTION NEEDED: deleteByTitle
-        await Milestones.deleteByTitle(titleToDelete);
-
-        // Redirect back to the main list of milestone types (Level 1)
-        res.redirect(`/milestones`);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error deleting milestone type");
-    }
+    try {
+        const titleToDelete = req.params.title;
+        await Milestones.deleteByTitle(titleToDelete);
+        res.redirect(`/milestones`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting milestone type");
+    }
 });
 
 
 /* ============================================================
-   LEVEL 3: MANAGER/PARTICIPANT DRILL-DOWN (View specific person's list)
-   URL: /milestones/participant/5
+   LEVEL 3: MANAGER/PARTICIPANT DRILL-DOWN (View specific person's list)
+   URL: /milestones/participant/5
+   --- FIXED: ROBUST ID CHECK ---
 ============================================================ */
-router.get("/participant/:id", requireLogin, async (req, res) => { // CHANGED to requireLogin
-    try {
-        const participantId = req.params.id;
-        const loggedInUserId = req.session.userID;
-        const role = (req.session.access_level || "").toLowerCase();
-        
-        // AUTHORIZATION CHECK: Admin OR Owner
-        const isManager = role === 'manager' || role === 'admin';
-        const isOwner = String(loggedInUserId) === String(participantId);
+router.get("/participant/:id", requireLogin, async (req, res) => { 
+    try {
+        const participantId = req.params.id;
+        
+        // FIX: Check all possible locations for the User ID
+        const loggedInUserId = (req.session.user && req.session.user.participant_id) || 
+                               req.session.participant_id || 
+                               req.session.userID;
 
-        if (!isManager && !isOwner) {
-            return res.status(403).send("Unauthorized Access: You can only view your own milestones.");
-        }
-        
-        // Fetch milestones for this specific person
-        const milestones = await Milestones.getByParticipant(participantId);
-        
-        // Fetch participant details just for the name in the header
-        const participant = await Participants.getById(participantId);
+        const role = (req.session.access_level || "").toLowerCase();
+        
+        // AUTHORIZATION CHECK: Admin OR Owner
+        const isManager = role === 'manager' || role === 'admin';
+        // Ensure both IDs are strings for comparison
+        const isOwner = String(loggedInUserId) === String(participantId);
 
-        if (!participant) return res.status(404).send("Participant not found");
+        if (!isManager && !isOwner) {
+            return res.status(403).send("Unauthorized Access: You can only view your own milestones.");
+        }
+        
+        const milestones = await Milestones.getByParticipant(participantId);
+        const participant = await Participants.getById(participantId);
 
-        // We REUSE 'index.ejs' but populate it with this person's data
-        res.render("milestones/index", {
-            title: `${participant.first_name}'s Milestones`,
-            milestones: milestones,
-            participantName: `${participant.first_name}'s`,
-            participant: participant,
+        if (!participant) return res.status(404).send("Participant not found");
+
+        res.render("milestones/index", {
+            title: `${participant.first_name}'s Milestones`,
+            milestones: milestones,
+            participantName: `${participant.first_name}'s`,
+            participant: participant,
             session: req.session
-        });
+        });
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error loading participant milestones");
-    }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading participant milestones");
+    }
 });
 
 
 /* ============================================================
-   NEW MILESTONE (ADMIN ONLY) - Existing logic
+   NEW MILESTONE (ADMIN ONLY)
 ============================================================ */
-
-// Show form
 router.get("/new", requireAdmin, async (req, res) => {
-    try {
-        const participants = await Participants.getAll();
-        
-        const selectedId = req.query.participant_id;
+    try {
+        const participants = await Participants.getAll();
+        const selectedId = req.query.participant_id;
 
-        res.render("milestones/new", {
-            title: "Add Milestone",
-            participants,
-            selectedId,
+        res.render("milestones/new", {
+            title: "Add Milestone",
+            participants,
+            selectedId,
             session: req.session
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error loading form");
-    }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading form");
+    }
 });
 
-// Submit form
 router.post("/new", requireAdmin, async (req, res) => {
-    try {
-        const newMilestone = {
-            participant_id: Number(req.body.ParticipantID),
-            title: req.body.MilestoneTitle,
-            achieved_date: req.body.MilestoneDate
-        };
+    try {
+        const newMilestone = {
+            participant_id: Number(req.body.ParticipantID),
+            title: req.body.MilestoneTitle,
+            achieved_date: req.body.MilestoneDate
+        };
 
-        await Milestones.create(newMilestone);
-        
-        // Redirect back to that specific user's list
-        res.redirect(`/milestones/participant/${newMilestone.participant_id}`);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error creating milestone");
-    }
+        await Milestones.create(newMilestone);
+        res.redirect(`/milestones/participant/${newMilestone.participant_id}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error creating milestone");
+    }
 });
 
 
 /* ============================================================
-   EDIT MILESTONE (ADMIN ONLY) - Existing logic
-   URL: /:pid/:mno/edit
+   EDIT MILESTONE (ADMIN ONLY)
 ============================================================ */
-
-// Show edit form
 router.get("/:pid/:mno/edit", requireAdmin, async (req, res) => {
-    try {
-        const milestone = await Milestones.getById(req.params.pid, req.params.mno);
-        const participants = await Participants.getAll();
+    try {
+        const milestone = await Milestones.getById(req.params.pid, req.params.mno);
+        const participants = await Participants.getAll();
 
-        if (!milestone) return res.status(404).send("Milestone not found");
+        if (!milestone) return res.status(404).send("Milestone not found");
 
-        res.render("milestones/edit", {
-            title: "Edit Milestone",
-            milestone,
-            participants,
+        res.render("milestones/edit", {
+            title: "Edit Milestone",
+            milestone,
+            participants,
             session: req.session
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error loading edit form");
-    }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading edit form");
+    }
 });
 
-// Submit edit
 router.post("/:pid/:mno/edit", requireAdmin, async (req, res) => {
-    try {
-        const updates = {
-            title: req.body.MilestoneTitle,
-            achieved_date: req.body.MilestoneDate
-        };
+    try {
+        const updates = {
+            title: req.body.MilestoneTitle,
+            achieved_date: req.body.MilestoneDate
+        };
 
-        await Milestones.update(req.params.pid, req.params.mno, updates);
-        
-        // Redirect back to that specific user's list
-        res.redirect(`/milestones/participant/${req.params.pid}`);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error updating milestone");
-    }
+        await Milestones.update(req.params.pid, req.params.mno, updates);
+        res.redirect(`/milestones/participant/${req.params.pid}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating milestone");
+    }
 });
 
 
 /* ============================================================
-   DELETE MILESTONE (ADMIN ONLY) - Existing logic
-   URL: /:pid/:mno/delete
+   DELETE MILESTONE (ADMIN ONLY)
 ============================================================ */
 router.post("/:pid/:mno/delete", requireAdmin, async (req, res) => {
-    try {
-        await Milestones.delete(req.params.pid, req.params.mno);
-        
-        // Redirect back to that specific user's list
-        res.redirect(`/milestones/participant/${req.params.pid}`);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error deleting milestone");
-    }
+    try {
+        await Milestones.delete(req.params.pid, req.params.mno);
+        res.redirect(`/milestones/participant/${req.params.pid}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting milestone");
+    }
 });
 
 
 /* ============================================================
-   SHOW SINGLE MILESTONE (LOGIN REQUIRED) - Existing logic
-   URL: /:pid/:mno
+   SHOW SINGLE MILESTONE (LOGIN REQUIRED)
 ============================================================ */
 router.get("/:pid/:mno", requireLogin, async (req, res) => {
-    try {
-        const milestone = await Milestones.getById(req.params.pid, req.params.mno);
+    try {
+        const milestone = await Milestones.getById(req.params.pid, req.params.mno);
+        if (!milestone) return res.status(404).send("Milestone not found");
 
-        if (!milestone) return res.status(404).send("Milestone not found");
+        const role = (req.session.access_level || "").toLowerCase();
+        
+        // Robust ID Check here too
+        const loggedInUserId = (req.session.user && req.session.user.participant_id) || 
+                               req.session.participant_id || 
+                               req.session.userID;
 
-        // --- SECURITY FIX ---
-        // Get role safely and convert to lowercase
-        const role = (req.session.access_level || "").toLowerCase();
+        const isAuthorized = (role === 'manager' || role === 'admin') || 
+                             (String(loggedInUserId) === String(milestone.participant_id));
 
-        // Allow if role is manager/admin OR if the user owns the milestone
-        const isAuthorized = (role === 'manager' || role === 'admin') || 
-                             (String(req.session.userID) === String(milestone.participant_id));
+        if (!isAuthorized) {
+             return res.status(403).send("Unauthorized Access");
+        }
 
-        if (!isAuthorized) {
-             return res.status(403).send("Unauthorized Access");
-        }
-        // --------------------
-
-        res.render("milestones/show", {
-            title: "Milestone Details",
-            milestone,
+        res.render("milestones/show", {
+            title: "Milestone Details",
+            milestone,
             session: req.session
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error loading details");
-    }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading details");
+    }
 });
 
 module.exports = router;

@@ -14,6 +14,9 @@
                 (session.user && (session.user.access_level || session.user.role)) ||
                 "";
             const isManager = roleRaw.toLowerCase() === "manager" || roleRaw.toLowerCase() === "admin";
+
+            // FIX: Handle both 'staffList' (from route) or 'managers' to prevent crash
+            const accounts = (typeof managers !== 'undefined') ? managers : ((typeof staffList !== 'undefined') ? staffList : []);
         %>
 
         <!-- TABLE CONTROLS (converted from Bootstrap flex) -->
@@ -34,11 +37,11 @@
                     type="text"
                     name="q"
                     placeholder="Search name or email…"
-                    value="<%= q || '' %>"
+                    value="<%= typeof q !== 'undefined' ? q : '' %>"
                 >
                 <button type="submit" class="btn btn-secondary btn-small">Search</button>
 
-                <% if (q) { %>
+                <% if (typeof q !== 'undefined' && q) { %>
                     <a href="/staff" class="search-clear-link">Clear</a>
                 <% } %>
             </form>
@@ -46,7 +49,7 @@
         </div>
 
         <!-- EMPTY STATE -->
-        <% if (managers.length === 0) { %>
+        <% if (accounts.length === 0) { %>
 
             <p>No manager or admin accounts found.</p>
 
@@ -65,7 +68,7 @@
                     </thead>
 
                     <tbody>
-                        <% managers.forEach(m => { %>
+                        <% accounts.forEach(m => { %>
                             <tr>
                                 <td><strong><%= m.first_name %> <%= m.last_name %></strong></td>
                                 <td><%= m.email %></td>
@@ -105,7 +108,7 @@
             <a href="/users/maintenance_index" class="btn btn-secondary btn-lg">
                 ← Back to Maintenance Dashboard
             </a>
-        </div>
+        </div>s
 
     </div>
 </section>
