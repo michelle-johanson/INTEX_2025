@@ -44,7 +44,7 @@ module.exports = {
             });
         }
 
-        return query.orderBy("event_occurrences.starts_at", "asc");
+        return query.orderBy("event_occurrences.starts_at", "desc");
     },
 
     getUpcoming() {
@@ -56,7 +56,7 @@ module.exports = {
                 "events.type as event_type"
             )
             .where("event_occurrences.starts_at", ">", knex.fn.now())
-            .orderBy("event_occurrences.starts_at", "asc");
+            .orderBy("event_occurrences.starts_at", "desc");
     },
 
     getById(id) {
@@ -88,7 +88,7 @@ module.exports = {
             });
         }
 
-        return query.orderBy("event_occurrences.starts_at", "asc");
+        return query.orderBy("event_occurrences.starts_at", "desc");
     },
     // -----------------------------------------
 
