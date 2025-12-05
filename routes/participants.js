@@ -9,15 +9,15 @@ const Registrations = require("../models/registrations");
 router.get("/", requireLogin, async (req, res) => {
     try {
         const role = (req.session.access_level || "").toLowerCase();
-        const query = req.query.q || "";
+        const q = req.query.q || "";
 
         // Managers/Admins see the full directory
         if (role === "manager" || role === "admin") {
-            const participants = await Participants.getAll(query);
+            const participants = await Participants.getAll(q);
             return res.render("participants/index", {
                 title: "Participant Directory",
                 participants,
-                query
+                q
             });
         }
 

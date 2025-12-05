@@ -1,60 +1,102 @@
 <div class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Add Survey</h1>
+        <h1 class="page-title">Add Survey</h1>
 
-    <form action="/surveys/new" method="POST" class="form">
+        <form action="/surveys/new" method="POST" class="form">
 
-        <label>Participant (Required)</label>
-        <select name="ParticipantID" required>
-            <option value="">Select a participant…</option>
-            
-            <% participants.forEach(p => { %>
-                <option value="<%= p.participant_id %>">
-                    <%= p.first_name %> <%= p.last_name %>
-                </option>
-            <% }) %>
-        </select>
+            <!-- PARTICIPANT -->
+            <label for="ParticipantID">Participant (Required)</label>
+            <select id="ParticipantID" name="ParticipantID" required>
+                <option value="">Select a participant…</option>
 
-        <label>Event Occurrence (Required)</label>
-        <select name="EventOccurrenceID" required>
-            <option value="">Select an event…</option>
-            
-            <% occurrences.forEach(o => { %>
-                <% const isSelected = (typeof selectedEvent !== 'undefined' && String(selectedEvent) === String(o.event_occurrence_id)); %>
-                
-                <option value="<%= o.event_occurrence_id %>" <%= isSelected ? 'selected' : '' %>>
-                    <%= o.event_name %> — <%= new Date(o.starts_at).toLocaleString() %>
-                </option>
-            <% }) %>
-        </select>
+                <% participants.forEach(p => { %>
+                    <option value="<%= p.participant_id %>">
+                        <%= p.first_name %> <%= p.last_name %>
+                    </option>
+                <% }) %>
+            </select>
 
-        <label>Satisfaction Score **(1-5)**</label>
-        <input type="number" name="SurveySatisfactionScore" min="1" max="5" required />
+            <!-- EVENT OCCURRENCE -->
+            <label for="EventOccurrenceID">Event Occurrence (Required)</label>
+            <select id="EventOccurrenceID" name="EventOccurrenceID" required>
+                <option value="">Select an event…</option>
 
-        <label>Usefulness Score **(1-5)**</label>
-        <input type="number" name="SurveyUsefulnessScore" min="1" max="5" required />
+                <% occurrences.forEach(o => { %>
+                    <% const isSelected = (typeof selectedEvent !== 'undefined' && String(selectedEvent) === String(o.event_occurrence_id)); %>
+                    <option value="<%= o.event_occurrence_id %>" <%= isSelected ? 'selected' : '' %>>
+                        <%= o.event_name %> — <%= new Date(o.starts_at).toLocaleString() %>
+                    </option>
+                <% }) %>
+            </select>
 
-        <!-- NEW FIELD: Instructor Score -->
-        <label>Instructor Score **(1-5)**</label>
-        <input type="number" name="SurveyInstructorScore" min="1" max="5" required />
+            <!-- SCORES -->
+            <label for="SurveySatisfactionScore">Satisfaction Score (1–5)</label>
+            <input 
+                id="SurveySatisfactionScore"
+                type="number" 
+                name="SurveySatisfactionScore" 
+                min="1" max="5" 
+                required
+            />
 
-        <label>Recommendation Score **(1-5)**</label>
-        <input type="number" name="SurveyRecommendationScore" min="1" max="5" required />
+            <label for="SurveyUsefulnessScore">Usefulness Score (1–5)</label>
+            <input 
+                id="SurveyUsefulnessScore"
+                type="number" 
+                name="SurveyUsefulnessScore" 
+                min="1" max="5" 
+                required
+            />
 
-        <!-- REMOVED: Overall Score input, as it is now calculated -->
+            <label for="SurveyInstructorScore">Instructor Score (1–5)</label>
+            <input 
+                id="SurveyInstructorScore"
+                type="number" 
+                name="SurveyInstructorScore" 
+                min="1" max="5" 
+                required
+            />
 
-        <label>Comments</label>
-        <textarea name="SurveyComments" rows="3"></textarea>
+            <label for="SurveyRecommendationScore">Recommendation Score (1–5)</label>
+            <input 
+                id="SurveyRecommendationScore"
+                type="number" 
+                name="SurveyRecommendationScore" 
+                min="1" max="5" 
+                required
+            />
 
-        <label>Submission Date</label>
-        <input type="date" name="SurveySubmissionDate" value="<%= new Date().toISOString().split('T')[0] %>" required />
+            <!-- COMMENTS -->
+            <label for="SurveyComments">Comments</label>
+            <textarea 
+                id="SurveyComments"
+                name="SurveyComments" 
+                rows="3"
+            ></textarea>
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
-            <button class="btn-submit">Submit Survey</button>
-            <a href="/surveys">Cancel</a>
-        </div>
+            <!-- SUBMISSION DATE -->
+            <label for="SurveySubmissionDate">Submission Date</label>
+            <input 
+                id="SurveySubmissionDate"
+                type="date" 
+                name="SurveySubmissionDate" 
+                value="<%= new Date().toISOString().split('T')[0] %>"
+                required
+            />
 
-    </form>
+            <!-- BUTTONS -->
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">
+                    Submit Survey
+                </button>
 
+                <a href="/surveys" class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
 </div>

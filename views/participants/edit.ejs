@@ -1,50 +1,54 @@
 <div class="page-container">
+    <div class="page-card-form">
 
-    <h1 class="page-title">Edit Participant</h1>
+        <h2>Edit Participant</h2>
 
-    <form action="/participants/<%= participant.participant_id %>/edit" method="POST" class="form">
+        <form action="/participants/<%= participant.participant_id %>/edit" method="POST" class="form">
 
-        <label>Email</label>
-        <input type="email" name="Email" value="<%= participant.email %>" required />
+            <label for="Email">Email</label>
+            <input id="Email" type="email" name="Email" value="<%= participant.email %>" required />
 
-        <label>First Name</label>
-        <input type="text" name="FirstName" value="<%= participant.first_name %>" required />
+            <label for="FirstName">First Name</label>
+            <input id="FirstName" type="text" name="FirstName" value="<%= participant.first_name %>" required />
 
-        <label>Last Name</label>
-        <input type="text" name="LastName" value="<%= participant.last_name %>" required />
+            <label for="LastName">Last Name</label>
+            <input id="LastName" type="text" name="LastName" value="<%= participant.last_name %>" required />
 
-        <label>Date of Birth</label>
-        <input type="date" 
-               name="DOB" 
-               value="<%= participant.dob ? new Date(participant.dob).toISOString().split('T')[0] : '' %>" 
-               required />
+            <label for="DOB">Date of Birth</label>
+            <input id="DOB" type="date" name="DOB"
+                value="<%= participant.dob ? new Date(participant.dob).toISOString().split('T')[0] : '' %>" required />
 
-        <label>Role</label>
-        <input type="text" name="Role" value="<%= participant.role %>" />
+            <label for="Role">Role</label>
+            <input id="Role" type="text" name="Role" value="<%= participant.role %>" />
 
-        <label>Phone</label>
-        <input type="text" name="Phone" value="<%= participant.phone %>" />
+            <label for="Phone">Phone</label>
+            <input id="Phone" type="text" name="Phone" value="<%= participant.phone %>" />
 
-        <label>City</label>
-        <input type="text" name="City" value="<%= participant.city %>" />
+            <label for="City">City</label>
+            <input id="City" type="text" name="City" value="<%= participant.city %>" />
 
-        <label>State</label>
-        <input type="text" name="State" value="<%= participant.state %>" />
+            <label for="State">State</label>
+            <input id="State" type="text" name="State" value="<%= participant.state %>" />
 
-        <label>Zip Code</label>
-        <input type="text" name="Zip" value="<%= participant.zip %>" />
+            <label for="Zip">Zip Code</label>
+            <input id="Zip" type="text" name="Zip" value="<%= participant.zip %>" />
 
-        <label>School or Employment</label>
-        <input type="text" name="SchoolOrEmployment" value="<%= participant.school_or_employer %>" />
+            <label for="SchoolOrEmployment">School or Employment</label>
+            <input id="SchoolOrEmployment" type="text" name="SchoolOrEmployment"
+                value="<%= participant.school_or_employer %>" />
 
-        <label>Field of Interest</label>
-        <input type="text" name="FieldOfInterest" value="<%= participant.field_of_interest %>" />
+            <label for="FieldOfInterest">Field of Interest</label>
+            <input id="FieldOfInterest" type="text" name="FieldOfInterest"
+                value="<%= participant.field_of_interest %>" />
 
-        <!-- #TO-DO: create class for flex container with gap: 1rem; align-items: center; -->
-        <div class="d-flex mt-2">
-            <button class="btn-submit">Save Changes</button>
-            <a href="/participants/<%= participant.participant_id %>">Cancel</a>
-        </div>
-    </form>
+            <div class="btn-wrapper">
+                <button class="btn btn-primary btn-lg">Save Changes</button>
+                <a href="/participants/<%= participant.participant_id %>" class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
 
+        </form>
+
+    </div>
 </div>

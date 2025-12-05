@@ -1,80 +1,100 @@
-<div class="page-container">
+<section class="page-container">
+    <div class="page-card-wide">
 
-    <h1 class="page-title">Registration Details</h1>
+        <h2 class="page-title">Registration Details</h2>
 
-    <% const isManager = session.access_level && (session.access_level.toLowerCase() === "manager" || session.access_level.toLowerCase() === "admin"); %>
+        <% 
+            const isManager =
+                session.access_level &&
+                (session.access_level.toLowerCase() === "manager" ||
+                 session.access_level.toLowerCase() === "admin");
+        %>
 
-    <div class="detail-card">
-        <div class="detail-row">
-            <span class="detail-label">Event</span>
-            <span class="detail-value">
-                <%= registration.event_name || "Unknown" %>
-            </span>
-        </div>
+        <!-- DETAILS -->
+        <div class="detail-card">
 
-        <div class="detail-row">
-            <span class="detail-label">Occurrence Date</span>
-            <span class="detail-value">
-                <%= new Date(registration.starts_at).toLocaleString() %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Participant</span>
-            <span class="detail-value">
-                <%= registration.first_name %> <%= registration.last_name %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Status</span>
-            <span class="detail-value">
-                <%= registration.status %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Attended?</span>
-            <span class="detail-value">
-                <%= registration.attended ? "Yes" : "No" %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Check-In Time</span>
-            <span class="detail-value">
-                <%= registration.check_in_time ? new Date(registration.check_in_time).toLocaleTimeString() : "—" %>
-            </span>
-        </div>
-
-        <div class="detail-row">
-            <span class="detail-label">Registered On</span>
-            <span class="detail-value">
-                <%= registration.created_at ? new Date(registration.created_at).toLocaleDateString() : 'N/A' %>
-            </span>
-        </div>
-
-        <% if (isManager) { %>
-            <!-- #TO-DO: create class for detail-actions with border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem; -->
-            <div class="detail-actions mt-2">
-                <a href="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit">Edit</a>
-                
-                <!-- #TO-DO: create class for link with margin-left: 1rem; font-size: 0.9em; -->
-                <a href="/registrations/event/<%= registration.event_occurrence_id %>">
-                    View All Registrants for this Event
-                </a>
+            <div class="detail-row">
+                <span class="detail-label">Event</span>
+                <span class="detail-value">
+                    <%= registration.event_name || "Unknown" %>
+                </span>
             </div>
-        <% } %>
+
+            <div class="detail-row">
+                <span class="detail-label">Occurrence Date</span>
+                <span class="detail-value">
+                    <%= new Date(registration.starts_at).toLocaleString() %>
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Participant</span>
+                <span class="detail-value">
+                    <%= registration.first_name %> <%= registration.last_name %>
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span class="detail-value"><%= registration.status %></span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Attended?</span>
+                <span class="detail-value"><%= registration.attended ? "Yes" : "No" %></span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Check-In Time</span>
+                <span class="detail-value">
+                    <%= registration.check_in_time ? new Date(registration.check_in_time).toLocaleTimeString() : "—" %>
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Registered On</span>
+                <span class="detail-value">
+                    <%= registration.created_at ? new Date(registration.created_at).toLocaleDateString() : 'N/A' %>
+                </span>
+            </div>
+
+            <!-- MANAGER ACTIONS -->
+            <% if (isManager) { %>
+                <div class="btn-wrapper" style="margin-top: 1.5rem;">
+
+                    <a href="/registrations/<%= registration.event_occurrence_id %>/<%= registration.participant_id %>/edit" 
+                       class="btn btn-primary btn-lg">
+                        Edit Registration
+                    </a>
+
+                    <a href="/registrations/event/<%= registration.event_occurrence_id %>" 
+                       class="btn btn-outline btn-lg">
+                        View All Registrants for This Event
+                    </a>
+
+                </div>
+            <% } %>
+
+        </div>
+
+        <!-- BACK BUTTON -->
+        <div class="btn-wrapper" style="margin-top: 2rem;">
+            <% if (isManager) { %>
+
+                <a href="/registrations/event/<%= registration.event_occurrence_id %>" 
+                   class="btn btn-secondary btn-lg">
+                    ← Back to Event List
+                </a>
+
+            <% } else { %>
+
+                <a href="/registrations" 
+                   class="btn btn-secondary btn-lg">
+                    ← Back to My Registrations
+                </a>
+
+            <% } %>
+        </div>
+
     </div>
-
-    <% if (isManager) { %>
-        <div class="mt-4">
-            <a href="/registrations/event/<%= registration.event_occurrence_id %>" class="btn btn-secondary">← Back to Event List</a>
-        </div>
-    <% } else { %>
-        <div class="mt-4">
-            <a href="/registrations" class="btn btn-secondary">← Back to My Registrations</a>
-        </div>
-    <% } %>
-
-</div>
+</section>

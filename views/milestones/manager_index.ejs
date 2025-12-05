@@ -1,38 +1,79 @@
-<div class="page-container">
-    <h1 class="page-title">Manage Milestones</h1>
-    <p class="mb-4">Select a participant below to view or edit their milestone history.</p>
+<section class="page-container">
+    <div class="container-inner">
 
-    <a href="/milestones/new" class="btn btn-primary btn-small mb-4">
-        + Add Milestone
-    </a>
+        <!-- HEADER -->
+        <div class="container-header">
+            <h1 class="page-title">Manage Milestones</h1>
+            <div class="heading-underline"></div>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Location</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% participants.forEach(p => { %>
-                <tr>
-                    <td>
-                        <strong><%= p.first_name %> <%= p.last_name %></strong>
-                    </td>
-                    <td><%= p.email %></td>
-                    <td><%= p.role %></td>
-                    <td><%= p.city %></td>
-                    
-                    <td class="table-actions">
-                        <a href="/milestones/participant/<%= p.participant_id %>" class="btn btn-secondary btn-small">
-                            View Milestones
-                        </a>
-                    </td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
-</div>
+        <p class="text-muted">
+            Select a participant below to view or update their milestone history.
+        </p>
+
+        <!-- ADD BUTTON -->
+        <div class="btn-wrapper" style="margin-bottom: 1.5rem;">
+            <a href="/milestones/new" class="btn btn-primary btn-small">
+                + Add Milestone
+            </a>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <% if (!participants || participants.length === 0) { %>
+
+            <p>No participants found.</p>
+
+        <% } else { %>
+
+            <!-- TABLE -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Location</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% participants.forEach(p => { %>
+                            <tr>
+                                <td>
+                                    <strong><%= p.first_name %> <%= p.last_name %></strong>
+                                </td>
+
+                                <td><%= p.email %></td>
+
+                                <td><%= p.role %></td>
+
+                                <td>
+                                    <%= p.city %>
+                                    <% if (p.state) { %>, <%= p.state %><% } %>
+                                </td>
+
+                                <td class="table-actions">
+                                    <a href="/milestones/participant/<%= p.participant_id %>"
+                                       class="btn btn-outline btn-table">
+                                        View Milestones
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        <% } %>
+
+        <!-- BACK BUTTON -->
+        <div class="btn-wrapper" style="margin-top: 2rem;">
+            <a href="/dashboard" class="btn btn-secondary btn-lg">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+</section>

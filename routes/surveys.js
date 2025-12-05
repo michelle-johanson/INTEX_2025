@@ -19,15 +19,15 @@ router.get("/", requireLogin, async (req, res) => {
         const role = roleRaw.toLowerCase();
         const isManager = role === "manager" || role === "admin";
 
-        const query = req.query.q || "";
+        const q = req.query.q || "";
 
         if (isManager) {
-            const events = await Events.getAll(query);
+            const events = await Events.getAll(q);
             return res.render("surveys/manager_index", {
                 title: "Survey Reports - Select Event Type",
                 mode: "types",
                 data: events,
-                query,
+                q,
                 session: req.session
             });
         }
@@ -68,13 +68,14 @@ router.get("/type/:id", requireLogin, async (req, res) => {
 
         const occurrences = await EventOccurrences.getByEventId(req.params.id, query);
 
+
         res.render("surveys/manager_index", {
-            title: `Surveys for ${event.name}`,
-            mode: "occurrences",
-            data: occurrences,
+            title,
+            mode,
+            data,
             event,
-            query,
-            session: req.session
+            occurrences,
+            q
         });
 
     } catch (err) {
